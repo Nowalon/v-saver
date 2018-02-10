@@ -1,32 +1,55 @@
 const electron = require('electron')
 // Module to control application life.
 const app = electron.app
+const ipc = electron.ipcMain
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
+// const {Menu, Tray} = require('electron')
+const Menu = electron.Menu
+const Tray = electron.Tray
+
 
 const path = require('path')
 const url = require('url')
+
+const { default: installExtension, VUEJS_DEVTOOLS } = require('electron-devtools-installer');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 
+let appIcon = null
+
+if (process.mas) app.setName('V-W-Saver')
+
 function createWindow () {
+
+  var windowOptions = {
+    width: 1500,
+    minWidth: 800,
+    height: 600,
+    title: app.getName()
+  }
+  if (process.platform === 'linux') {
+    windowOptions.icon = path.join(__dirname, '/assets/img/videoscreensaver-gradient-icon.png')
+  }
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 800, height: 600})
+  mainWindow = new BrowserWindow(windowOptions)
 
   // and load the index.html of the app.
   mainWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'index.html'),
+    pathname: path.join(__dirname, 'settings.html'),
     protocol: 'file:',
     slashes: true
   }))
 
-mainWindow.setFullScreen(!mainWindow.isFullScreen())
+//mainWindow.setFullScreen(!mainWindow.isFullScreen())
 
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
+//  mainWindow.addDevToolsExtension('node_modules/vue-devtools')
+      //require('devtron').install()
 
   // Emitted when the window is closed.
   mainWindow.on('closed', function () {
@@ -40,15 +63,77 @@ mainWindow.setFullScreen(!mainWindow.isFullScreen())
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', createWindow)
+app.on('ready', () => {
+  installExtension(VUEJS_DEVTOOLS)
+      .then((name) => console.log(`Added Extension:  ${name}`))
+      .catch((err) => console.log('An error occurred: ', err));
+
+  const iconName = process.platform === 'win32' ? 'videoscreensaver-black-icon.png' : 'assets/img/videoscreensaver-white-icon.png'
+  const iconPath = path.join(__dirname, iconName)
+console.log("__dirname: ", __dirname); //return true;
+  appIcon = new Tray(iconPath)
+  const contextMenu = Menu.buildFromTemplate([
+//    {label: 'Item2', type: 'radio'},
+    {
+      label: 'Settings',
+      click: function () {
+//        if (appIcon) appIcon.destroy()
+console.log("mainWindow: ", mainWindow); //return true;
+        if (mainWindow) {
+          mainWindow.show()
+          mainWindow.focus()
+        } else {
+          createWindow()
+        }
+      }
+    },
+    {
+      label: 'Remove',
+      click: function () {
+        /*if (appIcon) appIcon.destroy()*/
+      }
+    },
+    {
+      label: 'Lock',
+      click: () => {
+        /*if (appIcon) appIcon.destroy()*/
+const lockSystem = require('lock-system');
+        //setTimeout(() => {
+lockSystem();
+        //}, 5000);
+
+      }
+    },
+    {
+      label: 'Exit',
+      click: function () {
+        if (appIcon) appIcon.destroy()
+        app.exit()
+      }
+    }
+  ])
+  appIcon.setToolTip('V-Screensaver')
+  appIcon.setContextMenu(contextMenu)
+
+  createWindow()
+})
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
   // On OS X it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
-    app.quit()
+//    if (appIcon) appIcon.destroy()
+//    app.quit()
   }
+})
+
+app.on('quit', function () {
+console.log("ON QUIT!!"); //return true;
+  // On OS X it is common for applications and their menu bar
+  // to stay active until the user quits explicitly with Cmd + Q
+    if (appIcon) appIcon.destroy()
+    app.quit()
 })
 
 app.on('activate', function () {
@@ -59,13 +144,79 @@ app.on('activate', function () {
   }
 })
 
+ipc.on('remove-tray', function () {
+  appIcon.destroy()
+})
+
 setTimeout(function(){
 //  app.quit()
 //  mainWindow = null
 //  mainWindow.close()
 //  focusedWindow.setFullScreen(!focusedWindow.isFullScreen())
-  mainWindow.setFullScreen(!mainWindow.isFullScreen())
+//  mainWindow.setFullScreen(!mainWindow.isFullScreen())
 }, 5000);
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+
+
+
+
+
+
+
+
+
+
+
+// ANOTHER EXAMPLES HERE
+
+
+// Make this app a single instance app.
+//
+// The main window will be restored and focused instead of a second window
+// opened when a person attempts to launch a second instance.
+//
+// Returns true if the current version of the app should quit instead of
+// launching.
+function makeSingleInstance () {
+  if (process.mas) return false
+
+  return app.makeSingleInstance(function () {
+    if (mainWindow) {
+      if (mainWindow.isMinimized()) mainWindow.restore()
+      mainWindow.focus()
+    }
+  })
+}
+
+
+
+
+
+
+
+
+// ??? CHECK SYSTEM IDLE ???
+
+
+// TO USING
+
+// powerSaveBlocker
+// https://github.com/electron/electron/blob/master/docs/api/power-save-blocker.md
+// https://electronjs.org/docs/api/power-save-blocker
+
+// API to inhibit screensaver #1936
+// https://github.com/electron/electron/issues/1936
+
+// Is it possible to simulate keyboard/mouse event in NodeJS?
+// https://stackoverflow.com/questions/11178372/is-it-possible-to-simulate-keyboard-mouse-event-in-nodejs
+
+// node-key-sender
+// https://www.npmjs.com/package/node-key-sender
+
+// !!! lock-system
+// https://github.com/sindresorhus/lock-system
+
+
+

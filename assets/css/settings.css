@@ -1,0 +1,347 @@
+* {
+  font-family: Roboto, -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", "Oxygen", "Ubuntu", "Cantarell", "Open Sans", sans-serif;
+  color: #74b1be;
+  background-color: #2f3241;
+  -webkit-font-smoothing: antialiased;
+}
+/*.clearfix-divider{*/
+.clearfix-divider:after{
+  content: '';
+  position: relative;
+  display: table;
+  width: 100%;
+  clear: both;
+}
+.right{float: right;}
+body {
+  padding: 0;
+}
+.page-title{
+  text-align: center;
+/*  border-bottom: 2px solid #1a1b23;*/
+  padding: 8px 0 12px;
+  margin: 0;
+  margin-bottom: 8px;
+  font-size: 20px;
+}
+.logo{
+  position: absolute;
+  height: 38px;
+  left: 28px;
+  top: 8px;
+}
+.main-content{
+  padding: 20px;
+  padding-top: 0;
+  font-size: 12px;
+}
+
+#sectionsNav{
+  margin-bottom: 18px;
+}
+#sectionsNav ul {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  width: 100%;
+}
+#sectionsNav ul li{
+  list-style: none;
+  display: inline-block;
+  width: 49.5%;
+/*  border-top: none;*/
+}
+#sectionsNav ul li.active{
+  border-color: #9feaf9;
+}
+#sectionsNav ul li button{
+  padding: 10px 0;
+  margin: 0;
+  border: none;
+  width: 100%;
+  font-size: 16px;
+  outline: none;
+  border: 1px solid #74b1be;
+  border-radius: 3px;
+/*  background-color: #2f3241;*/
+/*  cursor: pointer;*/
+  transition: 0.2s all ease;
+}
+#sectionsNav ul li.active button,
+#sectionsNav ul li button.active{
+  color: #9feaf9;
+/*  font-weight: 700;*/
+  background-color: #303030;
+}
+#sectionsNav ul li button:hover{
+  color: #9feaf9;
+/*  background-color: #262d52;*/
+  background-color: #393d50;
+}
+
+#sectionsWrapper{
+  position: relative;
+  width: 100%;
+  height: 442px;
+  overflow: hidden;
+}
+#sectionsSlider{
+  position: absolute;
+  width: 200%;
+  height: 100%;
+  transform: translateX(0%);
+  transition: transform 0.3s;
+}
+#sectionsSlider.slider-tab1{
+  transform: translateX(0%);
+}
+#sectionsSlider.slider-tab2{
+  transform: translateX(-50%);
+}
+
+.main-content section {
+  position: relative;
+  width: 50%;
+  height: 100%;
+  display: inline-block;
+/*  border: 1px dashed #74b1be;*/
+/*  background: grey;*/
+  float: left;
+}
+
+#message {
+  position: absolute;
+  top: -25px;
+  right: 40px;
+  color: #9feaf9;
+  transition: 0.3s top ease;
+}
+#message.show-message {
+  top: 12px;
+}
+button.btn{
+  padding: 6px 10px;
+  margin: 0;
+  border: none;
+/*  width: 100%;*/
+  font-size: 14px;
+  outline: none;
+  border: 1px solid #74b1be;
+  border-radius: 3px;
+  transition: 0.2s all ease;
+}
+button.btn:hover{
+  color: #9feaf9;
+  background-color: #393d50;
+}
+button.btn:active{background-color: #303030;}
+
+
+.settings-col{
+  width: 50%;
+  float: left;
+  display: inline-block;
+  padding: 0;
+  box-sizing: border-box;
+display: table;
+}
+.settings-col.settings-col-1 {padding-right: 16px;}
+.settings-col.settings-col-2 {padding-left: 16px;}
+
+.disabled-option {
+  opacity: 0.4;
+}
+.settings-input {
+  width: 48px;
+  height: 21px;
+  color: #9feaf9;
+  background: #333;
+  position: relative;
+  border: 0 none;
+  border-radius: 50px;
+  -webkit-box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.5), 0px 1px 0px rgba(255, 255, 255, 0.2);
+          box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.5), 0px 1px 0px rgba(255, 255, 255, 0.2);
+  padding: 0 8px;
+  outline: none;
+}
+
+/*
+.checkbox-input {
+  border: 1px solid #74b1be;
+  background-color: #2f3241;
+  background-color: inherit;
+  width: 16px;
+  height: 16px;
+
+}
+*/
+
+.number-input {
+
+}
+
+.text-input {
+
+}
+.settings-option-wrap {
+  margin-bottom: 0.7em;
+  width: 100%;
+display: table-row;
+}
+.settings-option-wrap:after {
+  content: '';
+  display: table;
+  width: 100%;
+  clear: both;
+}
+.settings-option-title {
+  display: inline-block;
+display: table-cell;
+vertical-align: middle;
+/*padding: 8px 0;*/
+padding: 0;
+height: 28px;
+}
+
+.settings-option-control {
+  display: inline-block;
+  float: right;
+display: table-cell;
+}
+
+
+
+/* .slideThree */ /* https://codepen.io/bbodine1/pen/novBm */
+.slideCheckBox {
+  width: 48px;
+  height: 21px;
+  background: #333;
+/*  margin: 20px auto;*/
+  position: relative;
+  border-radius: 50px;
+  -webkit-box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.5), 0px 1px 0px rgba(255, 255, 255, 0.2);
+          box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.5), 0px 1px 0px rgba(255, 255, 255, 0.2);
+}
+.slideCheckBox:after {
+  content: "OFF";
+  color: #000;
+  position: absolute;
+  right: 3px;
+  z-index: 0;
+  font: 10px/22px Arial, sans-serif;
+  font-weight: bold;
+  text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.15);
+}
+.slideCheckBox:before {
+  content: "ON";
+/*  color: #27ae60;*/
+  color: #9feaf9;
+  position: absolute;
+  left: 6px;
+  z-index: 0;
+  font: 10px/22px Arial, sans-serif;
+  font-weight: bold;
+
+  text-shadow: 0px 0px 3px #9feaf9;
+}
+.slideCheckBox label {
+  display: block;
+  width: 20px;
+  height: 16px;
+  cursor: pointer;
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  z-index: 1;
+  background: #fcfff4;
+  background: -webkit-gradient(linear, left top, left bottom, from(#fcfff4), color-stop(40%, #dfe5d7), to(#b3bead));
+  background: linear-gradient(to bottom, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+  border-radius: 50px;
+  -webkit-transition: all 0.4s ease;
+  transition: all 0.4s ease;
+  -webkit-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.3);
+          box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.3);
+}
+.slideCheckBox input[type="checkbox"] {
+  visibility: hidden;
+}
+.slideCheckBox input[type="checkbox"]:checked + label {
+  left: 26px;
+}
+/* end of .slideThree */
+
+
+
+/* input type="radio" styles */
+.vs-radioGroup {}
+.vs-radioGroup label {
+  margin-right: 4px;
+  cursor: pointer;
+}
+.vs-radioGroup label:last-child {
+  margin-right: 0px;
+}
+.vs-radioGroup input[type="radio"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #5b8c96;
+  transition: 0.2s all linear;
+  outline: none;
+  margin-right: 2px;
+  position: relative;
+  text-align: center;
+  cursor: pointer;
+}
+.vs-radioGroup input:after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  display: inline-block;
+  position: relative;
+  border-radius: 50%;
+  border: 0px solid #74b1be;
+  box-sizing: border-box;
+  vertical-align: baseline;
+  transition: 0.2s border-width linear;
+}
+.vs-radioGroup input:checked {
+  border-color: #74b1be;
+}
+.vs-radioGroup input:checked:after {
+  border-width: 5px;
+}
+/* end of input type="radio" styles */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

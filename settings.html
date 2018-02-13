@@ -70,11 +70,11 @@
     <span class="settings-option-title">Change after:</span>
     <div class="vs-radioGroup settings-option-control">
       <input type="radio" id="changeAfterChoice1"
-       name="contact" value="interval" v-model="settings.changeAfter">
+       name="change_after" value="interval" v-model="settings.changeAfter">
       <label for="changeAfterChoice1">Interval</label>
 
       <input type="radio" id="changeAfterChoice2"
-       name="contact" value="videoends" v-model="settings.changeAfter">
+       name="change_after" value="videoends" v-model="settings.changeAfter">
       <label for="changeAfterChoice2">Video ends</label>
 <!--
       <input type="radio" id="changeAfterChoice3"
@@ -121,6 +121,7 @@
 <p></p></br>
 
 
+<!--
   <div class="settings-option-wrap">
     <span class="settings-option-title">Some Settings Option 00</span>
     <div class="vs-radioGroup settings-option-control">
@@ -137,8 +138,10 @@
       <label for="contactChoice3">Mail</label>
     </div>
   </div>
+-->
 
 
+<!--
   <div class="settings-option-wrap">
     <span class="settings-option-title">Some Settings Option 1</span>
     <div class="slideCheckBox settings-option-control">
@@ -146,20 +149,25 @@
       <label for="checkTestChBx"></label>
     </div>
   </div>
+-->
 
+<!--
   <div class="settings-option-wrap">
     <span class="settings-option-title">Some Settings Option 2</span>
     <div class="settings-option-control">
       <input type="number" min="0" max="12" class="settings-input number-input">
     </div>
   </div>
+-->
 
-  <div class="settings-option-wrap"><!-- disabled-option -->
+<!--
+  <div class="settings-option-wrap"> disabled-option
     <span class="settings-option-title">Some Settings Option 3</span>
     <div class="settings-option-control">
       <input type="number" min="0" max="60" step="5" class="settings-input number-input">
     </div>
   </div>
+-->
 
 </div>
 
@@ -205,31 +213,32 @@
 <p></p></br>
 <p></p></br>
 
+<!--
   <div class="settings-option-wrap">
     <span class="settings-option-title">Some Settings Option 4</span>
     <div class="settings-option-control">
       <input type="text"  class="settings-input text-input">
     </div>
   </div>
+-->
 
 
 
 
+<!--
   <div class="settings-option-wrap">
     <span class="settings-option-title">Some Settings Option NN</span>
-  <!--  <section title=".slideThree">-->
-      <!-- .slideThree -->
       <div class="slideCheckBox settings-option-control">
         <input type="checkbox" value="None" id="slideThree" name="check" checked />
         <label for="slideThree"></label>
       </div>
-      <!-- end .slideThree -->
-  <!--  </section>-->
   </div>
+-->
 
 
 
-  <button class="btn" @click="handleShowMessage('Test test!')">Reset to default</button>
+  <button class="btn" @click="handleResetSettings">Reset to default</button>
+  <button class="btn" @click="handleDeleteSettings">test/delete</button>
 
 </div>
 

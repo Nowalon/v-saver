@@ -2,38 +2,41 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 
-//'use strict';
+'use strict';
 
-//console.log("vue: ", vue); //return true;
 
-//const Vue = require('vue')
-//const Vue = require('vue/dist/vue.js');
+const ipc = require('electron').ipcRenderer
+
 const Vue = require('vue/dist/vue.min.js')
-//import Vue from 'vue'
+
 Vue.config.devtools = true
 
 var messageTimeout = 0;
 
-//(function() {
 
 var settingsApp = new Vue({
   el: '#settings',
 
-/*
-  data () {
-    return {
-      message: 'Hello Vue!',
-      activeTab: 'tab-1'
-    }
-  },
-*/
   data: {
     message: '',
     showMessage: false,
-//    message: 'Hello Vue! Hello Vue! Hello Vue! Hello Vue! Hello Vue!',
     activeTab: 'tab1',
+    initLoadedOrReset: false,
 
     //files: [],
+    defaultSettings: {
+      files: [],
+      runInterval: 10,
+      lockSystemOnExit: true,
+      changeAfter: 'videoends',
+      changeInterval: 5,
+      randomizeVideo: true,
+      showSystemClockTime: true,
+      showVideoRemainingTime: true,
+      showVideoFileName: true,
+      showInternetConnectionLostIndicator: true,
+      showTrayIcon: true
+    },
     settings: {
       files: [],
       runInterval: 10,
@@ -79,8 +82,28 @@ var settingsApp = new Vue({
 
   mounted () {
     var self = this;
-//console.warn("mounted self: ", self);
-//console.warn("mounted $data: ", this.$data);
+
+    self.loadSettings();
+
+    ipc.on('load-settings-reply', function (event, arg) {
+console.log("load-settings-reply -> arg: ", arg);
+      self.updateLoadedSettings(arg);
+    })
+
+    ipc.on('save-settings-reply', function (event, arg) {
+console.log("save-settings-reply -> arg: ", arg);
+      self.handleShowMessage(arg);
+    })
+
+    ipc.on('reset-settings-reply', function (event, arg) {
+console.log("reset-settings-reply -> arg: ", arg);
+      self.initLoadedOrReset = false;
+      self.settings = self.defaultSettings;
+      self.handleShowMessage(arg);
+      setTimeout(() => {
+        self.initLoadedOrReset = true;
+      }, 100);
+    })
   },
 
   updated: function () {},
@@ -93,6 +116,26 @@ var settingsApp = new Vue({
 
     handleShowMessage (message, timeout) {
       var _timeout = timeout || 3000;
+      if (this.showMessage && messageTimeout) {
+        this.showMessage = false;
+        clearTimeout(messageTimeout);
+        setTimeout(() => {
+          this.handleShowMessage (message, timeout);
+        }, 300)
+      } else {
+        if (messageTimeout) {
+          clearTimeout(messageTimeout);
+        }
+        this.message = message;
+        this.showMessage = true;
+        messageTimeout = setTimeout(() => {
+          this.showMessage = false;
+        }, _timeout);
+      }
+    },
+/*
+    handleShowMessage (message, timeout) {
+      var _timeout = timeout || 3000;
       if (messageTimeout) {
         clearTimeout(messageTimeout);
       }
@@ -102,15 +145,41 @@ var settingsApp = new Vue({
         this.showMessage = false;
       }, _timeout);
     },
+*/
 
     handleSaveSettings () {
-      this.handleShowMessage('Saved!')
+      ipc.send('save-settings', this.settings)
+    },
+
+    loadSettings () {
+      ipc.send('load-settings', 'load')
+    },
+
+    updateLoadedSettings (settingsdata) {
+      if (settingsdata) {
+        this.settings = settingsdata;
+        this.handleShowMessage('Settings loaded...', 1500);
+      } else {
+        this.handleSaveSettings();
+      }
+      setTimeout(() => {
+        this.initLoadedOrReset = true;
+      }, 100);
+    },
+
+    handleResetSettings () {
+      ipc.send('reset-settings', this.defaultSettings)
+    },
+
+
+
+    handleDeleteSettings () {
+      ipc.send('delete-settings', 'delete')
     }
 
   },
 
   watch: {
-//    'settings.showSystemClockTime' : function (newValue, oldValue) {
 /*
         handler: function (val, oldVal) {
             console.log('watch 1', 'newval: ', val, '   oldVal:', oldVal)
@@ -125,7 +194,7 @@ console.warn("newValue: ", newValue);
 console.warn("oldValue: ", oldValue);
 //console.warn("oldValue.runInterval: ", oldValue.runInterval);
 
-          this.handleShowMessage('Settings saved!')
+        this.initLoadedOrReset && this.handleSaveSettings()
       },
       deep: true
     }
@@ -134,7 +203,6 @@ console.warn("oldValue: ", oldValue);
 });
 
 
-//})()
 
 
 

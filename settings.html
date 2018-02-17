@@ -10,10 +10,8 @@
   <body>
 
     <h1 class="page-title" >
-<!--      <a href="#" @click.prevent="handleShowAbout">-->
       <img src="./assets/img/videoscreensaver-gradient-icon.png"
            class="logo" id="logoImg"/>
-<!--      </a>-->
       Settings
     </h1>
 
@@ -157,11 +155,6 @@
 
 
           <section id="filesSection" class="section">
-<!--
-      We are using Node.js <script>document.write(process.versions.node)</script>,
-      Chromium <script>document.write(process.versions.chrome)</script>,
-      and Electron <script>document.write(process.versions.electron)</script>.
--->
 
             <div class="settings-col settings-col-1">
               <button class="btn" @click="handleAddFiles">Add files</button>
@@ -202,6 +195,7 @@
 
         <div class="btn-controls">
           <button class="btn" @click="handleResetSettings" disabled>Reset to default</button>
+          <button class="btn btn-close" @click="handleCloseSettings">Close</button>
           <button class="btn right" @click="handleSaveSettings">Save</button>
         </div>
 

@@ -137,6 +137,9 @@ button.btn[disabled]{
   color: inherit;
   background-color: inherit;
 }
+button.btn.btn-close{
+  margin-left: 8px;
+}
 
 .settings-col{
   width: 50%;

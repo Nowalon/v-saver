@@ -140,7 +140,8 @@ console.log("ON-QUIT!!"); //return true;
   // to stay active until the user quits explicitly with Cmd + Q
     if (appIcon) appIcon.destroy()
 //  aboutDialog
-    aboutDialog = null
+    settingsWindow = null;
+    aboutDialog = null;
     app.quit()
 })
 
@@ -198,6 +199,11 @@ ipc.on('open-about-dialog', function (event, arg) {
     buttons: ['Ok'],
   })
 })
+
+ipc.on('close-settings', function (event, settingsData) {
+  settingsWindow.close();
+})
+
 
 
 

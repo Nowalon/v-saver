@@ -122,11 +122,6 @@ var settingsApp = new Vue({
     logoImg = document.getElementById('logoImg');
 
     logoImg.addEventListener('click', () => {
-console.warn("logoImg CLICK!");
-console.warn("process.versions: ", process.versions);
-console.warn("process.versions.node: ", process.versions.node);
-console.warn("process.versions.chrome: ", process.versions.chrome);
-console.warn("process.versions.electron: ", process.versions.electron);
       ipc.send('open-about-dialog');
     }, false);
 
@@ -245,9 +240,8 @@ console.warn("process.versions.electron: ", process.versions.electron);
       ipc.send('delete-settings', 'delete')
     },
 
-    handleShowAbout () {
-console.warn("handleShowAbout");
-
+    handleCloseSettings () {
+      ipc.send('close-settings')
     }
 
   },

@@ -9,19 +9,13 @@
   </head>
   <body>
 
-<!--    <div class="main-content" id="appSettings">
-      <p> - </p>
-      <p> - </p>
-      <p> - </p>
-      <p>{{ message }}</p>
-      <p> - </p>
-    </div>-->
-
-    <h1 class="page-title">
-      <img src="./assets/img/videoscreensaver-gradient-icon.png" class="logo" />
+    <h1 class="page-title" >
+<!--      <a href="#" @click.prevent="handleShowAbout">-->
+      <img src="./assets/img/videoscreensaver-gradient-icon.png"
+           class="logo" id="logoImg"/>
+<!--      </a>-->
       Settings
     </h1>
-
 
     <div class="main-content" id="settings">
 
@@ -37,229 +31,180 @@
         </ul>
       </div>
       <div id="sectionsWrapper">
-        <div id="sectionsSlider" class="___slider-tab1" :class="sectionsSliderClass">
+        <div id="sectionsSlider" :class="sectionsSliderClass">
+
           <section id="appearanceSection" class="section">
-            <!--Appearance/Behavior-->
 
-<!--
-<p>
-  <input type="checkbox" class="settings-input checkbox-input">
-</p>
--->
-<div class="settings-col settings-col-1">
+            <div class="settings-col settings-col-1">
 
-  <div class="settings-option-wrap">
-    <span class="settings-option-title">Run screensaver after (1-30min)</span>
-    <div class="settings-option-control">
-      <input type="number" min="1"
-             :max="maxRunInterval"
-             v-model="settings.runInterval"
-             class="settings-input number-input">
-    </div>
-  </div>
+              <div class="settings-option-wrap">
+                <span class="settings-option-title">Run <!--screensaver--> after idle (1-30min)</span>
+                <div class="settings-option-control">
+                  <input type="number" min="1"
+                         :max="maxRunInterval"
+                         v-model="settings.runInterval"
+                         class="settings-input number-input">
+                </div>
+              </div>
 
-  <div class="settings-option-wrap">
-    <span class="settings-option-title">Lock system on exit</span>
-    <div class="slideCheckBox settings-option-control">
-      <input type="checkbox" id="lockSystemOnExitChBx" name="lockSystemOnExit" v-model="settings.lockSystemOnExit" >
-      <label for="lockSystemOnExitChBx"></label>
-    </div>
-  </div>
+              <div class="settings-option-wrap">
+                <span class="settings-option-title">Lock system on exit</span>
+                <div class="slideCheckBox settings-option-control">
+                  <input type="checkbox" id="lockSystemOnExitChBx" name="lockSystemOnExit" v-model="settings.lockSystemOnExit" >
+                  <label for="lockSystemOnExitChBx"></label>
+                </div>
+              </div>
 
-  <div class="settings-option-wrap">
-    <span class="settings-option-title">Change after:</span>
-    <div class="vs-radioGroup settings-option-control">
-      <input type="radio" id="changeAfterChoice1"
-       name="change_after" value="interval" v-model="settings.changeAfter">
-      <label for="changeAfterChoice1">Interval</label>
+              <div class="settings-option-wrap">
+                <span class="settings-option-title">Change after:</span>
+                <div class="vs-radioGroup settings-option-control">
+                  <input type="radio" id="changeAfterChoice1"
+                   name="change_after" value="interval" v-model="settings.changeAfter">
+                  <label for="changeAfterChoice1">Interval</label>
 
-      <input type="radio" id="changeAfterChoice2"
-       name="change_after" value="videoends" v-model="settings.changeAfter">
-      <label for="changeAfterChoice2">Video ends</label>
-<!--
-      <input type="radio" id="changeAfterChoice3"
-       name="contact" value="mail" v-model="changeAfter">
-      <label for="changeAfterChoice3">Mail</label>
--->
-    </div>
-  </div>
+                  <input type="radio" id="changeAfterChoice2"
+                   name="change_after" value="videoends" v-model="settings.changeAfter">
+                  <label for="changeAfterChoice2">Video ends</label>
+                </div>
+              </div>
 
-  <div class="settings-option-wrap" :class="{'disabled-option' : changeIntervalDisabled}">
-    <span class="settings-option-title">Change interval (1-30min)</span>
-    <div class="settings-option-control">
-      <input type="number" min="1"
-             :max="maxVideoChangeInterval"
-             v-model="settings.changeInterval"
-             :disabled="changeIntervalDisabled"
-             class="settings-input number-input">
-    </div>
-  </div>
+              <div class="settings-option-wrap" :class="{'disabled-option' : changeIntervalDisabled}">
+                <span class="settings-option-title">Change interval (1-30min)</span>
+                <div class="settings-option-control">
+                  <input type="number" min="1"
+                         :max="maxVideoChangeInterval"
+                         v-model="settings.changeInterval"
+                         :disabled="changeIntervalDisabled"
+                         class="settings-input number-input">
+                </div>
+              </div>
 
-  <div class="settings-option-wrap">
-    <span class="settings-option-title">Randomize video</span>
-    <div class="slideCheckBox settings-option-control">
-      <input type="checkbox" id="randomizeVideoChBx" name="randomizeVideo" v-model="settings.randomizeVideo" >
-      <label for="randomizeVideoChBx"></label>
-    </div>
-  </div>
+              <div class="settings-option-wrap">
+                <span class="settings-option-title">Randomize video</span>
+                <div class="slideCheckBox settings-option-control">
+                  <input type="checkbox" id="randomizeVideoChBx" name="randomizeVideo" v-model="settings.randomizeVideo" >
+                  <label for="randomizeVideoChBx"></label>
+                </div>
+              </div>
 
-<p></p></br>
+              <p></p></br>
 
-  <!-- showTrayIcon -->
-  <div class="settings-option-wrap disabled-option">
-    <span class="settings-option-title">Show tray icon <!--(restart to show settings)--></span>
-    <div class="slideCheckBox settings-option-control">
-      <input type="checkbox" disabled id="showTrayIconChBx" name="showTrayIcon" v-model="settings.showTrayIcon" >
-      <label for="showTrayIconChBx"></label>
-    </div>
-  </div>
-  <!-- showTrayIcon -->
+              <!-- showTrayIcon -->
+              <div class="settings-option-wrap disabled-option">
+                <span class="settings-option-title">Show tray icon <!--(restart to show settings)--></span>
+                <div class="slideCheckBox settings-option-control">
+                  <input type="checkbox" disabled id="showTrayIconChBx" name="showTrayIcon" v-model="settings.showTrayIcon" >
+                  <label for="showTrayIconChBx"></label>
+                </div>
+              </div>
+              <!-- showTrayIcon -->
+
+            </div>
 
 
-<p></p></br>
-<p></p></br>
-<p></p></br>
+            <div class="settings-col settings-col-2">
 
+              <div class="settings-option-wrap">
+                <span class="settings-option-title">Show system clock time</span>
+                <div class="slideCheckBox settings-option-control">
+                  <input type="checkbox" id="showSystemClockTimeChBx" name="showSystemClockTime" v-model="settings.showSystemClockTime" >
+                  <label for="showSystemClockTimeChBx"></label>
+                </div>
+              </div>
 
-<!--
-  <div class="settings-option-wrap">
-    <span class="settings-option-title">Some Settings Option 00</span>
-    <div class="vs-radioGroup settings-option-control">
-      <input type="radio" id="contactChoice1"
-       name="contact" value="email" v-model="radioTest">
-      <label for="contactChoice1">Email</label>
+              <div class="settings-option-wrap" :class="{'disabled-option' : changeTimeFormatDisabled}">
+                <span class="settings-option-title">24h time format</span>
+                <div class="slideCheckBox settings-option-control">
+                  <input type="checkbox" id="use24TimeFormatChBx" name="use24TimeFormat"
+                         v-model="settings.use24TimeFormat"
+                         :disabled="changeTimeFormatDisabled" >
+                  <label for="use24TimeFormatChBx"></label>
+                </div>
+              </div>
 
-      <input type="radio" id="contactChoice2"
-       name="contact" value="phone" v-model="radioTest">
-      <label for="contactChoice2">Phone</label>
+              <div class="settings-option-wrap">
+                <span class="settings-option-title">Show video remaining time</span>
+                <div class="slideCheckBox settings-option-control">
+                  <input type="checkbox" id="showVideoRemainingTimeChBx" name="showVideoRemainingTime" v-model="settings.showVideoRemainingTime" >
+                  <label for="showVideoRemainingTimeChBx"></label>
+                </div>
+              </div>
 
-      <input type="radio" id="contactChoice3"
-       name="contact" value="mail" v-model="radioTest">
-      <label for="contactChoice3">Mail</label>
-    </div>
-  </div>
--->
+              <div class="settings-option-wrap">
+                <span class="settings-option-title">Show video file name on change</span>
+                <div class="slideCheckBox settings-option-control">
+                  <input type="checkbox" id="showVideoFileNameChBx" name="showVideoFileName" v-model="settings.showVideoFileName" >
+                  <label for="showVideoFileNameChBx"></label>
+                </div>
+              </div>
 
+              <div class="settings-option-wrap">
+                <span class="settings-option-title">Show Internet connection lost indicator</span>
+                <div class="slideCheckBox settings-option-control">
+                  <input type="checkbox" id="showInternetConnectionLostIndicatorChBx" name="showInternetConnectionLostIndicator" v-model="settings.showInternetConnectionLostIndicator" >
+                  <label for="showInternetConnectionLostIndicatorChBx"></label>
+                </div>
+              </div>
 
-<!--
-  <div class="settings-option-wrap">
-    <span class="settings-option-title">Some Settings Option 1</span>
-    <div class="slideCheckBox settings-option-control">
-      <input type="checkbox" id="checkTestChBx" name="checktest" v-model="checkTest" >
-      <label for="checkTestChBx"></label>
-    </div>
-  </div>
--->
+              <p></p></br>
+              <p></p></br>
 
-<!--
-  <div class="settings-option-wrap">
-    <span class="settings-option-title">Some Settings Option 2</span>
-    <div class="settings-option-control">
-      <input type="number" min="0" max="12" class="settings-input number-input">
-    </div>
-  </div>
--->
+              <button class="btn" @click="handleDeleteSettings" disabled>test/delete</button>
 
-<!--
-  <div class="settings-option-wrap"> disabled-option
-    <span class="settings-option-title">Some Settings Option 3</span>
-    <div class="settings-option-control">
-      <input type="number" min="0" max="60" step="5" class="settings-input number-input">
-    </div>
-  </div>
--->
-
-</div>
-
-
-<div class="settings-col settings-col-2">
-
-  <div class="settings-option-wrap">
-    <span class="settings-option-title">Show system clock time</span>
-    <div class="slideCheckBox settings-option-control">
-      <input type="checkbox" id="showSystemClockTimeChBx" name="showSystemClockTime" v-model="settings.showSystemClockTime" >
-      <label for="showSystemClockTimeChBx"></label>
-    </div>
-  </div>
-
-  <div class="settings-option-wrap">
-    <span class="settings-option-title">Show video remaining time</span>
-    <div class="slideCheckBox settings-option-control">
-      <input type="checkbox" id="showVideoRemainingTimeChBx" name="showVideoRemainingTime" v-model="settings.showVideoRemainingTime" >
-      <label for="showVideoRemainingTimeChBx"></label>
-    </div>
-  </div>
-
-  <div class="settings-option-wrap">
-    <span class="settings-option-title">Show video file name on change</span>
-    <div class="slideCheckBox settings-option-control">
-      <input type="checkbox" id="showVideoFileNameChBx" name="showVideoFileName" v-model="settings.showVideoFileName" >
-      <label for="showVideoFileNameChBx"></label>
-    </div>
-  </div>
-
-  <div class="settings-option-wrap">
-    <span class="settings-option-title">Show Internet connection lost indicator</span>
-    <div class="slideCheckBox settings-option-control">
-      <input type="checkbox" id="showInternetConnectionLostIndicatorChBx" name="showInternetConnectionLostIndicator" v-model="settings.showInternetConnectionLostIndicator" >
-      <label for="showInternetConnectionLostIndicatorChBx"></label>
-    </div>
-  </div>
-
-
-
-
-
-<p></p></br>
-<p></p></br>
-
-<!--
-  <div class="settings-option-wrap">
-    <span class="settings-option-title">Some Settings Option 4</span>
-    <div class="settings-option-control">
-      <input type="text"  class="settings-input text-input">
-    </div>
-  </div>
--->
-
-
-
-
-<!--
-  <div class="settings-option-wrap">
-    <span class="settings-option-title">Some Settings Option NN</span>
-      <div class="slideCheckBox settings-option-control">
-        <input type="checkbox" value="None" id="slideThree" name="check" checked />
-        <label for="slideThree"></label>
-      </div>
-  </div>
--->
-
-
-
-  <button class="btn" @click="handleResetSettings">Reset to default</button>
-  <button class="btn" @click="handleDeleteSettings">test/delete</button>
-
-</div>
-
-
-<div class="clearfix-divider"></div>
-<button class="btn right" @click="handleSaveSettings">Save</button>
-
+            </div>
 
           </section>
+
+
           <section id="filesSection" class="section">
-            Files
-            <br>
-      <!-- All of the Node.js APIs are available in this renderer process. -->
 <!--
       We are using Node.js <script>document.write(process.versions.node)</script>,
       Chromium <script>document.write(process.versions.chrome)</script>,
       and Electron <script>document.write(process.versions.electron)</script>.
 -->
 
+            <div class="settings-col settings-col-1">
+              <button class="btn" @click="handleAddFiles">Add files</button>
+              <span class="btn-notif">duplicates will be skipped</span>
+            </div>
+            <div class="settings-col settings-col-2">
+              <button class="btn" @click="handleClearFiles">Remove all files</button>
+              <span class="btn-notif">Files count: {{ filesCount }}</span>
+            </div>
+
+            <div class="clearfix-divider"></div>
+
+            <div class="setting-files-wrap" id="settingFilesWrapNode">
+              <ul class="file-list" id="fileListNode">
+                <li v-for="filePath, filePathindex in settings.files" :index="filePathindex">
+                  <span class="file-name">{{ filePathindex }}: {{ filePath }}</span>
+                  <span class="file-action file-action-move-up"
+                        :class="{'disabled' : filePathindex === 0}"
+                        @click="handleMoveFilePathUp(filePath, filePathindex)"
+                        title="move up"> &#8679; </span>
+                  <span class="file-action file-action-move-down"
+                        @click="handleMoveFilePathDown(filePath, filePathindex)"
+                        :class="{'disabled' : filePathindex === (settings.files.length - 1) }"
+                        title="move down"> &#8681; </span>
+                  <span class="file-action file-action-delete"
+                        @click="handleRemoveFilePath(filePath, filePathindex)"
+                        title="remove"> &times; </span>
+                </li>
+              </ul>
+              <div class="file-list-scroller" v-if="showfileListScroll"><span>&varr;</span></div>
+            </div>
+
           </section>
+
         </div>
+
+        <div class="clearfix-divider"></div>
+
+        <div class="btn-controls">
+          <button class="btn" @click="handleResetSettings" disabled>Reset to default</button>
+          <button class="btn right" @click="handleSaveSettings">Save</button>
+        </div>
+
       </div>
 
     </div>
@@ -268,23 +213,6 @@
     <script>
       // You can also require other files to run in this process
       require('./renderer.js')
-
-
-
-
-/*
-      document.getElementById('go_tab1').addEventListener('click', handleTabSwitch)
-      document.getElementById('go_tab2').addEventListener('click', handleTabSwitch)
-*/
-
-      function __handleTabSwitch(e) {
-        e.preventDefault();
-        document.querySelectorAll('#sectionsNav ul li').forEach(item => {
-          item.classList.remove('active');
-        })
-        e.target.parentNode.classList.add('active');
-        document.getElementById('sectionsSlider').setAttribute('class', 'slider-' + e.target.id.replace('go_', ''));
-      }
 
     </script>
   </body>

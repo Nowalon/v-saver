@@ -8,25 +8,29 @@ const BrowserWindow = electron.BrowserWindow
 // const {Menu, Tray} = require('electron')
 const Menu = electron.Menu
 const Tray = electron.Tray
+const dialog = electron.dialog
 
 
 const path = require('path')
 const url = require('url')
+const lockSystem = require('lock-system');
 
 const { default: installExtension, VUEJS_DEVTOOLS } = require('electron-devtools-installer');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow
+let settingsWindow
 
 let appIcon = null
 let appSettings = null
+let aboutDialog = null
 
 if (process.mas) app.setName('V-W-Saver')
 
 function createSettingsWindow () {
 
   var windowOptions = {
+    //width: 800,
     width: 1500,
     minWidth: 800,
     height: 600,
@@ -36,29 +40,27 @@ function createSettingsWindow () {
     windowOptions.icon = path.join(__dirname, '/assets/img/videoscreensaver-gradient-icon.png')
   }
   // Create the browser window.
-  mainWindow = new BrowserWindow(windowOptions)
+  settingsWindow = new BrowserWindow(windowOptions)
 
   // and load the index.html of the app.
-  mainWindow.loadURL(url.format({
+  settingsWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'settings.html'),
     protocol: 'file:',
     slashes: true
   }))
 
-//mainWindow.setFullScreen(!mainWindow.isFullScreen())
+//settingsWindow.setFullScreen(!settingsWindow.isFullScreen())
 
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools()
-//  mainWindow.addDevToolsExtension('node_modules/vue-devtools')
-      //require('devtron').install()
+  settingsWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
-  mainWindow.on('closed', function () {
+  settingsWindow.on('closed', function () {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
-    mainWindow = null
+    settingsWindow = null
   })
 }
 
@@ -79,11 +81,9 @@ console.log("__dirname: ", __dirname); //return true;
     {
       label: 'Settings',
       click: function () {
-//        if (appIcon) appIcon.destroy()
-console.log("mainWindow: ", mainWindow); //return true;
-        if (mainWindow) {
-          mainWindow.show()
-          mainWindow.focus()
+        if (settingsWindow) {
+          settingsWindow.show()
+          settingsWindow.focus()
         } else {
           createSettingsWindow()
         }
@@ -98,12 +98,7 @@ console.log("mainWindow: ", mainWindow); //return true;
     {
       label: 'Lock',
       click: () => {
-        /*if (appIcon) appIcon.destroy()*/
-const lockSystem = require('lock-system');
-        //setTimeout(() => {
-lockSystem();
-        //}, 5000);
-
+        lockSystem();
       }
     },
     {
@@ -122,9 +117,10 @@ lockSystem();
   } else {
     createSettingsWindow()
   }
-console.log("settings.has('settings'): ", settings.has('settings'));
-console.log("settings.get('settings'): ", settings.get('settings'));
-console.log("appSettings: ", appSettings);
+//console.log("settings.has('settings'): ", settings.has('settings'));
+//console.log("settings.get('settings'): ", settings.get('settings'));
+//console.log("appSettings: ", appSettings);
+//createSettingsWindow()
 
 })
 
@@ -139,17 +135,19 @@ app.on('window-all-closed', function () {
 })
 
 app.on('quit', function () {
-console.log("ON QUIT!!"); //return true;
+console.log("ON-QUIT!!"); //return true;
   // On OS X it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
     if (appIcon) appIcon.destroy()
+//  aboutDialog
+    aboutDialog = null
     app.quit()
 })
 
 app.on('activate', function () {
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) {
+  if (settingsWindow === null) {
     createSettingsWindow()
   }
 })
@@ -158,39 +156,55 @@ ipc.on('remove-tray', function () {
   appIcon.destroy()
 })
 
+
+ipc.on('open-file-dialog', function (event) {
+  dialog.showOpenDialog({
+    title: 'Select video files - mp4 preferred (required for WEB)',
+    properties: ['openFile', 'multiSelections', 'showHiddenFiles'],
+    filters: [
+      {name: 'Movies', extensions: ['webm', 'avi', 'mp4']}
+    ]
+  }, function (filePaths) {
+    if (filePaths) event.sender.send('selected-files-reply', filePaths)
+  })
+})
+
 ipc.on('save-settings', function (event, settingsData) {
-console.log("on save-settings => settingsData: ", settingsData);
   settings.set('settings', settingsData);
   appSettings = settings.get('settings');
-console.log("SAVE => GET=> appSettings: ", appSettings);
   event.sender.send('save-settings-reply', 'Settings saved!')
 })
 
 ipc.on('load-settings', function (event, msg) {
-console.log("on load-settings => msg: ", msg);
   if (settings.has('settings')) {
     appSettings = settings.get('settings')
   }
-console.log("LOAD => GET=> appSettings: ", appSettings);
   event.sender.send('load-settings-reply', appSettings)
 })
 
 ipc.on('reset-settings', function (event, settingsData) {
-console.log("on reset-settings => settingsData: ", settingsData);
   settings.set('settings', settingsData);
   appSettings = settings.get('settings');
-console.log("RESET => GET=> appSettings: ", appSettings);
   event.sender.send('reset-settings-reply', 'Default settings restored...')
+})
+
+ipc.on('open-about-dialog', function (event, arg) {
+  var aboutDialogMessage = `${app.getName().toUpperCase()}: version ${app.getVersion()} \n \n using Node.js ${process.versions.node}, Chromium ${process.versions.chrome}, and Electron ${process.versions.electron}`;
+  aboutDialog = dialog.showMessageBox({
+    type: 'info',
+    title: 'V-Screensaver - About',
+    icon: path.join(__dirname, '/assets/img/videoscreensaver-gradient-icon.png'),
+    detail: aboutDialogMessage,
+    buttons: ['Ok'],
+  })
 })
 
 
 
 
 ipc.on('delete-settings', function (event, msg) {
-console.log("on delete-settings => msg: ", msg);
   settings.deleteAll();
   appSettings = settings.get('settings');
-console.log("DELETE => GET=> appSettings: ", appSettings);
   event.sender.send('delete-settings-reply', appSettings)
 })
 
@@ -198,10 +212,10 @@ console.log("DELETE => GET=> appSettings: ", appSettings);
 
 setTimeout(function(){
 //  app.quit()
-//  mainWindow = null
-//  mainWindow.close()
+//  settingsWindow = null
+//  settingsWindow.close()
 //  focusedWindow.setFullScreen(!focusedWindow.isFullScreen())
-//  mainWindow.setFullScreen(!mainWindow.isFullScreen())
+//  settingsWindow.setFullScreen(!settingsWindow.isFullScreen())
 }, 5000);
 
 // In this file you can include the rest of your app's specific main process
@@ -231,9 +245,9 @@ function makeSingleInstance () {
   if (process.mas) return false
 
   return app.makeSingleInstance(function () {
-    if (mainWindow) {
-      if (mainWindow.isMinimized()) mainWindow.restore()
-      mainWindow.focus()
+    if (settingsWindow) {
+      if (settingsWindow.isMinimized()) settingsWindow.restore()
+      settingsWindow.focus()
     }
   })
 }

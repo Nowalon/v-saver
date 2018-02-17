@@ -13,6 +13,7 @@ Vue.config.devtools = true
 
 var messageTimeout = 0;
 
+var settingFilesWrapNode, fileListNode, logoImg;
 
 var settingsApp = new Vue({
   el: '#settings',
@@ -23,7 +24,6 @@ var settingsApp = new Vue({
     activeTab: 'tab1',
     initLoadedOrReset: false,
 
-    //files: [],
     defaultSettings: {
       files: [],
       runInterval: 10,
@@ -32,6 +32,7 @@ var settingsApp = new Vue({
       changeInterval: 5,
       randomizeVideo: true,
       showSystemClockTime: true,
+      use24TimeFormat: true,
       showVideoRemainingTime: true,
       showVideoFileName: true,
       showInternetConnectionLostIndicator: true,
@@ -46,6 +47,7 @@ var settingsApp = new Vue({
       randomizeVideo: true,
 
       showSystemClockTime: true,
+      use24TimeFormat: true,
       showVideoRemainingTime: true,
       showVideoFileName: true,
       showInternetConnectionLostIndicator: true,
@@ -55,9 +57,8 @@ var settingsApp = new Vue({
     maxRunInterval: 30,
     maxVideoChangeInterval: 30,
 
+    showfileListScroll: false
 
-    checkTest: false,
-    radioTest: null
   },
 
 
@@ -75,8 +76,16 @@ var settingsApp = new Vue({
       return this.activeTab === 'tab2' ? 'active' : '';
     },
 
+    filesCount () {
+      return this.settings.files.length;
+    },
+
     changeIntervalDisabled () {
       return !this.settings.changeAfter || this.settings.changeAfter !== 'interval'
+    },
+
+    changeTimeFormatDisabled () {
+      return !this.settings.showSystemClockTime
     }
   },
 
@@ -85,18 +94,21 @@ var settingsApp = new Vue({
 
     self.loadSettings();
 
+    ipc.on('selected-files-reply', function (event, paths) {
+      if (paths && paths.length) {
+        self.setUpdateFiles(paths);
+      }
+    })
+
     ipc.on('load-settings-reply', function (event, arg) {
-console.log("load-settings-reply -> arg: ", arg);
       self.updateLoadedSettings(arg);
     })
 
     ipc.on('save-settings-reply', function (event, arg) {
-console.log("save-settings-reply -> arg: ", arg);
       self.handleShowMessage(arg);
     })
 
     ipc.on('reset-settings-reply', function (event, arg) {
-console.log("reset-settings-reply -> arg: ", arg);
       self.initLoadedOrReset = false;
       self.settings = self.defaultSettings;
       self.handleShowMessage(arg);
@@ -104,6 +116,20 @@ console.log("reset-settings-reply -> arg: ", arg);
         self.initLoadedOrReset = true;
       }, 100);
     })
+
+    settingFilesWrapNode = document.getElementById('settingFilesWrapNode');
+    fileListNode = document.getElementById('fileListNode');
+    logoImg = document.getElementById('logoImg');
+
+    logoImg.addEventListener('click', () => {
+console.warn("logoImg CLICK!");
+console.warn("process.versions: ", process.versions);
+console.warn("process.versions.node: ", process.versions.node);
+console.warn("process.versions.chrome: ", process.versions.chrome);
+console.warn("process.versions.electron: ", process.versions.electron);
+      ipc.send('open-about-dialog');
+    }, false);
+
   },
 
   updated: function () {},
@@ -111,7 +137,6 @@ console.log("reset-settings-reply -> arg: ", arg);
   methods: {
     handleTabSwitch (tab) {
       this.activeTab = tab;
-      // this.message = 'Good Bye!';
     },
 
     handleShowMessage (message, timeout) {
@@ -133,19 +158,64 @@ console.log("reset-settings-reply -> arg: ", arg);
         }, _timeout);
       }
     },
-/*
-    handleShowMessage (message, timeout) {
-      var _timeout = timeout || 3000;
-      if (messageTimeout) {
-        clearTimeout(messageTimeout);
-      }
-      this.message = message;
-      this.showMessage = true;
-      messageTimeout = setTimeout(() => {
-        this.showMessage = false;
-      }, _timeout);
+
+    handleAddFiles () {
+      ipc.send('open-file-dialog')
     },
-*/
+
+    setUpdateFiles (pathsArr) {
+      var settingsFilesArray = [...this.settings.files];
+      pathsArr.forEach((path, pathIndex) => {
+        if (settingsFilesArray.indexOf(path) < 0) {
+          settingsFilesArray.push(path);
+        }
+      });
+      this.settings.files = settingsFilesArray;
+    },
+
+    handleMoveFilePathUp (path, pathIndex) {
+      var allowed = pathIndex > 0;
+      if (allowed && pathIndex > -1) {
+        var settingsFilesArray = [...this.settings.files];
+        settingsFilesArray.splice(pathIndex, 1);
+        var newPathIndex = (pathIndex - 1 < 0) ? 0 : pathIndex - 1;
+        settingsFilesArray.splice(newPathIndex, 0, path);
+        this.settings.files = settingsFilesArray;
+      }
+    },
+
+    handleMoveFilePathDown (path, pathIndex) {
+      var allowed = pathIndex < this.settings.files.length;
+      var settingsFilesArray = [...this.settings.files];
+      if (allowed && pathIndex > -1) {
+        settingsFilesArray.splice(pathIndex, 1);
+        var newPathIndex = pathIndex + 1;
+        settingsFilesArray.splice(newPathIndex, 0, path);
+        this.settings.files = settingsFilesArray;
+      }
+    },
+
+    handleRemoveFilePath (path, pathIndex) {
+      var settingsFilesArray = [...this.settings.files];
+      if (pathIndex > -1) {
+        settingsFilesArray.splice(pathIndex, 1);
+        this.settings.files = settingsFilesArray;
+      }
+
+    },
+
+    handleClearFiles () {
+      this.settings.files = [];
+    },
+
+    handleFileListSize () {
+      if (settingFilesWrapNode && fileListNode) {
+        setTimeout(() => {
+          this.showfileListScroll = fileListNode.offsetHeight > settingFilesWrapNode.offsetHeight;
+        }, 300);
+      }
+    },
+
 
     handleSaveSettings () {
       ipc.send('save-settings', this.settings)
@@ -171,48 +241,36 @@ console.log("reset-settings-reply -> arg: ", arg);
       ipc.send('reset-settings', this.defaultSettings)
     },
 
-
-
     handleDeleteSettings () {
       ipc.send('delete-settings', 'delete')
+    },
+
+    handleShowAbout () {
+console.warn("handleShowAbout");
+
     }
 
   },
 
   watch: {
-/*
-        handler: function (val, oldVal) {
-            console.log('watch 1', 'newval: ', val, '   oldVal:', oldVal)
-        },
-        deep: true
-*/
 
     'settings' : {
       handler: function (newValue, oldValue) {
-console.warn("newValue: ", newValue);
-//console.warn("newValue.runInterval: ", newValue.runInterval);
-console.warn("oldValue: ", oldValue);
-//console.warn("oldValue.runInterval: ", oldValue.runInterval);
-
+console.warn("settings newValue: ", newValue);
         this.initLoadedOrReset && this.handleSaveSettings()
       },
       deep: true
+    },
+
+    'settings.files' : {
+      handler: function (newValue, oldValue) {
+        this.handleFileListSize();
+      },
     }
+
   }
 
 });
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

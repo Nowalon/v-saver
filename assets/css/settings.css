@@ -4,7 +4,6 @@
   background-color: #2f3241;
   -webkit-font-smoothing: antialiased;
 }
-/*.clearfix-divider{*/
 .clearfix-divider:after{
   content: '';
   position: relative;
@@ -15,10 +14,13 @@
 .right{float: right;}
 body {
   padding: 0;
+
+  padding: 8px;
+  margin: 0;
+  height: 100%;
 }
 .page-title{
   text-align: center;
-/*  border-bottom: 2px solid #1a1b23;*/
   padding: 8px 0 12px;
   margin: 0;
   margin-bottom: 8px;
@@ -29,10 +31,12 @@ body {
   height: 38px;
   left: 28px;
   top: 8px;
+  cursor: help;
 }
 .main-content{
   padding: 20px;
   padding-top: 0;
+  padding-bottom: 0;
   font-size: 12px;
 }
 
@@ -48,8 +52,8 @@ body {
 #sectionsNav ul li{
   list-style: none;
   display: inline-block;
-  width: 49.5%;
-/*  border-top: none;*/
+  /*width: 49.5%;*/
+  width: 49.8%;
 }
 #sectionsNav ul li.active{
   border-color: #9feaf9;
@@ -63,30 +67,26 @@ body {
   outline: none;
   border: 1px solid #74b1be;
   border-radius: 3px;
-/*  background-color: #2f3241;*/
-/*  cursor: pointer;*/
   transition: 0.2s all ease;
 }
 #sectionsNav ul li.active button,
 #sectionsNav ul li button.active{
   color: #9feaf9;
-/*  font-weight: 700;*/
   background-color: #303030;
 }
 #sectionsNav ul li button:hover{
   color: #9feaf9;
-/*  background-color: #262d52;*/
   background-color: #393d50;
 }
 
 #sectionsWrapper{
   position: relative;
   width: 100%;
-  height: 442px;
+  height: 456px;
   overflow: hidden;
 }
 #sectionsSlider{
-  position: absolute;
+  position: relative;
   width: 200%;
   height: 100%;
   transform: translateX(0%);
@@ -104,8 +104,6 @@ body {
   width: 50%;
   height: 100%;
   display: inline-block;
-/*  border: 1px dashed #74b1be;*/
-/*  background: grey;*/
   float: left;
 }
 
@@ -123,7 +121,6 @@ button.btn{
   padding: 6px 10px;
   margin: 0;
   border: none;
-/*  width: 100%;*/
   font-size: 14px;
   outline: none;
   border: 1px solid #74b1be;
@@ -135,7 +132,11 @@ button.btn:hover{
   background-color: #393d50;
 }
 button.btn:active{background-color: #303030;}
-
+button.btn[disabled]{
+  opacity: 0.4;
+  color: inherit;
+  background-color: inherit;
+}
 
 .settings-col{
   width: 50%;
@@ -147,6 +148,109 @@ display: table;
 }
 .settings-col.settings-col-1 {padding-right: 16px;}
 .settings-col.settings-col-2 {padding-left: 16px;}
+
+.setting-files-wrap {
+  margin: 12px 0;
+  width: 100%;
+  max-height: 376px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 20px;
+  position: relative;
+  padding-left: 0px;
+}
+.setting-files-wrap .file-list-scroller {
+  position: fixed;
+  width: 10px;
+  height: 32px;
+  top: 50%;
+  right: 1px;
+  transform: translateY(-50%);
+  background: transparent;
+}
+.setting-files-wrap .file-list-scroller span{
+  font-size: 2.2em;
+  background: transparent;
+}
+.setting-files-wrap ul.file-list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  width: 100%;
+}
+.setting-files-wrap ul.file-list li {
+  border: 1px solid #3e595f;
+  border-radius: 3px;
+  padding: 6px 0;
+  padding-left: 5px;
+  margin-bottom: 1px;
+  font-size: 0.9em;
+  position: relative;
+  transition: 0.2s all ease;
+  overflow: hidden;
+}
+.setting-files-wrap ul.file-list li:first-child {}
+.setting-files-wrap ul.file-list li:hover {
+  color: #9feaf9;
+  background-color: #393d50;
+}
+.setting-files-wrap ul.file-list li .file-name{
+  display: inline-block;
+  width: 100%;
+  color: inherit;
+  background-color: inherit;
+}
+.setting-files-wrap ul.file-list li .file-action{
+  position: absolute;
+  width: 22px;
+  text-align: center;
+  color: inherit;
+  background-color: transparent;
+  font-size: 2.4em;
+  font-weight: bold;
+  top: 0;
+  right: 0;
+  height: 100%;
+  display: block;
+  line-height: 0.88em;
+  cursor: default;
+  opacity: 0;
+  transform: scale(1);
+  transition: 0.2s all ease;
+}
+.setting-files-wrap ul.file-list li .file-action.file-action-delete {
+  right: 0;
+}
+.setting-files-wrap ul.file-list li .file-action.file-action-move-up {
+  right: 44px;
+  font-size: 1.6em;
+  line-height: 1.5em;
+}
+.setting-files-wrap ul.file-list li .file-action.file-action-move-down {
+  right: 22px;
+  font-size: 1.6em;
+  line-height: 1.5em;
+}
+.setting-files-wrap ul.file-list li .file-action:hover{
+  transform: scale(1.4);
+}
+.setting-files-wrap ul.file-list li .file-action:active{
+  transform: scale(1);
+  transition: 0s transform;
+}
+.setting-files-wrap ul.file-list li:hover .file-action{
+  cursor: pointer;
+  opacity: 1;
+}
+.setting-files-wrap ul.file-list li:hover .file-action.disabled,
+.setting-files-wrap ul.file-list li .file-action.disabled:hover{
+  opacity: 0.2;
+}
+.setting-files-wrap ul.file-list li .file-action.disabled{
+  cursor: default;
+  transform: scale(1);
+  transition: none !important;
+}
 
 .disabled-option {
   opacity: 0.4;
@@ -164,17 +268,6 @@ display: table;
   padding: 0 8px;
   outline: none;
 }
-
-/*
-.checkbox-input {
-  border: 1px solid #74b1be;
-  background-color: #2f3241;
-  background-color: inherit;
-  width: 16px;
-  height: 16px;
-
-}
-*/
 
 .number-input {
 
@@ -196,19 +289,25 @@ display: table-row;
 }
 .settings-option-title {
   display: inline-block;
-display: table-cell;
-vertical-align: middle;
-/*padding: 8px 0;*/
-padding: 0;
-height: 28px;
+  display: table-cell;
+  vertical-align: middle;
+  padding: 0;
+  height: 28px;
 }
 
 .settings-option-control {
   display: inline-block;
   float: right;
-display: table-cell;
+  display: table-cell;
 }
 
+.btn-controls {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  bottom: 0;
+}
+.btn-notif { margin-left: 26px;}
 
 
 /* .slideThree */ /* https://codepen.io/bbodine1/pen/novBm */
@@ -216,7 +315,6 @@ display: table-cell;
   width: 48px;
   height: 21px;
   background: #333;
-/*  margin: 20px auto;*/
   position: relative;
   border-radius: 50px;
   -webkit-box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.5), 0px 1px 0px rgba(255, 255, 255, 0.2);
@@ -234,7 +332,6 @@ display: table-cell;
 }
 .slideCheckBox:before {
   content: "ON";
-/*  color: #27ae60;*/
   color: #9feaf9;
   position: absolute;
   left: 6px;
@@ -317,7 +414,10 @@ display: table-cell;
 /* end of input type="radio" styles */
 
 
-
+.disabled-option input[disabled],
+.disabled-option label {
+  cursor: default;
+}
 
 
 

@@ -10,6 +10,14 @@ const Menu = electron.Menu
 const Tray = electron.Tray
 const dialog = electron.dialog
 
+const globalShortcut = electron.globalShortcut
+const shell = electron.shell // ????
+//const screen = electron.screen
+//const os = require('os')
+
+//const InputEvent = require('input-event');
+const desktopIdle = require('desktop-idle');
+
 
 const path = require('path')
 const url = require('url')
@@ -20,10 +28,15 @@ const { default: installExtension, VUEJS_DEVTOOLS } = require('electron-devtools
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let settingsWindow
+let saverWindow
 
 let appIcon = null
 let appSettings = null
 let aboutDialog = null
+let isSuspendSaver = false
+let idleTimer = 0
+let idleTimeOut = 0
+let isRunByIdleTimer = false
 
 if (process.mas) app.setName('V-W-Saver')
 
@@ -64,6 +77,86 @@ function createSettingsWindow () {
   })
 }
 
+
+function createSaverWindow () {
+
+  var windowOptions = {
+//    width: 800,
+    width: 1800,
+    minWidth: 1800,
+    height: 800,
+    title: app.getName()
+  }
+  if (process.platform === 'linux') {
+    windowOptions.icon = path.join(__dirname, '/assets/img/videoscreensaver-gradient-icon.png')
+  }
+  // Create the browser window.
+  saverWindow = new BrowserWindow(windowOptions)
+
+  // and load the index.html of the app.
+  saverWindow.loadURL(url.format({
+    pathname: path.join(__dirname, 'vsaver.html'),
+    protocol: 'file:',
+    slashes: true
+  }))
+
+//  saverWindow.setFullScreen(!saverWindow.isFullScreen())
+
+
+  // Open the DevTools.
+  saverWindow.webContents.openDevTools()
+
+  // Emitted when the window is closed.
+  saverWindow.on('closed', function () {
+    // Dereference the window object, usually you would store windows
+    // in an array if your app supports multi windows, this is the time
+    // when you should delete the corresponding element.
+    saverWindow = null
+  })
+}
+
+
+function checkSystemIdle () { // call after app.on('ready') and settings loaded only!
+  idleTimeOut && clearTimeout(idleTimeOut);
+//  idleTimer = appSettings.runInterval * 1;
+  var idleTimerSec = appSettings.runInterval * 1 * 60;
+var idleTimerSec = 50000000;
+  //setInterval(() => {
+//console.log("---> check appSettings: ", appSettings);
+//console.log("---> check appSettings.runInterval: ", typeof appSettings.runInterval, appSettings.runInterval);
+//console.log("---> check idleTimer: ", typeof idleTimer, idleTimer);
+//console.log("check idleTimerSec: ", /*typeof idleTimerSec,*/ idleTimerSec);
+  idleTimeOut = setTimeout(() => {
+    var desktopIdleSec = desktopIdle.getIdleTime();
+//    console.log("isSuspendSaver: ", isSuspendSaver);
+//    console.log("desktopIdleSec: ", /*typeof desktopIdleSec,*/ desktopIdleSec);
+    //console.log("screen.getCursorScreenPoint(): ", electron.screen.getCursorScreenPoint()); //return true;
+//console.log("isRunByIdleTimer: ", isRunByIdleTimer);
+    if (desktopIdleSec >= idleTimerSec) {
+      if (!isRunByIdleTimer){
+        isRunByIdleTimer = true;
+        if (!isSuspendSaver) {
+          if (appSettings && saverWindow) {
+            saverWindow.show()
+            saverWindow.focus()
+            saverWindow.setFullScreen(!saverWindow.isFullScreen())
+          } else {
+            if (appSettings) {
+              createSaverWindow()
+            }
+          }
+        }
+      }
+    } else {
+      isRunByIdleTimer = false;
+    }
+    checkSystemIdle();
+  }, 2000); // set 10000
+}
+
+
+
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -72,55 +165,124 @@ app.on('ready', () => {
       .then((name) => console.log(`Added Extension:  ${name}`))
       .catch((err) => console.log('An error occurred: ', err));
 
+  if (settings.has('settings')) {
+    appSettings = settings.get('settings');
+  } else {
+    createSettingsWindow()
+  }
+  checkSystemIdle();
+
+
+console.log(" ========================= check ======================== "); //return true;
+//setInterval(() => {
+////console.log("screen.getCursorScreenPoint(): ", electron.screen.getCursorScreenPoint()); //return true;
+//console.log(desktopIdle.getIdleTime());
+//}, 3000);
+
+electron.screen.on('display-metrics-changed', (event) => {
+console.warn("???????????????????? display-metrics-changed EVENT: ", event);
+});
+
+
+//console.log("process: ", process.timers); //return true;
+//console.log("os: ", os); //return true;
+//console.log("os.cpus: ", os.cpus() ); //return true;
+//setInterval(() => {
+//console.log("screen.getCursorScreenPoint(): ", electron.screen.getCursorScreenPoint()); //return true;
+//}, 1000);
+
+shell.beep();
+
+globalShortcut.register('CommandOrControl+B', () => {
+//globalShortcut.register('any', () => {
+  console.log('CommandOrControl+B is pressed')
+})
+
+
   const iconName = process.platform === 'win32' ? 'videoscreensaver-black-icon.png' : 'assets/img/videoscreensaver-white-icon.png'
   const iconPath = path.join(__dirname, iconName)
 console.log("__dirname: ", __dirname); //return true;
   appIcon = new Tray(iconPath)
-  const contextMenu = Menu.buildFromTemplate([
-//    {label: 'Item2', type: 'radio'},
-    {
-      label: 'Settings',
-      click: function () {
-        if (settingsWindow) {
-          settingsWindow.show()
-          settingsWindow.focus()
-        } else {
-          createSettingsWindow()
-        }
-      }
-    },
-    {
-      label: 'Remove',
-      click: function () {
-        /*if (appIcon) appIcon.destroy()*/
-      }
-    },
-    {
-      label: 'Lock',
-      click: () => {
-        lockSystem();
-      }
-    },
-    {
-      label: 'Exit',
-      click: function () {
-        if (appIcon) appIcon.destroy()
-        app.exit()
-      }
-    }
-  ])
+
+//  const contextMenu = Menu.buildFromTemplate([
+//  var contextMenuTemplate = [
+//    {
+//      label: 'Run screensaver',
+//      click: function () {
+//        if (appSettings && saverWindow) {
+//          saverWindow.show()
+//          saverWindow.focus()
+//          saverWindow.setFullScreen(!saverWindow.isFullScreen())
+//        } else {
+//          if (appSettings) {
+//            createSaverWindow()
+//          }
+//        }
+//      }
+//    },
+//    {
+//      label: 'Suspend screensaver running',
+//      click: function () {
+//        //
+//      }
+//    },
+//    {
+//      label: 'Settings',
+//      click: function () {
+//        if (settingsWindow) {
+//          settingsWindow.show()
+//          settingsWindow.focus()
+//        } else {
+//          createSettingsWindow()
+//        }
+//      }
+//    },
+//    {
+//      label: 'Remove',
+//      click: function () {
+//        /*if (appIcon) appIcon.destroy()*/
+//      }
+//    },
+//    {
+//      label: 'Lock',
+//      click: () => {
+//        lockSystem();
+//      }
+//    },
+//    {
+//      label: 'Exit',
+//      click: function () {
+//        if (appIcon) appIcon.destroy()
+//        app.exit()
+//      }
+//    }
+//  ];
+  var contextMenuTemplate = getContextMenuTemplate(true);
+  let contextMenu = Menu.buildFromTemplate(contextMenuTemplate);
+
   appIcon.setToolTip('V-Screensaver')
+  appIcon.setTitle('V-Screensaver')
   appIcon.setContextMenu(contextMenu)
 
-  if (settings.has('settings')) {
-    appSettings = settings.get('settings')
-  } else {
-    createSettingsWindow()
-  }
+/*
+setTimeout(() => {
+  contextMenuTemplate.push({
+      label: 'TESTETS!',
+      click: function () {
+        //
+      }
+  })
+  contextMenu = Menu.buildFromTemplate(contextMenuTemplate);
+  appIcon.setContextMenu(contextMenu)
+}, 6000);
+*/
+
 //console.log("settings.has('settings'): ", settings.has('settings'));
 //console.log("settings.get('settings'): ", settings.get('settings'));
 //console.log("appSettings: ", appSettings);
 //createSettingsWindow()
+//createSaverWindow();
+
 
 })
 
@@ -139,8 +301,8 @@ console.log("ON-QUIT!!"); //return true;
   // On OS X it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
     if (appIcon) appIcon.destroy()
-//  aboutDialog
     settingsWindow = null;
+    saverWindow = null;
     aboutDialog = null;
     app.quit()
 })
@@ -163,7 +325,7 @@ ipc.on('open-file-dialog', function (event) {
     title: 'Select video files - mp4 preferred (required for WEB)',
     properties: ['openFile', 'multiSelections', 'showHiddenFiles'],
     filters: [
-      {name: 'Movies', extensions: ['webm', 'avi', 'mp4']}
+      {name: 'Movies', extensions: ['webm', /*'avi',*/ 'mp4']}
     ]
   }, function (filePaths) {
     if (filePaths) event.sender.send('selected-files-reply', filePaths)
@@ -204,6 +366,17 @@ ipc.on('close-settings', function (event, settingsData) {
   settingsWindow.close();
 })
 
+ipc.on('close-vsaver-window', function (event) {
+console.log("====> ON CLOSE vsaver-window"); //return true;
+//console.log("appSettings.lockSystemOnExit: ", appSettings.lockSystemOnExit); //return true;
+  if (appSettings && appSettings.lockSystemOnExit) {
+    lockSystem();
+  }
+  setTimeout(() => {
+    saverWindow && saverWindow.close();
+  }, 1800);
+})
+
 
 
 
@@ -213,6 +386,87 @@ ipc.on('delete-settings', function (event, msg) {
   appSettings = settings.get('settings');
   event.sender.send('delete-settings-reply', appSettings)
 })
+
+
+
+function getContextMenuTemplate(suspend) {
+  var contextMenuTemplate = [
+    {
+      label: 'Suspend saver',
+      click: function () {
+        //
+      }
+    },
+    {
+      label: 'Run screensaver',
+      click: function () {
+        if (appSettings && saverWindow) {
+          saverWindow.show()
+          saverWindow.focus()
+          saverWindow.setFullScreen(!saverWindow.isFullScreen())
+        } else {
+          if (appSettings) {
+            createSaverWindow()
+          }
+        }
+      }
+    },
+    {
+      label: 'Settings',
+      click: function () {
+        if (settingsWindow) {
+          settingsWindow.show()
+          settingsWindow.focus()
+        } else {
+          createSettingsWindow()
+        }
+      }
+    },
+    {
+      label: 'Remove',
+      click: function () {
+        /*if (appIcon) appIcon.destroy()*/
+      }
+    },
+    {
+      label: 'Lock',
+      click: () => {
+        lockSystem();
+      }
+    },
+    {
+      label: 'Exit',
+      click: function () {
+        if (appIcon) appIcon.destroy()
+        app.exit()
+      }
+    }
+  ];
+
+  const suspendItem = {
+      label: 'Suspend screensaver running',
+      click: function () {
+        handleChangeContextMenuTemplate(true);
+    }
+  }
+  const resumeItem = {
+      label: 'Resume screensaver running',
+      click: function () {
+        handleChangeContextMenuTemplate(false);
+    }
+  }
+  contextMenuTemplate[0] = suspend ? suspendItem : resumeItem;
+  return contextMenuTemplate;
+}
+
+
+function handleChangeContextMenuTemplate(suspend){
+  isSuspendSaver = suspend ? true : false;
+  var contextMenuTemplate = getContextMenuTemplate(!isSuspendSaver);
+  contextMenu = Menu.buildFromTemplate(contextMenuTemplate);
+  appIcon.setContextMenu(contextMenu);
+}
+
 
 
 
@@ -285,6 +539,10 @@ function makeSingleInstance () {
 
 // !!! lock-system
 // https://github.com/sindresorhus/lock-system
+
+
+
+// MP4 works, AVI does not. The browsers don't support the AVI container format.
 
 
 

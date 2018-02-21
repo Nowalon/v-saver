@@ -4,6 +4,9 @@
 
 'use strict';
 
+// !!! TODO: use radio-button for time-format choose 12/24 instead of on/off;
+// TODO: try to fetch file duration time;
+
 
 const ipc = require('electron').ipcRenderer
 

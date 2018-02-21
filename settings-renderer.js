@@ -245,6 +245,10 @@ var settingsApp = new Vue({
 
     handleCloseSettings () {
       ipc.send('close-settings')
+    },
+
+    handleRunTestSaverWindow () {
+      ipc.send('run-vsaver-window');
     }
 
   },

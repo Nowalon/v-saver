@@ -115,6 +115,17 @@ function createSaverWindow () {
   })
 }
 
+function runSaverWindow () {
+  if (appSettings && saverWindow) {
+    saverWindow.show()
+    saverWindow.focus()
+    saverWindow.setFullScreen(!saverWindow.isFullScreen())
+  } else {
+    if (appSettings) {
+    createSaverWindow()
+    }
+  }
+}
 
 function checkSystemIdle () { // call after app.on('ready') and settings loaded only!
   idleTimeOut && clearTimeout(idleTimeOut);
@@ -136,15 +147,7 @@ var idleTimerSec = 50000000;
       if (!isRunByIdleTimer){
         isRunByIdleTimer = true;
         if (!isSuspendSaver) {
-          if (appSettings && saverWindow) {
-            saverWindow.show()
-            saverWindow.focus()
-            saverWindow.setFullScreen(!saverWindow.isFullScreen())
-          } else {
-            if (appSettings) {
-              createSaverWindow()
-            }
-          }
+          runSaverWindow();
         }
       }
     } else {
@@ -366,6 +369,10 @@ ipc.on('close-settings', function (event, settingsData) {
   settingsWindow.close();
 })
 
+ipc.on('run-vsaver-window', function (event) {
+  runSaverWindow();
+});
+
 ipc.on('close-vsaver-window', function (event) {
 console.log("====> ON CLOSE vsaver-window"); //return true;
 //console.log("appSettings.lockSystemOnExit: ", appSettings.lockSystemOnExit); //return true;
@@ -400,7 +407,7 @@ function getContextMenuTemplate(suspend) {
     {
       label: 'Run screensaver',
       click: function () {
-        if (appSettings && saverWindow) {
+        /*if (appSettings && saverWindow) {
           saverWindow.show()
           saverWindow.focus()
           saverWindow.setFullScreen(!saverWindow.isFullScreen())
@@ -408,7 +415,8 @@ function getContextMenuTemplate(suspend) {
           if (appSettings) {
             createSaverWindow()
           }
-        }
+        }*/
+        runSaverWindow();
       }
     },
     {
@@ -540,6 +548,9 @@ function makeSingleInstance () {
 // !!! lock-system
 // https://github.com/sindresorhus/lock-system
 
+// desktop-idle dev requires:
+// npm install --save-dev electron-rebuild
+// ./node_modules/.bin/electron-rebuild
 
 
 // MP4 works, AVI does not. The browsers don't support the AVI container format.

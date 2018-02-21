@@ -419,7 +419,7 @@ handleVideoTimeupdate(video/*, _currentTimeEl*/){
 
     handleCloseExitSaverWindow (event) {
 
-return;
+//return;
 
 //console.warn("event.type: ", event.type);
 //console.warn("event", event);
@@ -434,7 +434,6 @@ return;
         mouseMoveTresholdArr = [];
       }, 10);
     },
-
 
     getFileNameFromSrcLink (srcLink) {
         var srcParts_arr = [];

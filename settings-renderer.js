@@ -31,7 +31,7 @@ var settingsApp = new Vue({
     defaultSettings: {
       files: [],
       runInterval: 10,
-      lockSystemOnExit: true,
+      lockSystemOnExit: false,
       changeAfter: 'videoends',
       changeInterval: 5,
       randomizeVideo: true,
@@ -46,7 +46,7 @@ var settingsApp = new Vue({
     settings: {
       files: [],
       runInterval: 10,
-      lockSystemOnExit: true,
+      lockSystemOnExit: false,
       changeAfter: 'videoends',
       changeInterval: 5,
       randomizeVideo: true,

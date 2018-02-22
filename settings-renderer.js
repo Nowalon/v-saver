@@ -4,9 +4,9 @@
 
 'use strict';
 
-// !!! TODO: use radio-button for time-format choose 12/24 instead of on/off;
+// * !!! TODO: use radio-button for time-format choose 12/24 instead of on/off;
 // TODO: try to fetch file duration time;
-// TODO: settings save watch treshold
+// * TODO: settings save watch treshold
 
 
 const ipc = require('electron').ipcRenderer
@@ -16,6 +16,7 @@ const Vue = require('vue/dist/vue.min.js')
 Vue.config.devtools = true
 
 var messageTimeout = 0;
+var changeSettingsThresholdTimeout = 0;
 
 var settingFilesWrapNode, fileListNode, logoImg;
 
@@ -261,7 +262,10 @@ var settingsApp = new Vue({
     'settings' : {
       handler: function (newValue, oldValue) {
 console.warn("settings newValue: ", newValue);
-        this.initLoadedOrReset && this.handleSaveSettings()
+        changeSettingsThresholdTimeout && clearTimeout(changeSettingsThresholdTimeout);
+        changeSettingsThresholdTimeout = setTimeout(() => {
+          this.initLoadedOrReset && this.handleSaveSettings();
+        }, 600);
       },
       deep: true
     },

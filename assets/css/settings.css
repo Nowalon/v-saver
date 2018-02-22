@@ -431,20 +431,23 @@ display: table-row;
   min-width: 200px;
   max-width: 260px;
   height: auto;
-  top: 16px;
-  left: 2px;
+  top: 20px;
+  left: 0px;
   font-size: 0.85em;
   border-radius: 3px;
-  z-index: 9;
   background-color: rgba(29, 30, 37, 0.7);
   overflow: hidden;
-  transition: all 0.2s ease;
-  height: 0px;
+  transition: all 0.2s ease 0.5s;
+/*  height: 0px;*/
   padding: 0;
+  opacity: 0;
+  z-index: -9;
 }
 .settings-option-title:hover .note-tip-wr{
-  height: auto;
+/*  height: auto;*/
   padding: 2px;
+  opacity: 1;
+  z-index: 9;
 }
 .note-tip-ct {
   border: 1px solid #3e595f;

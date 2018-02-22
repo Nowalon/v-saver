@@ -6,6 +6,7 @@
 
 // !!! TODO: use radio-button for time-format choose 12/24 instead of on/off;
 // TODO: try to fetch file duration time;
+// TODO: settings save watch treshold
 
 
 const ipc = require('electron').ipcRenderer
@@ -35,7 +36,8 @@ var settingsApp = new Vue({
       changeInterval: 5,
       randomizeVideo: true,
       showSystemClockTime: true,
-      use24TimeFormat: true,
+      //use24TimeFormat: true,
+      clockTimeFormat: 24,
       showVideoRemainingTime: true,
       showVideoFileName: true,
       showInternetConnectionLostIndicator: true,
@@ -50,14 +52,15 @@ var settingsApp = new Vue({
       randomizeVideo: true,
 
       showSystemClockTime: true,
-      use24TimeFormat: true,
+      //use24TimeFormat: true,
+      clockTimeFormat: 24,
       showVideoRemainingTime: true,
       showVideoFileName: true,
       showInternetConnectionLostIndicator: true,
 
       showTrayIcon: true,
     },
-    maxRunInterval: 30,
+    maxRunInterval: 60,
     maxVideoChangeInterval: 30,
 
     showfileListScroll: false
@@ -274,6 +277,21 @@ console.warn("settings newValue: ", newValue);
 });
 
 
+
+var noteTip = Vue.component('note-tip', {
+  template: '#noteTip',
+  name: 'note-tip',
+  props: {
+    text: {
+      type: String,
+      default: null,
+    },
+    imgSrc: {
+      type: String,
+      default: null,
+    }
+  }
+});
 
 
 

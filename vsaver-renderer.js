@@ -4,6 +4,7 @@
 
 'use strict';
 
+// TODO: check video on-load: check if no video loaded; set duration 0;
 
 const ipc = require('electron').ipcRenderer
 

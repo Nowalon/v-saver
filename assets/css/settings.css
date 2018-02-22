@@ -1,7 +1,6 @@
 * {
   font-family: Roboto, -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", "Oxygen", "Ubuntu", "Cantarell", "Open Sans", sans-serif;
   color: #74b1be;
-  background-color: #2f3241;
   -webkit-font-smoothing: antialiased;
 }
 .clearfix-divider:after{
@@ -17,6 +16,7 @@ body {
   padding: 8px;
   margin: 0;
   height: 100%;
+  background-color: #2f3241;
 }
 .page-title{
   text-align: center;
@@ -64,6 +64,7 @@ body {
   width: 100%;
   font-size: 16px;
   outline: none;
+  background-color: #2f3241;
   border: 1px solid #74b1be;
   border-radius: 3px;
   transition: 0.2s all ease;
@@ -125,6 +126,7 @@ button.btn{
   border: 1px solid #74b1be;
   border-radius: 3px;
   transition: 0.2s all ease;
+  background-color: #2f3241;
 }
 button.btn:hover{
   color: #9feaf9;
@@ -295,6 +297,7 @@ display: table-row;
   vertical-align: middle;
   padding: 0;
   height: 28px;
+  position: relative;
 }
 
 .settings-option-control {
@@ -422,11 +425,42 @@ display: table-row;
 }
 
 
-
-
-
-
-
+.note-tip-wr {
+  position: absolute;
+  width: auto;
+  min-width: 200px;
+  max-width: 260px;
+  height: auto;
+  top: 16px;
+  left: 2px;
+  font-size: 0.85em;
+  border-radius: 3px;
+  z-index: 9;
+  background-color: rgba(29, 30, 37, 0.7);
+  overflow: hidden;
+  transition: all 0.2s ease;
+  height: 0px;
+  padding: 0;
+}
+.settings-option-title:hover .note-tip-wr{
+  height: auto;
+  padding: 2px;
+}
+.note-tip-ct {
+  border: 1px solid #3e595f;
+  border-radius: 3px;
+  padding: 2px 3px;
+  overflow: hidden;
+}
+.note-tip-text {
+  color: #9feaf9;
+}
+.note-tip-img {
+  float: right;
+  margin-left: 6px;
+  max-width: 48px !important;
+  max-height: 48px !important;
+}
 
 
 

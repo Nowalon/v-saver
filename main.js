@@ -47,6 +47,7 @@ function createSettingsWindow () {
     width: 1500,
     minWidth: 800,
     height: 600,
+    frame: false,
     title: app.getName()
   }
   if (process.platform === 'linux') {

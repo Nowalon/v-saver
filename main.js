@@ -86,6 +86,7 @@ function createSaverWindow () {
     width: 1800,
     minWidth: 1800,
     height: 800,
+    frame: false,
     title: app.getName()
   }
   if (process.platform === 'linux') {

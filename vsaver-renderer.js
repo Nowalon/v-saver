@@ -101,6 +101,7 @@ var saverApp = new Vue({
 
       showSystemClockTime: true,
       use24TimeFormat: true,
+      clockTimeFormat
       showVideoRemainingTime: true,
       showVideoFileName: true,
       showInternetConnectionLostIndicator: true,
@@ -331,7 +332,7 @@ setTimeout(() => {
     // check which file extension your browser can play and set the video source accordingly
     //    video.setAttribute('src', "videos/"+activeVideoSource);
 //        videoPlayer.setAttribute('src', activeVideoSource);
-        this.showVideoFileName(this.activeVideoSource);
+        this.settings.showVideoFileName && this.showVideoFileName(this.activeVideoSource);
 setTimeout(() => {
   this.isVideoFadeOutClass = false;
   this.isVideoFadeInClass = true;
@@ -449,7 +450,7 @@ handleVideoTimeupdate(video/*, _currentTimeEl*/){
         var h = today.getHours();
         var m = today.getMinutes();
         var s = today.getSeconds();
-        if (this.settings.use24TimeFormat) {
+        if (this.settings.clockTimeFormat == 24) {
           timeValueStr = h + ":" + this.checkTime(m) + ":" + this.checkTime(s);
         } else {
           timeValueStr = this.formatAMPMTime(today);
@@ -461,7 +462,9 @@ handleVideoTimeupdate(video/*, _currentTimeEl*/){
           this.clockTimeStylePosition = `margin-top: ${this.getRandomIntMinMax(200, 800)}px`;
         }
         if (s % 10 === 0){
-          this.isConnectedFlag && this.checkConnection();
+          if (this.settings.showInternetConnectionLostIndicator) {
+            this.isConnectedFlag && this.checkConnection();
+          }
         }
         if ((m % 30 === 0) && this.settings.showSystemClockTime){
           this.updateRandomizeFiles();

@@ -201,6 +201,61 @@ height: 1080px;
     }
 
 
+#hotkeysHelp {
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  transform: translateY(-50%);
+  width: 35%;
+  width: 400px;
+  min-width: 400px;
+  border: 2px solid #c0c0c0;
+  border: 2px solid rgba(85, 139, 150, 0.4);
+  border-radius: 6px;
+  color: #74b1be;
+  background-color: rgba(48, 48, 48, 0.7);
+  padding: 8px;
+  box-sizing: border-box;
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+#hotkeysHelp.show-hotkeys-help{
+  opacity: 0.9;
+}
+#hotkeysHelp .help-table{
+  display: table;
+  width: 100%;
+}
+#hotkeysHelp .help-row{
+  display: table-row;
+  width: 100%;
+}
+#hotkeysHelp .help-cell{
+  display: table-cell;
+  text-align: center;
+  padding: 4px;
+  width: 33.333%;
+}
+#hotkeysHelp .help-cell.help-descr{
+  font-size: 16px;
+  font-family: GoffikOutline;
+
+}
+#hotkeysHelp .help-cell pre{
+  font-size: 36px;
+  font-family: GoffikOutline;
+  padding: 0;
+  margin: 0;
+  width: 46px;
+  height: 38px;
+  line-height: 42px;
+  border: 1px solid rgba(116, 177, 190, 0.4);
+  border-radius: 4px;
+  margin: 0 auto;
+}
 
 
 

@@ -4,8 +4,8 @@
 
 'use strict';
 
+// * TODO: hotkeys helper;
 // TODO: check video on-load: check if no video loaded; set duration 0;
-// TODO: hotkeys helper;
 
 const ipc = require('electron').ipcRenderer
 
@@ -68,6 +68,7 @@ var saverApp = new Vue({
     isCurrentVideoTimeGo: false, // 'current-time-go'
     videoFileName: '',
     showAnimateFileName: false,
+    showHotkeysHelp: false,
 
 //    message: '',
 //    showMessage: false,
@@ -205,7 +206,16 @@ var saverApp = new Vue({
 //console.warn("keydown videoPlayer.currentTime: ", videoPlayer.currentTime);
 console.warn("keydown e.keyCode: ", e.keyCode);
 
-      // TODO: show 'help' on 'h'
+      if(e.keyCode === 72){ // 'h'
+        if (self.showHotkeysHelp) {
+          return false;
+        }
+        self.showHotkeysHelp = true;
+        setTimeout(() => {
+          self.showHotkeysHelp = false;
+        }, 5000);
+        return;
+      }
       if(e.keyCode === 78){ // 'n'
         self.goPlayer();
         return;
@@ -229,6 +239,7 @@ console.warn("keydown e.keyCode: ", e.keyCode);
 
 //console.log("E: ", e);
 //console.log("E.keyCode: ", e.keyCode);
+//                keyCode:72 = "h"
 //                keyCode:78 = "n"
 //                keyCode:77 = "m"
 //                keyCode:66 = "b"
@@ -241,7 +252,6 @@ console.warn("keydown e.keyCode: ", e.keyCode);
     document.addEventListener('click', self.handleCloseExitSaverWindow, false);
     document.addEventListener('mousemove', (e) => {
       mouseMoveTresholdArr.push(e.type);
-//      console.warn("mouseMoveTresholdArr: ", mouseMoveTresholdArr);
       if (mouseMoveTresholdArr.length > mouseMoveTresholdLimit) {
         self.handleCloseExitSaverWindow(e);
       }

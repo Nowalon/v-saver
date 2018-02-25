@@ -5,7 +5,7 @@
 'use strict';
 
 // * TODO: hotkeys helper;
-// TODO: check video on-load: check if no video loaded; set duration 0;
+// * TODO: check video on-load: check if no video loaded; set duration 0;
 
 const ipc = require('electron').ipcRenderer
 

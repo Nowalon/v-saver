@@ -6,7 +6,7 @@
 
 // * !!! TODO: use radio-button for time-format choose 12/24 instead of on/off;
 // * TODO: settings save watch treshold
-// TODO: default video
+// * TODO: default video
 // TODO: try to fetch file duration time;
 // TODO: note-tip transition decrease/fix for hovered;
 
@@ -32,7 +32,10 @@ var settingsApp = new Vue({
     initLoadedOrReset: false,
 
     defaultSettings: {
-      files: [],
+      files: [
+        './assets/video/Starman - SpaceX.mp4',
+        './assets/video/Orion Nebula - 360 Video.mp4'
+      ],
       runInterval: 10,
       lockSystemOnExit: false,
       changeAfter: 'videoends',
@@ -205,7 +208,10 @@ var settingsApp = new Vue({
         settingsFilesArray.splice(pathIndex, 1);
         this.settings.files = settingsFilesArray;
       }
+    },
 
+    handleLoadDemoFiles () {
+      this.setUpdateFiles(this.defaultSettings.files);
     },
 
     handleClearFiles () {

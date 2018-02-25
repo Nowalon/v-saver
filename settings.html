@@ -189,7 +189,7 @@
             <div class="settings-col settings-col-1">
               <button class="btn" @click="handleAddFiles">Add files</button>
               <span class="btn-notif">duplicates will be skipped</span>
-              <button class="btn right" @click="handleAddFiles">Load demo</button>
+              <button class="btn right" @click="handleLoadDemoFiles">Load demo</button>
             </div>
             <div class="settings-col settings-col-2">
               <button class="btn" @click="handleClearFiles">Remove all files</button>
@@ -225,7 +225,7 @@
         <div class="clearfix-divider"></div>
 
         <div class="btn-controls">
-          <button class="btn mr-6" @click="handleResetSettings" disabled>Reset to default</button>
+          <button class="btn mr-6" @click="handleResetSettings">Reset to default</button>
           <button class="btn btn-close" @click="handleCloseSettings">Close</button>
           <button class="btn right" @click="handleSaveSettings">Save</button>
         </div>

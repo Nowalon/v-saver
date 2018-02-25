@@ -6,6 +6,8 @@
 
 // * TODO: hotkeys helper;
 // * TODO: check video on-load: check if no video loaded; set duration 0;
+// TODO: ! videoend - interval !;
+// TODO: fix video src error (trigger timout, message width);
 
 const ipc = require('electron').ipcRenderer
 

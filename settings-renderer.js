@@ -8,7 +8,7 @@
 // * TODO: settings save watch treshold
 // * TODO: default video
 // TODO: try to fetch file duration time;
-// TODO: note-tip transition decrease/fix for hovered;
+// * TODO: note-tip transition decrease/fix for hovered;
 
 
 const ipc = require('electron').ipcRenderer

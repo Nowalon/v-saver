@@ -56,6 +56,9 @@ var saverApp = new Vue({
 
     activeVideoIndex: -1, // 0 index -1
     activeVideoSource: null,
+    isVideoLoaded: false,
+    showVideoLoadingError: false,
+    nextVideoErrorTimeoutSec: 15,
     isVideoFadeOutClass: true,
     isVideoFadeInClass: false,
     isOverlayfadeOut: false,
@@ -143,6 +146,12 @@ var saverApp = new Vue({
 //    clockTimeNode = document.getElementById('clockTime');
 //    internetConnectionIcoElem = document.getElementById('internetConnectionIco');
 //    videoPlayer.removeEventListener('timeupdate', this.handleVideoTimeupdate);
+    videoPlayer.addEventListener('loadedmetadata', () => {
+      self.isVideoLoaded = true;
+      setTimeout(() => {
+        videoPlayer.currentTime = 0;
+      }, 10);
+    }, false)
 
     self.loadSettings();
 
@@ -221,6 +230,9 @@ console.warn("keydown e.keyCode: ", e.keyCode);
         return;
       }
       if(e.keyCode === 77){ // 'm'
+        if (isNaN(videoPlayer.duration)){
+          return false;
+        }
         videoPlayer.currentTime = (videoPlayer.currentTime + 10 < videoPlayer.duration) ? videoPlayer.currentTime + 10 : videoPlayer.duration - 3;
         return;
       }
@@ -306,6 +318,9 @@ console.log("Settings loaded...: ", this.settings); //return true;
           return false;
         }
 
+        this.isVideoLoaded = false;
+        this.showVideoLoadingError = false;
+
         // choose one random url from our storage as the active video
 //        var activeVideoSource = videoStorage[Math.round(Math.random() * (videoStorage.length - 1))];
 /*
@@ -347,6 +362,7 @@ setTimeout(() => {
 setTimeout(() => {
   this.isVideoFadeOutClass = false;
   this.isVideoFadeInClass = true;
+  this.checkIsVideoLoaded();
 }, 200);
 
     //    videoPlayer.addEventListener('durationchange', handleVideoInit(videoPlayer), false);
@@ -365,74 +381,84 @@ setTimeout(() => {
 }, 100);
     },
 
-
-
-handleVideoTimeupdate(video/*, _currentTimeEl*/){
-  var self = this;
-    return function(){
-//        var currentTimeEl = _currentTimeEl;
-        var diff = video.duration - video.currentTime;
-
-//console.warn("video.duration: ", video.duration);
-//console.warn("video.currentTime: ", video.currentTime);
-//console.warn("diff: ", diff);
-
-        if (last_diff !== Math.floor(diff)){
-
-            var s_diff = Math.floor(diff) % 60;
-//console.log("diff: ",  Math.floor(diff));
-//console.log("s_diff: ", s_diff);
-//            var remain = "-" + parseInt(diff / 60) + ":" + ( s_diff < 10 ? "0" + s_diff : s_diff );
-            var remain = ( isNaN(parseInt(diff / 60)) || isNaN(s_diff) ) ? "0:00" : "-" + parseInt(diff / 60) + ":" + ( s_diff < 10 ? "0" + s_diff : s_diff );
-
-            var total_s = Math.floor(video.duration) % 60;
-            var totalDurationMin = ( isNaN(parseInt(video.duration / 60)) || isNaN(total_s) ) ? "0:00" : parseInt(video.duration / 60) + ":" + ( total_s < 10 ? "0" + total_s : total_s );
-//console.warn("totalDurationMin: ", totalDurationMin);
-          self.currentFileDuration = totalDurationMin;
-//console.warn("this.currentFileDuration: ", self.currentFileDuration);
-          //currentTimeEl.innerHTML = remain;
-
-            self.currentVideoTimeValue = remain;
-            //self.currentVideoTimeValue = totalDurationMin + ' / ' + remain;
-//console.warn("self.currentVideoTimeValue: ", self.currentVideoTimeValue);
-//            currentTimeEl.innerHTML = Math.floor(video.duration) + ' : ' + Math.floor(diff) + ' : ' + remain;
-
-/*
-        if (Math.floor(diff) === 3){
-            currentTimeEl.style.fontSize = '950px';
-            currentTimeEl.style.opacity = '0';
+    checkIsVideoLoaded () {
+      setTimeout(() => {
+        if (!this.isVideoLoaded) {
+          this.showVideoLoadingError = true;
+          setTimeout(() => {
+            this.goPlayer();
+            this.showVideoLoadingError = false;
+          }, this.nextVideoErrorTimeoutSec * 1000);
         }
-*/
-            if (Math.floor(diff) <= 3){
-    //            currentTimeEl.style.fontSize = '950px';
-    //            currentTimeEl.style.opacity = '0';
-                //currentTimeEl.classList.add('current-time-endtime');
-                self.animateCurrentTime();
-                if (Math.floor(diff) === 1){
-//                    videoPlayer.classList.add('video-fade-out');
-                  //self.isVideoFadeOutClass = true;
-                  self.isVideoFadeInClass = false;
+      }, 500);
+    },
+
+    handleVideoTimeupdate(video/*, _currentTimeEl*/){
+      var self = this;
+        return function(){
+    //        var currentTimeEl = _currentTimeEl;
+            var diff = video.duration - video.currentTime;
+
+    //console.warn("video.duration: ", video.duration);
+    //console.warn("video.currentTime: ", video.currentTime);
+    //console.warn("diff: ", diff);
+
+            if (last_diff !== Math.floor(diff)){
+
+                var s_diff = Math.floor(diff) % 60;
+    //console.log("diff: ",  Math.floor(diff));
+    //console.log("s_diff: ", s_diff);
+    //            var remain = "-" + parseInt(diff / 60) + ":" + ( s_diff < 10 ? "0" + s_diff : s_diff );
+                var remain = ( isNaN(parseInt(diff / 60)) || isNaN(s_diff) ) ? "0:00" : "-" + parseInt(diff / 60) + ":" + ( s_diff < 10 ? "0" + s_diff : s_diff );
+
+                var total_s = Math.floor(video.duration) % 60;
+                var totalDurationMin = ( isNaN(parseInt(video.duration / 60)) || isNaN(total_s) ) ? "0:00" : parseInt(video.duration / 60) + ":" + ( total_s < 10 ? "0" + total_s : total_s );
+    //console.warn("totalDurationMin: ", totalDurationMin);
+              self.currentFileDuration = totalDurationMin;
+    //console.warn("this.currentFileDuration: ", self.currentFileDuration);
+              //currentTimeEl.innerHTML = remain;
+
+                self.currentVideoTimeValue = remain;
+                //self.currentVideoTimeValue = totalDurationMin + ' / ' + remain;
+    //console.warn("self.currentVideoTimeValue: ", self.currentVideoTimeValue);
+    //            currentTimeEl.innerHTML = Math.floor(video.duration) + ' : ' + Math.floor(diff) + ' : ' + remain;
+
+    /*
+            if (Math.floor(diff) === 3){
+                currentTimeEl.style.fontSize = '950px';
+                currentTimeEl.style.opacity = '0';
+            }
+    */
+                if (Math.floor(diff) <= 3){
+        //            currentTimeEl.style.fontSize = '950px';
+        //            currentTimeEl.style.opacity = '0';
+                    //currentTimeEl.classList.add('current-time-endtime');
+                    self.animateCurrentTime();
+                    if (Math.floor(diff) === 1){
+    //                    videoPlayer.classList.add('video-fade-out');
+                      //self.isVideoFadeOutClass = true;
+                      self.isVideoFadeInClass = false;
+                    }
+                    if (Math.floor(diff) === 0){
+    //                  self.activeVideoIndex++;
+                      self.isVideoFadeInClass = false;
+                      self.goPlayer();
+                    }
+                } else {
+                  //self.isVideoFadeOutClass = false;
+    //              self.isVideoFadeInClass = true;
                 }
-                if (Math.floor(diff) === 0){
-//                  self.activeVideoIndex++;
-                  self.isVideoFadeInClass = false;
-                  self.goPlayer();
-                }
-            } else {
-              //self.isVideoFadeOutClass = false;
-//              self.isVideoFadeInClass = true;
+
+                last_diff = Math.floor(diff);
             }
 
-            last_diff = Math.floor(diff);
         }
-
-    }
-},
+    },
 
 
     handleCloseExitSaverWindow (event) {
 
-//return;
+return;
 
 //console.warn("event.type: ", event.type);
 //console.warn("event", event);

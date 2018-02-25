@@ -197,7 +197,7 @@ height: 1080px;
     @keyframes internetConnectionIcoBlinkAnimation {
         0% {opacity: 0; transform: scale(0.7);}
         35% {opacity: 1.0; transform: scale(1);}
-        100% {opacity: 0; transform: scale(6.8);}
+        100% {opacity: 0; transform: scale(6.9);}
     }
 
 
@@ -209,10 +209,8 @@ height: 1080px;
   right: 0;
   margin: 0 auto;
   transform: translateY(-50%);
-  width: 35%;
   width: 400px;
   min-width: 400px;
-  border: 2px solid #c0c0c0;
   border: 2px solid rgba(85, 139, 150, 0.4);
   border-radius: 6px;
   color: #74b1be;
@@ -256,6 +254,37 @@ height: 1080px;
   border-radius: 4px;
   margin: 0 auto;
 }
+
+#videoSrcError{
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  transform: translateY(-50%);
+  width: 80%;
+  min-width: 890px;
+  border: 2px solid rgba(255, 0, 0, 0.4);
+  border-radius: 6px;
+  color: red;
+  background-color: rgba(48, 48, 48, 0.7);
+  padding: 8px;
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+#videoSrcError p{
+  font-family: GoffikOutline;
+  font-size: 1.6em;
+  color: red;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+#videoSrcError.video-src-error{
+  opacity: 0.9;
+}
+
 
 
 

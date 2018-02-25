@@ -53,6 +53,12 @@
         </svg>
         <!--<img id="internetConnectionIco" src="images/cloud-connection-2.svg"/>-->
 
+        <div id="videoSrcError" :class="{'video-src-error' : showVideoLoadingError}">
+          <p>The video source &laquo;{{ activeVideoSource }}&raquo; is not available:</p>
+          <p>maybe it has wrong format, was removed, renamed or deleted...</p> </br>
+          <p>Next source loading attempt in {{ nextVideoErrorTimeoutSec }} sec...</p>
+        </div>
+
         <div id="hotkeysHelp" :class="{'show-hotkeys-help' : showHotkeysHelp}">
           <div class="help-table">
             <div class="help-row">

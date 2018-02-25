@@ -8,6 +8,7 @@
 // * TODO: check video on-load: check if no video loaded; set duration 0;
 // ** TODO:SEEMS FIXED  fix video src error (trigger timout- temp fixed loadeddata/loadedmetadata, message width);
 // TODO: ! settings>changeAfter: videoend - interval !;
+// TODO: fix checkInternetConnection behavior;
 
 const ipc = require('electron').ipcRenderer
 

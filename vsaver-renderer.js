@@ -9,6 +9,7 @@
 // ** TODO:SEEMS FIXED  fix video src error (trigger timout- temp fixed loadeddata/loadedmetadata, message width);
 // TODO: ! settings>changeAfter: videoend - interval !;
 // TODO: fix checkInternetConnection behavior;
+// TODO: clock am/pm text/size/position;
 
 const ipc = require('electron').ipcRenderer
 

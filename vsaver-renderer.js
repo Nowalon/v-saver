@@ -6,8 +6,8 @@
 
 // * TODO: hotkeys helper;
 // * TODO: check video on-load: check if no video loaded; set duration 0;
+// ** TODO:SEEMS FIXED  fix video src error (trigger timout- temp fixed loadeddata/loadedmetadata, message width);
 // TODO: ! settings>changeAfter: videoend - interval !;
-// TODO: fix video src error (trigger timout, message width);
 
 const ipc = require('electron').ipcRenderer
 
@@ -42,6 +42,11 @@ var exitSaverTimeOut = 0;
 var mouseMoveTresholdTimeOut = 0;
 var mouseMoveTresholdArr = [];
 var mouseMoveTresholdLimit = 20;
+var showVideoLoadingErrorTimeOut = 0;
+var goNextTresholdTimeOut = 0;
+var goNextAvailable = true;
+var nextVideoErrorCountDownTimeOut = 0;
+var isVideoLoadedTimeOut = 0;
 
 
 
@@ -61,6 +66,7 @@ var saverApp = new Vue({
     isVideoLoaded: false,
     showVideoLoadingError: false,
     nextVideoErrorTimeoutSec: 15,
+    nextVideoErrorCountDownSec: 0,
     isVideoFadeOutClass: true,
     isVideoFadeInClass: false,
     isOverlayfadeOut: false,
@@ -148,12 +154,23 @@ var saverApp = new Vue({
 //    clockTimeNode = document.getElementById('clockTime');
 //    internetConnectionIcoElem = document.getElementById('internetConnectionIco');
 //    videoPlayer.removeEventListener('timeupdate', this.handleVideoTimeupdate);
+//    videoPlayer.addEventListener('durationchange', () => {
+
     videoPlayer.addEventListener('loadedmetadata', () => {
+console.warn("  loadedmetadata    !!!! ");
       self.isVideoLoaded = true;
       setTimeout(() => {
         videoPlayer.currentTime = 0;
       }, 10);
-    }, false)
+    }, false);
+
+    videoPlayer.addEventListener('loadeddata', () => {
+console.warn(" ---- loadeddata");
+      self.isVideoLoaded = true;
+      setTimeout(() => {
+        videoPlayer.currentTime = 0;
+      }, 10);
+    }, false);
 
     self.loadSettings();
 
@@ -227,10 +244,33 @@ console.warn("keydown e.keyCode: ", e.keyCode);
         }, 5000);
         return;
       }
+
       if(e.keyCode === 78){ // 'n'
+//        goNextTresholdTimeOut && clearTimeout(goNextTresholdTimeOut);
+//        if (goNextTresholdTimeOut) {
+//          clearTimeout(goNextTresholdTimeOut);
+//          return false;
+//        }
+//        goNextTresholdTimeOut && clearTimeout(goNextTresholdTimeOut);
+
+        if (!goNextAvailable) {
+//console.warn("FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE ");
+          return false;
+        }
+//console.warn("GO GO GO GO GO GO GO GO GO GO GO GO GO GO GO GO GO GO GO GO GO GO ");
+        showVideoLoadingErrorTimeOut && clearTimeout(showVideoLoadingErrorTimeOut);
+        this.showVideoLoadingError = false;
         self.goPlayer();
+        nextVideoErrorCountDownTimeOut && clearInterval(nextVideoErrorCountDownTimeOut);
+        isVideoLoadedTimeOut && clearInterval(isVideoLoadedTimeOut);
+        goNextAvailable = false;
+        goNextTresholdTimeOut = setTimeout(() => {
+          goNextAvailable = true;
+//          goNextTresholdTimeOut && clearTimeout(goNextTresholdTimeOut);
+        }, 1000);
         return;
       }
+
       if(e.keyCode === 77){ // 'm'
         if (isNaN(videoPlayer.duration)){
           return false;
@@ -322,6 +362,9 @@ console.log("Settings loaded...: ", this.settings); //return true;
 
         this.isVideoLoaded = false;
         this.showVideoLoadingError = false;
+        this.nextVideoErrorCountDownSec = this.nextVideoErrorTimeoutSec;
+        nextVideoErrorCountDownTimeOut && clearInterval(nextVideoErrorCountDownTimeOut);
+        isVideoLoadedTimeOut && clearInterval(isVideoLoadedTimeOut);
 
         // choose one random url from our storage as the active video
 //        var activeVideoSource = videoStorage[Math.round(Math.random() * (videoStorage.length - 1))];
@@ -364,7 +407,9 @@ setTimeout(() => {
 setTimeout(() => {
   this.isVideoFadeOutClass = false;
   this.isVideoFadeInClass = true;
-  this.checkIsVideoLoaded();
+  setTimeout(() => {
+    this.checkIsVideoLoaded();
+  }, 1000);
 }, 200);
 
     //    videoPlayer.addEventListener('durationchange', handleVideoInit(videoPlayer), false);
@@ -384,15 +429,26 @@ setTimeout(() => {
     },
 
     checkIsVideoLoaded () {
-      setTimeout(() => {
-        if (!this.isVideoLoaded) {
+//console.warn("????????? this.isVideoLoaded: ", this.isVideoLoaded);
+      nextVideoErrorCountDownTimeOut && clearInterval(nextVideoErrorCountDownTimeOut);
+      isVideoLoadedTimeOut && clearInterval(isVideoLoadedTimeOut);
+      isVideoLoadedTimeOut = setTimeout(() => {
+        if (!this.isVideoLoaded && isNaN(videoPlayer.duration)) {
           this.showVideoLoadingError = true;
-          setTimeout(() => {
+          nextVideoErrorCountDownTimeOut = setInterval(() => {
+//console.warn("CHECK COUNT-DOWN", Date.now());
+            this.nextVideoErrorCountDownSec = this.nextVideoErrorCountDownSec - 1;
+//console.warn("CHECK this.nextVideoErrorCountDownSec", this.nextVideoErrorCountDownSec);
+          }, 1000);
+          showVideoLoadingErrorTimeOut && clearTimeout(showVideoLoadingErrorTimeOut);
+          showVideoLoadingErrorTimeOut = setTimeout(() => {
+//console.warn("WTF     ???????????????????");
             this.goPlayer();
             this.showVideoLoadingError = false;
+
           }, this.nextVideoErrorTimeoutSec * 1000);
         }
-      }, 500);
+      }, 1500);
     },
 
     handleVideoTimeupdate(video/*, _currentTimeEl*/){

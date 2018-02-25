@@ -263,7 +263,7 @@ height: 1080px;
   right: 0;
   margin: 0 auto;
   transform: translateY(-50%);
-  width: 80%;
+  width: 70%;
   min-width: 890px;
   border: 2px solid rgba(255, 0, 0, 0.4);
   border-radius: 6px;
@@ -271,7 +271,11 @@ height: 1080px;
   background-color: rgba(48, 48, 48, 0.7);
   padding: 8px;
   opacity: 0;
+  transition: opacity 0.1s ease;
+}
+#videoSrcError.video-src-error{
   transition: opacity 0.7s ease;
+  opacity: 0.9;
 }
 #videoSrcError p{
   font-family: GoffikOutline;
@@ -280,9 +284,6 @@ height: 1080px;
   margin: 0;
   padding: 0;
   text-align: center;
-}
-#videoSrcError.video-src-error{
-  opacity: 0.9;
 }
 
 

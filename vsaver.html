@@ -56,7 +56,7 @@
         <div id="videoSrcError" :class="{'video-src-error' : showVideoLoadingError}">
           <p>The video source &laquo;{{ activeVideoSource }}&raquo; is not available:</p>
           <p>perhaps it has wrong format, was removed, renamed or deleted...</p> </br>
-          <p>Next source loading attempt in {{ nextVideoErrorTimeoutSec }} sec...</p>
+          <p>Next source loading attempt in {{ nextVideoErrorCountDownSec }} sec...</p>
         </div>
 
         <div id="hotkeysHelp" :class="{'show-hotkeys-help' : showHotkeysHelp}">

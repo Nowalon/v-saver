@@ -5,6 +5,7 @@
 'use strict';
 
 // TODO: check video on-load: check if no video loaded; set duration 0;
+// TODO: hotkeys helper;
 
 const ipc = require('electron').ipcRenderer
 
@@ -54,7 +55,7 @@ var saverApp = new Vue({
 //    videoPlayer: null,
 
     activeVideoIndex: -1, // 0 index -1
-    activeVideoSource: null, // rename to 'activeVideoSource' further
+    activeVideoSource: null,
     isVideoFadeOutClass: true,
     isVideoFadeInClass: false,
     isOverlayfadeOut: false,
@@ -545,11 +546,19 @@ console.warn("filenameStr: ", filenameStr);
     },
 
     updateRandomizeFiles() {
+/*
       if (this.settings
           && this.settings.randomizeVideo
           && this.settings.files
           && this.settings.files.length > 1) {
         this.filesRandom = this.shuffleArray(this.settings.files);
+      }
+*/
+      if (this.settings
+          && this.settings.randomizeVideo
+          && this.files
+          && this.files.length > 1) {
+        this.filesRandom = this.shuffleArray(this.files);
       }
     },
 

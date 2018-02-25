@@ -10,7 +10,6 @@
   width: 100%;
   clear: both;
 }
-.right{float: right;}
 body {
   padding: 0;
   padding: 8px;
@@ -139,7 +138,7 @@ button.btn[disabled]{
   background-color: inherit;
 }
 button.btn.btn-close{
-  margin-left: 8px;
+/*  margin-left: 8px;*/
 }
 
 .settings-col{
@@ -313,6 +312,12 @@ display: table-row;
   bottom: 0;
 }
 .btn-notif { margin-left: 26px;}
+.run-saver-notif {
+    display: table-cell;
+    padding-top: 8px;
+    font-size: 0.9em;
+}
+
 
 
 /* .slideThree */ /* https://codepen.io/bbodine1/pen/novBm */
@@ -483,4 +488,12 @@ display: table-row;
 
 
 
+.right{float: right;}
+.mr-4{margin-right: 4px !important;}
+.mr-6{margin-right: 6px !important;}
+.mr-8{margin-right: 8px !important;}
+.mr-10{margin-right: 10px !important;}
+.mr-12{margin-right: 12px !important;}
+.mr-14{margin-right: 14px !important;}
+.mr-16{margin-right: 16px !important;}
 

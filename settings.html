@@ -171,8 +171,13 @@
               <p></p></br>
               <p></p></br>
 
-              <button class="btn" @click="handleDeleteSettings" disabled>test/delete</button>
+              <button class="btn mr-6" @click="handleDeleteSettings" disabled>test/delete</button>
               <button class="btn" @click="handleRunTestSaverWindow">Run screensaver</button>
+
+              <div class="settings-option-wrap">
+                <p class="run-saver-notif"><sup>*</sup>Press `H` in screesaver to show hotkeys help info</p>
+              </div>
+
 
             </div>
 
@@ -184,6 +189,7 @@
             <div class="settings-col settings-col-1">
               <button class="btn" @click="handleAddFiles">Add files</button>
               <span class="btn-notif">duplicates will be skipped</span>
+              <button class="btn right" @click="handleAddFiles">Load demo</button>
             </div>
             <div class="settings-col settings-col-2">
               <button class="btn" @click="handleClearFiles">Remove all files</button>
@@ -219,7 +225,7 @@
         <div class="clearfix-divider"></div>
 
         <div class="btn-controls">
-          <button class="btn" @click="handleResetSettings" disabled>Reset to default</button>
+          <button class="btn mr-6" @click="handleResetSettings" disabled>Reset to default</button>
           <button class="btn btn-close" @click="handleCloseSettings">Close</button>
           <button class="btn right" @click="handleSaveSettings">Save</button>
         </div>

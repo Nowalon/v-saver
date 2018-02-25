@@ -5,8 +5,9 @@
 'use strict';
 
 // * !!! TODO: use radio-button for time-format choose 12/24 instead of on/off;
-// TODO: try to fetch file duration time;
 // * TODO: settings save watch treshold
+// TODO: default video
+// TODO: try to fetch file duration time;
 
 
 const ipc = require('electron').ipcRenderer
@@ -236,7 +237,7 @@ var settingsApp = new Vue({
       }
       setTimeout(() => {
         this.initLoadedOrReset = true;
-      }, 100);
+      }, 650);
     },
 
     handleResetSettings () {

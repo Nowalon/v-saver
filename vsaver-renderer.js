@@ -7,7 +7,7 @@
 // * TODO: hotkeys helper;
 // * TODO: check video on-load: check if no video loaded; set duration 0;
 // ** TODO:SEEMS FIXED  fix video src error (trigger timout- temp fixed loadeddata/loadedmetadata, message width);
-// TODO: ! settings>changeAfter: videoend - interval !;
+// * TODO: settings>changeAfter: videoend - interval;
 // TODO: fix checkInternetConnection behavior;
 // TODO: clock am/pm text/size/position;
 
@@ -40,6 +40,14 @@ var svt = 0;
 var stt = 0;
 var shvf = 0;
 var hgvf = 0;
+//
+//var mainPlayTimeOut = 0;
+var mainPlayInterval = 0;
+var mainPlayIntervalId = 0;
+var mainPlayFrameSec = 0;
+//var nextByIntervalTimeOut = 0;
+var nextByIntervalTrsholdFlag = false;
+//
 var exitSaverTimeOut = 0;
 var mouseMoveTresholdTimeOut = 0;
 var mouseMoveTresholdArr = [];
@@ -69,7 +77,7 @@ var saverApp = new Vue({
     showVideoLoadingError: false,
     nextVideoErrorTimeoutSec: 15,
     nextVideoErrorCountDownSec: 0,
-    isVideoFadeOutClass: true,
+//    isVideoFadeOutClass: true,
     isVideoFadeInClass: false,
     isOverlayfadeOut: false,
 
@@ -159,7 +167,7 @@ var saverApp = new Vue({
 //    videoPlayer.addEventListener('durationchange', () => {
 
     videoPlayer.addEventListener('loadedmetadata', () => {
-console.warn("  loadedmetadata    !!!! ");
+//console.warn("  loadedmetadata    !!!! ");
       self.isVideoLoaded = true;
       setTimeout(() => {
         videoPlayer.currentTime = 0;
@@ -167,7 +175,7 @@ console.warn("  loadedmetadata    !!!! ");
     }, false);
 
     videoPlayer.addEventListener('loadeddata', () => {
-console.warn(" ---- loadeddata");
+//console.warn(" ---- loadeddata");
       self.isVideoLoaded = true;
       setTimeout(() => {
         videoPlayer.currentTime = 0;
@@ -256,10 +264,8 @@ console.warn("keydown e.keyCode: ", e.keyCode);
 //        goNextTresholdTimeOut && clearTimeout(goNextTresholdTimeOut);
 
         if (!goNextAvailable) {
-//console.warn("FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE ");
           return false;
         }
-//console.warn("GO GO GO GO GO GO GO GO GO GO GO GO GO GO GO GO GO GO GO GO GO GO ");
         showVideoLoadingErrorTimeOut && clearTimeout(showVideoLoadingErrorTimeOut);
         this.showVideoLoadingError = false;
         self.goPlayer();
@@ -332,6 +338,7 @@ console.warn("keydown e.keyCode: ", e.keyCode);
         this.settings = settingsdata;
         this.files = this.settings.files;
         this.updateRandomizeFiles();
+        mainPlayInterval = (this.settings.changeAfter === 'interval') ? this.settings.changeInterval * 1 * 60 : 0;
 //        if (this.settings.randomizeVideo) {
 //          this.filesRandom = this.shuffleArray(this.settings.files);
 //        }
@@ -353,20 +360,20 @@ console.log("Settings loaded...: ", this.settings); //return true;
 
       //add all array of videos here !!
 //        var videoStorage = this.settings.files;
-        var videoStorage = this.settings.randomizeVideo && this.filesRandom.length ? this.filesRandom : this.files;
+      var videoStorage = this.settings.randomizeVideo && this.filesRandom.length ? this.filesRandom : this.files;
 
-        if (!videoStorage.length) {
-          this.currentVideoTimeValue = '';
-          this.currentFileDuration = '';
-          this.showVideoFileName('*/NO VIDEO AVAILABLE');
-          return false;
-        }
+      if (!videoStorage.length) {
+        this.currentVideoTimeValue = '';
+        this.currentFileDuration = '';
+        this.showVideoFileName('*/NO VIDEO AVAILABLE');
+        return false;
+      }
 
-        this.isVideoLoaded = false;
-        this.showVideoLoadingError = false;
-        this.nextVideoErrorCountDownSec = this.nextVideoErrorTimeoutSec;
-        nextVideoErrorCountDownTimeOut && clearInterval(nextVideoErrorCountDownTimeOut);
-        isVideoLoadedTimeOut && clearInterval(isVideoLoadedTimeOut);
+      this.isVideoLoaded = false;
+      this.showVideoLoadingError = false;
+      this.nextVideoErrorCountDownSec = this.nextVideoErrorTimeoutSec;
+      nextVideoErrorCountDownTimeOut && clearInterval(nextVideoErrorCountDownTimeOut);
+      isVideoLoadedTimeOut && clearInterval(isVideoLoadedTimeOut);
 
         // choose one random url from our storage as the active video
 //        var activeVideoSource = videoStorage[Math.round(Math.random() * (videoStorage.length - 1))];
@@ -379,72 +386,64 @@ console.log("Settings loaded...: ", this.settings); //return true;
         }
 */
 
-        this.activeVideoIndex++;
-        if (this.activeVideoIndex >= (videoStorage.length)) {
-          this.updateRandomizeFiles();
-          this.activeVideoIndex = 0;
-        }
+      this.activeVideoIndex++;
+      if (this.activeVideoIndex >= (videoStorage.length)) {
+        this.updateRandomizeFiles();
+        this.activeVideoIndex = 0;
+      }
 //console.warn("this.activeVideoIndex of LENGHT: ", this.activeVideoIndex, '/', videoStorage.length);
 
-        this.activeVideoSource = videoStorage[this.activeVideoIndex];
+      this.activeVideoSource = videoStorage[this.activeVideoIndex];
 
-        setTimeout(() => {
-          videoPlayer.currentTime = 0;
-        }, 50);
+      setTimeout(() => {
+        videoPlayer.currentTime = 0;
+        mainPlayFrameSec = 0;
+      }, 50);
 
 //          this.activeVideoSource = this.activeVideoSource.replace('.avi', '.mp4');
 
     //    videoPlayer.removeEventListener('durationchange', handleVideoInit());
     //    videoPlayer.removeEventListener('loadedmetadata', handleVideoInit);
     //    videoPlayer.removeEventListener('durationchange', handleVideoInit);
-        videoPlayer.removeEventListener('timeupdate', this.handleVideoTimeupdate);
+      videoPlayer.removeEventListener('timeupdate', this.handleVideoTimeupdate);
 
-setTimeout(() => {
+      setTimeout(() => {
+      this.settings.showVideoFileName && this.showVideoFileName(this.activeVideoSource);
+      setTimeout(() => {
+//        this.isVideoFadeOutClass = false;
+        this.isVideoFadeInClass = true;
+        setTimeout(() => {
+          this.checkIsVideoLoaded();
+        }, 1000);
+      }, 200);
 
-
-    // check which file extension your browser can play and set the video source accordingly
-    //    video.setAttribute('src', "videos/"+activeVideoSource);
-//        videoPlayer.setAttribute('src', activeVideoSource);
-        this.settings.showVideoFileName && this.showVideoFileName(this.activeVideoSource);
-setTimeout(() => {
-  this.isVideoFadeOutClass = false;
-  this.isVideoFadeInClass = true;
-  setTimeout(() => {
-    this.checkIsVideoLoaded();
-  }, 1000);
-}, 200);
-
-    //    videoPlayer.addEventListener('durationchange', handleVideoInit(videoPlayer), false);
-    //    videoPlayer.addEventListener('loadedmetadata', handleVideoInit, false);
-    //    videoPlayer.addEventListener('durationchange', handleVideoInit, false);
-//        videoPlayer.addEventListener('timeupdate', this.handleVideoTimeupdate(videoPlayer, currentTimeEl) , false);
-        videoPlayer.addEventListener('timeupdate', this.handleVideoTimeupdate(videoPlayer) , false);
-
-    //setTimeout(function(){
-    ////videoPlayer.currentTime = 170;
-    //videoPlayer.currentTime = 60*3-6;
-    //}, 700);
-//        videoPlayer.classList.remove('video-fade-out');
-//        videoPlayer.classList.remove('video-fade-out');
-//  this.isVideoFadeOutClass = false;
-}, 100);
+          //    videoPlayer.addEventListener('durationchange', handleVideoInit(videoPlayer), false);
+          //    videoPlayer.addEventListener('loadedmetadata', handleVideoInit, false);
+          //    videoPlayer.addEventListener('durationchange', handleVideoInit, false);
+      //        videoPlayer.addEventListener('timeupdate', this.handleVideoTimeupdate(videoPlayer, currentTimeEl) , false);
+      videoPlayer.addEventListener('timeupdate', this.handleVideoTimeupdate(videoPlayer) , false);
+      this.startVideiIntervalTimer();
+          //setTimeout(function(){
+          ////videoPlayer.currentTime = 170;
+          //videoPlayer.currentTime = 60*3-6;
+          //}, 700);
+      //        videoPlayer.classList.remove('video-fade-out');
+      //        videoPlayer.classList.remove('video-fade-out');
+      //  this.isVideoFadeOutClass = false;
+      }, 100);
     },
 
     checkIsVideoLoaded () {
-//console.warn("????????? this.isVideoLoaded: ", this.isVideoLoaded);
       nextVideoErrorCountDownTimeOut && clearInterval(nextVideoErrorCountDownTimeOut);
       isVideoLoadedTimeOut && clearInterval(isVideoLoadedTimeOut);
       isVideoLoadedTimeOut = setTimeout(() => {
         if (!this.isVideoLoaded && isNaN(videoPlayer.duration)) {
           this.showVideoLoadingError = true;
           nextVideoErrorCountDownTimeOut = setInterval(() => {
-//console.warn("CHECK COUNT-DOWN", Date.now());
             this.nextVideoErrorCountDownSec = this.nextVideoErrorCountDownSec - 1;
-//console.warn("CHECK this.nextVideoErrorCountDownSec", this.nextVideoErrorCountDownSec);
           }, 1000);
           showVideoLoadingErrorTimeOut && clearTimeout(showVideoLoadingErrorTimeOut);
           showVideoLoadingErrorTimeOut = setTimeout(() => {
-//console.warn("WTF     ???????????????????");
             this.goPlayer();
             this.showVideoLoadingError = false;
 
@@ -456,6 +455,22 @@ setTimeout(() => {
     handleVideoTimeupdate(video/*, _currentTimeEl*/){
       var self = this;
         return function(){
+//console.warn("mainPlayFrameSec: ", mainPlayFrameSec);
+          if (self.settings && self.settings.changeAfter && self.settings.changeAfter === 'interval') {
+//mainPlayInterval = 10;
+            if (mainPlayFrameSec >= mainPlayInterval) {
+              if (nextByIntervalTrsholdFlag) { return; }
+              self.isVideoFadeInClass = false;
+              nextByIntervalTrsholdFlag = true;
+              setTimeout(() => {
+                self.goPlayer();
+                setTimeout(() => {
+                  nextByIntervalTrsholdFlag = false;
+                }, 2000);
+              }, 1200);
+            }
+
+          }
     //        var currentTimeEl = _currentTimeEl;
             var diff = video.duration - video.currentTime;
 
@@ -515,10 +530,17 @@ setTimeout(() => {
         }
     },
 
+    startVideiIntervalTimer () {
+      mainPlayIntervalId && clearInterval(mainPlayIntervalId);
+      mainPlayIntervalId = setInterval(() => {
+        mainPlayFrameSec = mainPlayFrameSec + 1;
+      }, 1000);
+
+    },
 
     handleCloseExitSaverWindow (event) {
 
-return;
+//return;
 
 //console.warn("event.type: ", event.type);
 //console.warn("event", event);

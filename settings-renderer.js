@@ -7,8 +7,8 @@
 // * !!! TODO: use radio-button for time-format choose 12/24 instead of on/off;
 // * TODO: settings save watch treshold
 // * TODO: default video
-// TODO: try to fetch file duration time;
 // * TODO: note-tip transition decrease/fix for hovered;
+// TODO: try to fetch file duration time;
 
 
 const ipc = require('electron').ipcRenderer

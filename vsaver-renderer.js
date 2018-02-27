@@ -8,8 +8,9 @@
 // * TODO: check video on-load: check if no video loaded; set duration 0;
 // ** TODO:SEEMS FIXED  fix video src error (trigger timout- temp fixed loadeddata/loadedmetadata, message width);
 // * TODO: settings>changeAfter: videoend - interval;
-// TODO: fix checkInternetConnection behavior;
+// * TODO: fix checkInternetConnection behavior;
 // TODO: clock am/pm text/size/position;
+// TODO: change/optimize the tray icon;
 
 const ipc = require('electron').ipcRenderer
 
@@ -17,8 +18,6 @@ const Vue = require('vue/dist/vue.min.js')
 
 Vue.config.devtools = true
 
-const checkInternetConnection = require('./checkInternetConnection.js');
-const ping = checkInternetConnection.ping;
 
 var messageTimeout = 0;
 
@@ -156,8 +155,6 @@ var saverApp = new Vue({
   mounted () {
     var self = this;
 
-//console.warn("checkInternetConnection: ", checkInternetConnection);
-//console.warn("checkInternetConnection.ping: ", checkInternetConnection.ping);
     videoPlayer = document.getElementById('videoPlayer');
 //    currentTimeEl = document.getElementById('currentTime');
 
@@ -202,13 +199,14 @@ var saverApp = new Vue({
         }, 50);
 
       });
-    })
+    });
 
-/*
-    ipc.on('save-settings-reply', function (event, arg) {
-      self.handleShowMessage(arg);
-    })
-*/
+    ipc.on('check-internet-connection-reply', function (event, arg) {
+      self.isConnectedFlag = arg ? true : false;
+      if (!self.isConnectedFlag) {
+        setTimeout(self.checkConnection, 5000);
+      }
+    });
 
 /*
     ipc.on('reset-settings-reply', function (event, arg) {
@@ -361,6 +359,7 @@ console.log("Settings loaded...: ", this.settings); //return true;
       //add all array of videos here !!
 //        var videoStorage = this.settings.files;
       var videoStorage = this.settings.randomizeVideo && this.filesRandom.length ? this.filesRandom : this.files;
+var videoStorage = [];
 
       if (!videoStorage.length) {
         this.currentVideoTimeValue = '';
@@ -615,18 +614,7 @@ console.log("Settings loaded...: ", this.settings); //return true;
     },
 
     checkConnection () {
-      ping(this.checkConnectionExternalSource, null,
-        pingRes => {
-//console.info("ping RES:", pingRes);
-            this.isConnectedFlag = true;
-            //this.showConnection(true);
-        },
-        pingErr => {
-//console.warn("ping ERR:", pingErr);
-            this.isConnectedFlag = false;
-            //this.showConnection(false);
-            setTimeout(this.checkConnection, 5000);
-        });
+      ipc.send('check-internet-connection');
     },
 
     animateCurrentTime() { // current video time

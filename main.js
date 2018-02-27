@@ -19,9 +19,11 @@ const shell = electron.shell // ????
 const desktopIdle = require('desktop-idle');
 
 
-const path = require('path')
-const url = require('url')
+const path = require('path');
+const url = require('url');
 const lockSystem = require('lock-system');
+const dns = require('dns');
+
 
 const { default: installExtension, VUEJS_DEVTOOLS } = require('electron-devtools-installer');
 
@@ -36,6 +38,7 @@ let aboutDialog = null
 let isSuspendSaver = false
 let idleTimer = 0
 let idleTimeOut = 0
+let checkDnsLookUpTimeOut = 0
 let isRunByIdleTimer = false
 
 if (process.mas) app.setName('V-W-Saver')
@@ -386,7 +389,13 @@ console.log("====> ON CLOSE vsaver-window"); //return true;
   }, 1800);
 })
 
-
+ipc.on('check-internet-connection', function (event) {
+  checkConnection().then(res => {
+    event.sender.send('check-internet-connection-reply', true)
+  }).catch(err => {
+    event.sender.send('check-internet-connection-reply', false)
+  });
+});
 
 
 
@@ -477,7 +486,33 @@ function handleChangeContextMenuTemplate(suspend){
   appIcon.setContextMenu(contextMenu);
 }
 
-
+function checkConnection() {
+  return new Promise(function(resolve, reject) {
+    var done = false;
+    var start = (new Date()).getTime();
+    checkDnsLookUpTimeOut && clearTimeout(checkDnsLookUpTimeOut);
+    checkDnsLookUpTimeOut = setTimeout(() => {
+      if (done) { return false; }
+      done = true;
+      reject(new Error('DNS lookup timout error'));
+      return false;
+    }, 4500);
+    dns.lookupService('8.8.8.8', 53, function(error, hostname, service){
+      // google-public-dns-a.google.com domain
+      //console.log("checkConnection: ", hostname, service, Date.now());
+      if (error) {
+        if (done) { return false; }
+        done = true;
+        reject(error);
+      } else {
+        if (done) { return false; }
+        var delta = ((new Date()).getTime() - start);
+        done = true;
+        resolve({hostname: hostname, time: delta});
+      }
+    });
+  });
+}
 
 
 setTimeout(function(){
@@ -529,7 +564,6 @@ function makeSingleInstance () {
 
 
 
-// ??? CHECK SYSTEM IDLE ???
 
 
 // TO USING
@@ -550,6 +584,7 @@ function makeSingleInstance () {
 // !!! lock-system
 // https://github.com/sindresorhus/lock-system
 
+// ??? CHECK SYSTEM IDLE ???
 // desktop-idle dev requires:
 // npm install --save-dev electron-rebuild
 // ./node_modules/.bin/electron-rebuild

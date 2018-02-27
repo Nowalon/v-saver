@@ -22,7 +22,8 @@
         <div id="clockTime"
              v-if="settings.showSystemClockTime"
              :style="clockTimeStylePosition"
-             >{{ clockTimeValue }}</div><!-- id="time" -->
+             ><span v-if="clockAMPMValue" class="clock-am-pm">{{ clockAMPMValue }}</span>{{ clockTimeValue }}
+        </div>
         <div id="currentTime"
              v-if="settings.showVideoRemainingTime"
              :class="{'current-time-go' : isCurrentVideoTimeGo}">
@@ -30,7 +31,7 @@
         </div>
         <div id="playNext">next</div>
         <div id="videoFileName"
-             :class="{'show-file-name' : showAnimateFileName}">
+             :class="{'show-file-name' : showAnimateFileName, 'show-no-video': isNoVideoClass}">
           {{ videoFileName }}
         </div>
 

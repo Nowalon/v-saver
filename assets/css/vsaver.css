@@ -103,7 +103,13 @@ height: 1080px;
     margin-left: 50px;
     margin-top: 20%;
     transition: margin-top 0.75s;
+    display: inline-block;
   }
+  #clockTime .clock-am-pm {
+    font-size: 0.4em;
+    margin-right: 2px;
+  }
+
   #currentTime{
     font-size: 26px;
     font-family: GoffikOutline;
@@ -154,10 +160,19 @@ height: 1080px;
         font-family: GoffikOutline;
         color: white;
         margin: 0 auto;
-        transition: bottom 0.1s 0.75s;
+        transition: all 0.1s 0.75s;
+        transition: bottom 0.1s 0.75s, font-size 0.25s 0.55s, color 0.15s 0.9s;
     }
     #videoFileName.show-file-name{
         bottom: 16px;
+    }
+    #videoFileName.show-file-name.show-no-video{
+      bottom: 48%;
+      font-size: 2.2em;
+      color: red;
+      color: brown;
+      color: firebrick;
+      transition: bottom 0.1s 0.75s, font-size 0.15s 0.9s, color 0.15s 0.2s;
     }
 
 /*#internetConnectionIco,*/

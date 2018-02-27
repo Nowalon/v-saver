@@ -9,7 +9,7 @@
 // ** TODO:SEEMS FIXED  fix video src error (trigger timout- temp fixed loadeddata/loadedmetadata, message width);
 // * TODO: settings>changeAfter: videoend - interval;
 // * TODO: fix checkInternetConnection behavior;
-// TODO: clock am/pm text/size/position;
+// * TODO: clock am/pm text/size/position;
 // TODO: change/optimize the tray icon;
 
 const ipc = require('electron').ipcRenderer
@@ -81,10 +81,12 @@ var saverApp = new Vue({
     isOverlayfadeOut: false,
 
     isConnectedFlag: true,
+    clockAMPMValue: null,
     clockTimeValue: null,
     clockTimeStylePosition: null,
     currentVideoTimeValue: '0:00',
     currentFileDuration: '0:00',
+    isNoVideoClass: false,
     isCurrentVideoTimeGo: false, // 'current-time-go'
     videoFileName: '',
     showAnimateFileName: false,
@@ -359,15 +361,17 @@ console.log("Settings loaded...: ", this.settings); //return true;
       //add all array of videos here !!
 //        var videoStorage = this.settings.files;
       var videoStorage = this.settings.randomizeVideo && this.filesRandom.length ? this.filesRandom : this.files;
-var videoStorage = [];
+//var videoStorage = [];
 
       if (!videoStorage.length) {
         this.currentVideoTimeValue = '';
         this.currentFileDuration = '';
+        this.isNoVideoClass = true;
         this.showVideoFileName('*/NO VIDEO AVAILABLE');
         return false;
       }
 
+      this.isNoVideoClass = false;
       this.isVideoLoaded = false;
       this.showVideoLoadingError = false;
       this.nextVideoErrorCountDownSec = this.nextVideoErrorTimeoutSec;
@@ -570,6 +574,7 @@ var videoStorage = [];
         var s = today.getSeconds();
         if (this.settings.clockTimeFormat == 24) {
           timeValueStr = h + ":" + this.checkTime(m) + ":" + this.checkTime(s);
+          this.clockAMPMValue = null;
         } else {
           timeValueStr = this.formatAMPMTime(today);
         }
@@ -597,12 +602,12 @@ var videoStorage = [];
       var hours = date.getHours();
       var minutes = date.getMinutes();
       var seconds = date.getSeconds();
-      var ampm = hours >= 12 ? 'pm' : 'am';
+      this.clockAMPMValue = hours >= 12 ? 'pm' : 'am';
       hours = hours % 12;
       hours = hours ? hours : 12; // the hour '0' should be '12'
       minutes = this.checkTime(minutes);
       seconds = this.checkTime(seconds);
-      var strTime = ampm + ' ' + hours + ':' + minutes + ':' + seconds;
+      var strTime = hours + ':' + minutes + ':' + seconds;
       return strTime;
     },
 

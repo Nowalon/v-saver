@@ -439,13 +439,14 @@ display: table-row;
   top: 20px;
   left: 0px;
   font-size: 0.85em;
-  border-radius: 3px;
+  border-radius: 4px;
   background-color: rgba(29, 30, 37, 0.7);
   overflow: hidden;
   transition: all 0.1s ease 0.1s;
   padding: 0;
   opacity: 0;
   z-index: -9;
+  box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.5);
 }
 .settings-option-title:hover .note-tip-wr{
   padding: 2px;

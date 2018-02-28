@@ -8,8 +8,8 @@
 // * TODO: settings save watch treshold
 // * TODO: default video
 // * TODO: note-tip transition decrease/fix for hovered;
+// TODO: lock option for 'reset to default'
 // TODO: try to fetch file duration time;
-// TODO: set settings obj from default on-mounted before settings loading
 
 
 const ipc = require('electron').ipcRenderer

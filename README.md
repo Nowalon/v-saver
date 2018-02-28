@@ -1,4 +1,4 @@
-# videoscreensaver
+# v-saver
 Electron based desktop videoscreensaver (linux(ubuntu)-first)
 
 

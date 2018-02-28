@@ -9,6 +9,7 @@
 // * TODO: default video
 // * TODO: note-tip transition decrease/fix for hovered;
 // TODO: try to fetch file duration time;
+// TODO: set settings obj from default on-mounted before settings loading
 
 
 const ipc = require('electron').ipcRenderer
@@ -49,6 +50,7 @@ var settingsApp = new Vue({
       showInternetConnectionLostIndicator: true,
       showTrayIcon: true
     },
+    // TODO: set this settings obj from default on-mounted before settings loading
     settings: {
       files: [],
       runInterval: 10,

@@ -4,13 +4,18 @@
 
 'use strict';
 
-// * !!! TODO: use radio-button for time-format choose 12/24 instead of on/off;
+// * TODO: use radio-button for time-format choose 12/24 instead of on/off;
 // * TODO: settings save watch treshold
 // * TODO: default video
 // * TODO: note-tip transition decrease/fix for hovered;
-// TODO: lock option for 'reset to default'
+// * TODO: lock option for 'reset to default'
+// * TODO: settings window 'headline';
+// * TODO: set settings obj from default on-mounted before settings loading
 // TODO: try to fetch file duration time;
 
+/*
+commit:
+*/
 
 const ipc = require('electron').ipcRenderer
 
@@ -48,10 +53,11 @@ var settingsApp = new Vue({
       showVideoRemainingTime: true,
       showVideoFileName: true,
       showInternetConnectionLostIndicator: true,
-      showTrayIcon: true
+      showTrayIcon: true,
+      devDebugMode: true // !!! devDebugMode
     },
-    // TODO: set this settings obj from default on-mounted before settings loading
     settings: {
+/*
       files: [],
       runInterval: 10,
       lockSystemOnExit: false,
@@ -67,7 +73,10 @@ var settingsApp = new Vue({
       showInternetConnectionLostIndicator: true,
 
       showTrayIcon: true,
+      devDebugMode: true
+*/
     },
+    unlockResetToDefault: false,
     maxRunInterval: 60,
     maxVideoChangeInterval: 30,
 
@@ -91,7 +100,7 @@ var settingsApp = new Vue({
     },
 
     filesCount () {
-      return this.settings.files.length;
+      return (this.settings && this.settings.files) ? this.settings.files.length : 0;
     },
 
     changeIntervalDisabled () {
@@ -105,6 +114,8 @@ var settingsApp = new Vue({
 
   mounted () {
     var self = this;
+
+    self.settings = self.defaultSettings;
 
     self.loadSettings();
 
@@ -120,12 +131,14 @@ var settingsApp = new Vue({
 
     ipc.on('save-settings-reply', function (event, arg) {
       self.handleShowMessage(arg);
+      self.unlockResetToDefault = false;
     })
 
     ipc.on('reset-settings-reply', function (event, arg) {
       self.initLoadedOrReset = false;
       self.settings = self.defaultSettings;
       self.handleShowMessage(arg);
+      self.unlockResetToDefault = false;
       setTimeout(() => {
         self.initLoadedOrReset = true;
       }, 100);
@@ -251,6 +264,7 @@ var settingsApp = new Vue({
 
     handleResetSettings () {
       ipc.send('reset-settings', this.defaultSettings)
+      this.unlockResetToDefault = false;
     },
 
     handleDeleteSettings () {

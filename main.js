@@ -41,17 +41,25 @@ let idleTimeOut = 0
 let checkDnsLookUpTimeOut = 0
 let isRunByIdleTimer = false
 
+/* devDebugMode ONLY */ var isDevDebugMode = false;
+
 if (process.mas) app.setName('V-W-Saver')
 
 function createSettingsWindow () {
 
   var windowOptions = {
-    //width: 800,
-    width: 1500,
+    width: 800,
+//    width: 1500,
     minWidth: 800,
     height: 600,
+    resizable: false,
+    titleBarStyle: 'hidden',
     frame: false,
+    opacity: 0.8,
     title: app.getName()
+  }
+  if(isDevDebugMode) {
+    windowOptions.width = 1500;
   }
   if (process.platform === 'linux') {
     windowOptions.icon = path.join(__dirname, '/assets/img/videoscreensaver-gradient-icon.png')
@@ -70,7 +78,7 @@ function createSettingsWindow () {
 
 
   // Open the DevTools.
-  settingsWindow.webContents.openDevTools()
+  isDevDebugMode && settingsWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   settingsWindow.on('closed', function () {
@@ -89,6 +97,7 @@ function createSaverWindow () {
     width: 1800,
     minWidth: 1800,
     height: 800,
+    alwaysOnTop: true,
     frame: false,
     title: app.getName()
   }
@@ -106,10 +115,15 @@ function createSaverWindow () {
   }))
 
 //  saverWindow.setFullScreen(!saverWindow.isFullScreen())
-
+  if(!isDevDebugMode) {
+    saverWindow.setFullScreen(!saverWindow.isFullScreen())
+  }
 
   // Open the DevTools.
-  saverWindow.webContents.openDevTools()
+  isDevDebugMode && saverWindow.webContents.openDevTools()
+
+//  saverWindow.focus();
+//  saverWindow.focusOnWebView();
 
   // Emitted when the window is closed.
   saverWindow.on('closed', function () {
@@ -127,7 +141,7 @@ function runSaverWindow () {
     saverWindow.setFullScreen(!saverWindow.isFullScreen())
   } else {
     if (appSettings) {
-    createSaverWindow()
+      createSaverWindow()
     }
   }
 }
@@ -136,7 +150,12 @@ function checkSystemIdle () { // call after app.on('ready') and settings loaded 
   idleTimeOut && clearTimeout(idleTimeOut);
 //  idleTimer = appSettings.runInterval * 1;
   var idleTimerSec = appSettings.runInterval * 1 * 60;
-var idleTimerSec = 50000000;
+  var idleTimeOutValue = 10000;
+
+if(isDevDebugMode){
+  var idleTimerSec = 50000000;
+  //var idleTimeOutValue = 2000;
+}
   //setInterval(() => {
 //console.log("---> check appSettings: ", appSettings);
 //console.log("---> check appSettings.runInterval: ", typeof appSettings.runInterval, appSettings.runInterval);
@@ -169,15 +188,17 @@ var idleTimerSec = 50000000;
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', () => {
-  installExtension(VUEJS_DEVTOOLS)
-      .then((name) => console.log(`Added Extension:  ${name}`))
-      .catch((err) => console.log('An error occurred: ', err));
-
   if (settings.has('settings')) {
     appSettings = settings.get('settings');
+    /* devDebugMode */ isDevDebugMode = appSettings && appSettings.hasOwnProperty('devDebugMode') ? appSettings.devDebugMode : false;
   } else {
     createSettingsWindow()
   }
+
+  isDevDebugMode && installExtension(VUEJS_DEVTOOLS)
+      .then((name) => console.log(`Added Extension:  ${name}`))
+      .catch((err) => console.log('An error occurred: ', err));
+
   checkSystemIdle();
 
 
@@ -199,7 +220,7 @@ console.warn("???????????????????? display-metrics-changed EVENT: ", event);
 //console.log("screen.getCursorScreenPoint(): ", electron.screen.getCursorScreenPoint()); //return true;
 //}, 1000);
 
-shell.beep();
+//shell.beep();
 
 globalShortcut.register('CommandOrControl+B', () => {
 //globalShortcut.register('any', () => {
@@ -207,7 +228,8 @@ globalShortcut.register('CommandOrControl+B', () => {
 })
 
 
-  const iconName = process.platform === 'win32' ? 'videoscreensaver-black-icon.png' : 'assets/img/videoscreensaver-white-icon.png'
+//  const iconName = process.platform === 'win32' ? 'videoscreensaver-black-icon.png' : 'assets/img/videoscreensaver-white-icon.png'
+  const iconName = process.platform === 'win32' ? 'videoscreensaver-black-icon.png' : '/assets/img/videoscreensaver-gradient-icon.png'
   const iconPath = path.join(__dirname, iconName)
 console.log("__dirname: ", __dirname); //return true;
   appIcon = new Tray(iconPath)
@@ -343,6 +365,7 @@ ipc.on('open-file-dialog', function (event) {
 ipc.on('save-settings', function (event, settingsData) {
   settings.set('settings', settingsData);
   appSettings = settings.get('settings');
+  /* devDebugMode */ isDevDebugMode = appSettings && appSettings.hasOwnProperty('devDebugMode') ? appSettings.devDebugMode : false;
   event.sender.send('save-settings-reply', 'Settings saved!')
 })
 
@@ -360,14 +383,7 @@ ipc.on('reset-settings', function (event, settingsData) {
 })
 
 ipc.on('open-about-dialog', function (event, arg) {
-  var aboutDialogMessage = `${app.getName().toUpperCase()}: version ${app.getVersion()} \n \n using Node.js ${process.versions.node}, Chromium ${process.versions.chrome}, and Electron ${process.versions.electron}`;
-  aboutDialog = dialog.showMessageBox({
-    type: 'info',
-    title: 'V-Screensaver - About',
-    icon: path.join(__dirname, '/assets/img/videoscreensaver-gradient-icon.png'),
-    detail: aboutDialogMessage,
-    buttons: ['Ok'],
-  })
+  showAboutDialogMessage();
 })
 
 ipc.on('close-settings', function (event, settingsData) {
@@ -386,7 +402,7 @@ console.log("====> ON CLOSE vsaver-window"); //return true;
   }
   setTimeout(() => {
     saverWindow && saverWindow.close();
-  }, 1800);
+  }, 1600); // 1800
 })
 
 ipc.on('check-internet-connection', function (event) {
@@ -442,15 +458,21 @@ function getContextMenuTemplate(suspend) {
       }
     },
     {
-      label: 'Remove',
+      label: 'Remove?',
       click: function () {
         /*if (appIcon) appIcon.destroy()*/
       }
     },
     {
-      label: 'Lock',
+      label: 'Lock system',
       click: () => {
         lockSystem();
+      }
+    },
+    {
+      label: 'About',
+      click: () => {
+        showAboutDialogMessage();
       }
     },
     {
@@ -484,6 +506,25 @@ function handleChangeContextMenuTemplate(suspend){
   var contextMenuTemplate = getContextMenuTemplate(!isSuspendSaver);
   contextMenu = Menu.buildFromTemplate(contextMenuTemplate);
   appIcon.setContextMenu(contextMenu);
+}
+
+function showAboutDialogMessage() {
+  var aboutDialogMessage = `${app.getName().toUpperCase()}: version ${app.getVersion()} \n \n
+    using Node.js ${process.versions.node},
+    Chromium ${process.versions.chrome},
+    and Electron ${process.versions.electron}
+    \n
+    Electron based videoscreensaver`;
+  aboutDialog = dialog.showMessageBox({
+    type: 'info',
+    title: 'V-Saver - About',
+    icon: path.join(__dirname, '/assets/img/videoscreensaver-gradient-icon.png'),
+    message: aboutDialogMessage,
+    detail: 'github.com/Nowalon/v-saver',
+    buttons: ['Ok'],
+  }, () => {
+    /* https://electronjs.org/docs/api/dialog  :  If a callback is passed, the dialog will not block the process. The API call will be asynchronous and the result will be passed via callback(response) */
+  });
 }
 
 function checkConnection() {

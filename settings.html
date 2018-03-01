@@ -35,7 +35,7 @@
 
               <div class="settings-option-wrap">
                 <span class="settings-option-title">Run <!--screensaver--> after idle (1-{{ maxRunInterval }}min)
-                <note-tip text="Run screensaver after system idle time value. Switch off system screensaver, power management settings" ></note-tip>
+                  <note-tip text="Run screensaver after system idle time value. Switch off system screensaver, power management settings" ></note-tip>
                 </span>
                 <div class="settings-option-control">
                   <input type="number" min="1"
@@ -47,7 +47,7 @@
 
               <div class="settings-option-wrap">
                 <span class="settings-option-title">Change video after:
-                <note-tip text="Plays next video by certain defined interval or plays every video to end. Anyway plays next video if the previous one was over" ></note-tip>
+                  <note-tip text="Plays next video by certain defined interval or plays every video to end. Anyway plays next video if the previous one was over" ></note-tip>
                 </span>
                 <div class="vs-radioGroup settings-option-control">
                   <input type="radio" id="changeAfterChoice1"
@@ -73,7 +73,7 @@
 
               <div class="settings-option-wrap">
                 <span class="settings-option-title ">Shuffle video
-                <note-tip text="Shuffle video sources playlist. Shuffling on saver start and periodically direcly in screensaver vindow, not in settings:Files" ></note-tip>
+                  <note-tip text="Shuffle video sources playlist. Shuffling on saver start and periodically direcly in screensaver vindow, not in settings:Files" ></note-tip>
                 </span>
                 <div class="slideCheckBox settings-option-control">
                   <input type="checkbox" id="randomizeVideoChBx" name="randomizeVideo" v-model="settings.randomizeVideo" >
@@ -83,7 +83,7 @@
 
               <div class="settings-option-wrap">
                 <span class="settings-option-title">Lock system on exit
-                <note-tip text="Lock system after screensaver exit" ></note-tip>
+                  <note-tip text="Lock system after screensaver exit" ></note-tip>
                 </span>
                 <div class="slideCheckBox settings-option-control">
                   <input type="checkbox" id="lockSystemOnExitChBx" name="lockSystemOnExit" v-model="settings.lockSystemOnExit" >
@@ -102,6 +102,30 @@
                 </div>
               </div>
               <!-- showTrayIcon -->
+
+              <div class="settings-option-wrap">
+                <span class="settings-option-title">Unlock 'Reset to default' option
+                  <note-tip text="Will not be saved in settings" ></note-tip>
+                </span>
+                <div class="slideCheckBox settings-option-control">
+                  <input type="checkbox" id="unlockResetToDefaultChBx" name="unlockResetToDefault" v-model="unlockResetToDefault" >
+                  <label for="unlockResetToDefaultChBx"></label>
+                </div>
+              </div>
+
+              <p></p></br>
+              <p></p></br>
+              <p></p></br>
+
+
+              <div class="settings-option-wrap">
+                <span class="settings-option-title">dev/debug mode</span>
+                <div class="slideCheckBox settings-option-control">
+                  <input type="checkbox" id="devDebugModeChBx" name="devDebugMode" v-model="settings.devDebugMode" >
+                  <label for="devDebugModeChBx"></label>
+                </div>
+              </div>
+
 
             </div>
 
@@ -225,7 +249,7 @@
         <div class="clearfix-divider"></div>
 
         <div class="btn-controls">
-          <button class="btn mr-6" @click="handleResetSettings">Reset to default</button>
+          <button class="btn mr-6" :disabled="!unlockResetToDefault" @click="handleResetSettings">Reset to default</button>
           <button class="btn btn-close" @click="handleCloseSettings">Close</button>
           <button class="btn right" @click="handleSaveSettings">Save</button>
         </div>

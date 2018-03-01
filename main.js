@@ -33,6 +33,8 @@ let settingsWindow
 let saverWindow
 
 let appIcon = null
+let iconPathNorm
+let iconPathSusp
 let appSettings = null
 let aboutDialog = null
 let isSuspendSaver = false
@@ -228,11 +230,12 @@ globalShortcut.register('CommandOrControl+B', () => {
 })
 
 
-//  const iconName = process.platform === 'win32' ? 'videoscreensaver-black-icon.png' : 'assets/img/videoscreensaver-white-icon.png'
-  const iconName = process.platform === 'win32' ? 'videoscreensaver-black-icon.png' : '/assets/img/videoscreensaver-gradient-icon.png'
-  const iconPath = path.join(__dirname, iconName)
+  const iconNameNormal = process.platform === 'win32' ? '/assets/img/v-saver.ico' : '/assets/img/v-saver__icon.png';
+  const iconNameSuspended = process.platform === 'win32' ? '/assets/img/v-saver-suspended.ico' : '/assets/img/v-saver-suspended__icon.png';
+  iconPathNorm = path.join(__dirname, iconNameNormal)
+  iconPathSusp = path.join(__dirname, iconNameSuspended)
 console.log("__dirname: ", __dirname); //return true;
-  appIcon = new Tray(iconPath)
+  appIcon = new Tray(iconPathNorm)
 
 //  const contextMenu = Menu.buildFromTemplate([
 //  var contextMenuTemplate = [
@@ -506,6 +509,11 @@ function handleChangeContextMenuTemplate(suspend){
   var contextMenuTemplate = getContextMenuTemplate(!isSuspendSaver);
   contextMenu = Menu.buildFromTemplate(contextMenuTemplate);
   appIcon.setContextMenu(contextMenu);
+  if (isSuspendSaver) {
+    appIcon.setImage(iconPathSusp);
+  } else {
+    appIcon.setImage(iconPathNorm);
+  }
 }
 
 function showAboutDialogMessage() {

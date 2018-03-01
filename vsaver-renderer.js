@@ -10,10 +10,10 @@
 // * TODO: settings>changeAfter: videoend - interval;
 // * TODO: fix checkInternetConnection behavior;
 // ? TODO: check pointer behavior issue;
+// * TODO: handle/change the tray icon if suspended;
+// * TODO: change/optimize the tray icon;
 // TODO: showFileName count/total info;
 // -> TODO: clock am/pm text/size/position => use if clockAMPMValue do decrease left margin value;
-// TODO: handle/change the tray icon if suspended;
-// TODO: change/optimize the tray icon;
 // TODO: app version check/notify;
 // TODO: check multiscreen;
 

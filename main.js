@@ -48,7 +48,7 @@ const checkVersionUrl='https://raw.githubusercontent.com/Nowalon/v-saver/setting
 
 /* devDebugMode ONLY */ var isDevDebugMode = false;
 
-if (process.mas) app.setName('V-W-Saver')
+if (process.mas) app.setName('V-Saver')
 
 function createSettingsWindow () {
 

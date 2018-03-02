@@ -14,6 +14,7 @@
 // * TODO: change/optimize the tray icon;
 // * TODO: app version check/notify;
 // TODO: showFileName count/total info ===> change avery 30 min  behavior;
+// TODO: reset isSuspendSaver after ~ 2h idle;
 // -> TODO: clock am/pm text/size/position => use if clockAMPMValue do decrease left margin value;
 // TODO: check multiscreen;
 
@@ -596,7 +597,7 @@ console.log("Settings loaded...: ", this.settings); //return true;
           }
         }
         if ((m % 30 === 0) && this.settings.showSystemClockTime){
-          this.updateRandomizeFiles();
+          // ??? this.updateRandomizeFiles();   ??? showSystemClockTime ???
         }
         stt && clearTimeout(stt);
         stt = setTimeout(() => {

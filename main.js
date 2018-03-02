@@ -40,6 +40,7 @@ let aboutDialog = null
 let isSuspendSaver = false
 let idleTimer = 0
 let idleTimeOut = 0
+const resetIdleValue = 8640 // ~2.4h
 let checkDnsLookUpTimeOut = 0
 let isRunByIdleTimer = false
 let newAppVersionValue = null
@@ -176,11 +177,14 @@ if(isDevDebugMode){
     //console.log("screen.getCursorScreenPoint(): ", electron.screen.getCursorScreenPoint()); //return true;
 //console.log("isRunByIdleTimer: ", isRunByIdleTimer);
     if (desktopIdleSec >= idleTimerSec) {
-      if (!isRunByIdleTimer){
-        isRunByIdleTimer = true;
-        if (!isSuspendSaver) {
+      if (!isSuspendSaver) {
+        if (!isRunByIdleTimer){
+          isRunByIdleTimer = true;
           runSaverWindow();
         }
+      }
+      if(desktopIdleSec >= resetIdleValue) {
+        handleChangeContextMenuTemplate(false);
       }
     } else {
       isRunByIdleTimer = false;

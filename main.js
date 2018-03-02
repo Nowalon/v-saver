@@ -2,7 +2,6 @@ const electron = require('electron')
 // Module to control application life.
 const app = electron.app
 const ipc = electron.ipcMain
-const settings = require('electron-settings');
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
 // const {Menu, Tray} = require('electron')
@@ -10,19 +9,20 @@ const Menu = electron.Menu
 const Tray = electron.Tray
 const dialog = electron.dialog
 
-const globalShortcut = electron.globalShortcut
-const shell = electron.shell // ????
-//const screen = electron.screen
-//const os = require('os')
+const settings = require('electron-settings');
 
-//const InputEvent = require('input-event');
-const desktopIdle = require('desktop-idle');
+//const globalShortcut = electron.globalShortcut
+//const shell = electron.shell // ????
+//const os = require('os')
 
 
 const path = require('path');
 const url = require('url');
-const lockSystem = require('lock-system');
 const dns = require('dns');
+const request = require('request');
+
+const lockSystem = require('lock-system');
+const desktopIdle = require('desktop-idle');
 
 
 const { default: installExtension, VUEJS_DEVTOOLS } = require('electron-devtools-installer');
@@ -42,6 +42,9 @@ let idleTimer = 0
 let idleTimeOut = 0
 let checkDnsLookUpTimeOut = 0
 let isRunByIdleTimer = false
+let newAppVersionValue = null
+
+const checkVersionUrl='https://raw.githubusercontent.com/Nowalon/v-saver/settings/package.json';
 
 /* devDebugMode ONLY */ var isDevDebugMode = false;
 
@@ -152,11 +155,13 @@ function checkSystemIdle () { // call after app.on('ready') and settings loaded 
   idleTimeOut && clearTimeout(idleTimeOut);
 //  idleTimer = appSettings.runInterval * 1;
   var idleTimerSec = appSettings.runInterval * 1 * 60;
-  var idleTimeOutValue = 10000;
+  var idleTimeOutValue = 10000; // 10000~20000 ?
+
+//console.log("isDevDebugMode: ", isDevDebugMode, new Date()); //return true;
 
 if(isDevDebugMode){
-  var idleTimerSec = 50000000;
-  //var idleTimeOutValue = 2000;
+  idleTimerSec = 50000000;
+  idleTimeOutValue = 2000;
 }
   //setInterval(() => {
 //console.log("---> check appSettings: ", appSettings);
@@ -167,6 +172,7 @@ if(isDevDebugMode){
     var desktopIdleSec = desktopIdle.getIdleTime();
 //    console.log("isSuspendSaver: ", isSuspendSaver);
 //    console.log("desktopIdleSec: ", /*typeof desktopIdleSec,*/ desktopIdleSec);
+//    console.log("idleTimerSec: ", idleTimerSec);
     //console.log("screen.getCursorScreenPoint(): ", electron.screen.getCursorScreenPoint()); //return true;
 //console.log("isRunByIdleTimer: ", isRunByIdleTimer);
     if (desktopIdleSec >= idleTimerSec) {
@@ -180,7 +186,7 @@ if(isDevDebugMode){
       isRunByIdleTimer = false;
     }
     checkSystemIdle();
-  }, 2000); // set 10000
+  }, idleTimeOutValue); // set 10000
 }
 
 
@@ -222,93 +228,28 @@ console.warn("???????????????????? display-metrics-changed EVENT: ", event);
 //console.log("screen.getCursorScreenPoint(): ", electron.screen.getCursorScreenPoint()); //return true;
 //}, 1000);
 
-//shell.beep();
-
-globalShortcut.register('CommandOrControl+B', () => {
-//globalShortcut.register('any', () => {
-  console.log('CommandOrControl+B is pressed')
-})
 
 
   const iconNameNormal = process.platform === 'win32' ? '/assets/img/v-saver.ico' : '/assets/img/v-saver__icon.png';
   const iconNameSuspended = process.platform === 'win32' ? '/assets/img/v-saver-suspended.ico' : '/assets/img/v-saver-suspended__icon.png';
   iconPathNorm = path.join(__dirname, iconNameNormal)
   iconPathSusp = path.join(__dirname, iconNameSuspended)
-console.log("__dirname: ", __dirname); //return true;
   appIcon = new Tray(iconPathNorm)
 
-//  const contextMenu = Menu.buildFromTemplate([
-//  var contextMenuTemplate = [
-//    {
-//      label: 'Run screensaver',
-//      click: function () {
-//        if (appSettings && saverWindow) {
-//          saverWindow.show()
-//          saverWindow.focus()
-//          saverWindow.setFullScreen(!saverWindow.isFullScreen())
-//        } else {
-//          if (appSettings) {
-//            createSaverWindow()
-//          }
-//        }
-//      }
-//    },
-//    {
-//      label: 'Suspend screensaver running',
-//      click: function () {
-//        //
-//      }
-//    },
-//    {
-//      label: 'Settings',
-//      click: function () {
-//        if (settingsWindow) {
-//          settingsWindow.show()
-//          settingsWindow.focus()
-//        } else {
-//          createSettingsWindow()
-//        }
-//      }
-//    },
-//    {
-//      label: 'Remove',
-//      click: function () {
-//        /*if (appIcon) appIcon.destroy()*/
-//      }
-//    },
-//    {
-//      label: 'Lock',
-//      click: () => {
-//        lockSystem();
-//      }
-//    },
-//    {
-//      label: 'Exit',
-//      click: function () {
-//        if (appIcon) appIcon.destroy()
-//        app.exit()
-//      }
-//    }
-//  ];
   var contextMenuTemplate = getContextMenuTemplate(true);
   let contextMenu = Menu.buildFromTemplate(contextMenuTemplate);
 
-  appIcon.setToolTip('V-Screensaver')
-  appIcon.setTitle('V-Screensaver')
+  appIcon.setToolTip('V-Saver')
+  appIcon.setTitle('V-Saver')
   appIcon.setContextMenu(contextMenu)
 
-/*
-setTimeout(() => {
-  contextMenuTemplate.push({
-      label: 'TESTETS!',
-      click: function () {
-        //
-      }
-  })
-  contextMenu = Menu.buildFromTemplate(contextMenuTemplate);
-  appIcon.setContextMenu(contextMenu)
-}, 6000);
-*/
+  checkConnection().then(res => {
+    checkVersion().then(isewVersionResult => {
+      newAppVersionValue = isewVersionResult ? isewVersionResult : null;
+    }).catch(versionErr => { /**/ });
+  }).catch(err => { /**/ });
+
+
 
 //console.log("settings.has('settings'): ", settings.has('settings'));
 //console.log("settings.get('settings'): ", settings.get('settings'));
@@ -317,7 +258,11 @@ setTimeout(() => {
 //createSaverWindow();
 
 
-})
+}) // ready
+
+
+
+
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
@@ -413,6 +358,18 @@ ipc.on('check-internet-connection', function (event) {
     event.sender.send('check-internet-connection-reply', true)
   }).catch(err => {
     event.sender.send('check-internet-connection-reply', false)
+  });
+});
+
+ipc.on('check-app-version', function (event) {
+  checkConnection().then(res => {
+    checkVersion().then(isewVersionResult => {
+      event.sender.send('check-app-version-reply', isewVersionResult)
+    }).catch(versionErr => {
+      event.sender.send('check-app-version-reply', false)
+    });
+  }).catch(err => {
+    event.sender.send('check-app-version-reply', false)
   });
 });
 
@@ -517,7 +474,8 @@ function handleChangeContextMenuTemplate(suspend){
 }
 
 function showAboutDialogMessage() {
-  var aboutDialogMessage = `${app.getName().toUpperCase()}: version ${app.getVersion()} \n \n
+  var isNewVersionStr = newAppVersionValue ? '\n\n A new version ' + newAppVersionValue + ' is available' : '';
+  var aboutDialogMessage = `${app.getName().toUpperCase()}: version ${app.getVersion()} ${isNewVersionStr} \n \n
     using Node.js ${process.versions.node},
     Chromium ${process.versions.chrome},
     and Electron ${process.versions.electron}
@@ -557,11 +515,34 @@ function checkConnection() {
         if (done) { return false; }
         var delta = ((new Date()).getTime() - start);
         done = true;
+console.log(" ++++++ checkConnection RES: ", {hostname: hostname, time: delta}); //return true;
         resolve({hostname: hostname, time: delta});
       }
     });
   });
 }
+
+function checkVersion() {
+  var repVersion;
+  return new Promise((resolve, reject) => {
+    var appVersion = app.getVersion();
+    request.get(checkVersionUrl, function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            var docJSONparsed = JSON.parse(body);
+          repVersion = docJSONparsed.version;
+          if (repVersion > appVersion) {
+            resolve(repVersion);
+          } else {
+            resolve(false);
+          }
+        } else {
+          reject(error);
+        }
+    });
+  });
+}
+
+
 
 
 setTimeout(function(){

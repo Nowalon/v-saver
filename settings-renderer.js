@@ -11,6 +11,7 @@
 // * TODO: lock option for 'reset to default'
 // * TODO: settings window 'headline';
 // * TODO: set settings obj from default on-mounted before settings loading
+// TODO: files order - set move last down as first and vice versa;
 // TODO: try to fetch file duration time;
 
 /*
@@ -18,6 +19,7 @@ commit:
 */
 
 const ipc = require('electron').ipcRenderer
+const shell = require('electron').shell;
 
 const Vue = require('vue/dist/vue.min.js')
 
@@ -36,6 +38,9 @@ var settingsApp = new Vue({
     showMessage: false,
     activeTab: 'tab1',
     initLoadedOrReset: false,
+    repoUrl: 'https://github.com/Nowalon/v-saver',
+    isNewVersionavailable: false,
+    newVersionValue: '0.0.0',
 
     defaultSettings: {
       files: [
@@ -144,6 +149,16 @@ var settingsApp = new Vue({
       }, 100);
     })
 
+    ipc.on('check-app-version-reply', function (event, arg) {
+      if (arg && arg.length) {
+        self.isNewVersionavailable = true;
+        self.newVersionValue = arg;
+      } else {
+        self.isNewVersionavailable = false;
+      }
+    });
+
+
     settingFilesWrapNode = document.getElementById('settingFilesWrapNode');
     fileListNode = document.getElementById('fileListNode');
     logoImg = document.getElementById('logoImg');
@@ -151,6 +166,8 @@ var settingsApp = new Vue({
     logoImg.addEventListener('click', () => {
       ipc.send('open-about-dialog');
     }, false);
+
+    this.checkAppVersion();
 
   },
 
@@ -277,6 +294,14 @@ var settingsApp = new Vue({
 
     handleRunTestSaverWindow () {
       ipc.send('run-vsaver-window');
+    },
+
+    checkAppVersion () {
+      ipc.send('check-app-version');
+    },
+
+    handleOpenVersion () {
+      shell.openExternal(this.repoUrl);
     }
 
   },

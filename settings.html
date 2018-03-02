@@ -252,6 +252,7 @@
           <button class="btn mr-6" :disabled="!unlockResetToDefault" @click="handleResetSettings">Reset to default</button>
           <button class="btn btn-close" @click="handleCloseSettings">Close</button>
           <button class="btn right" @click="handleSaveSettings">Save</button>
+          <p v-if="isNewVersionavailable" class="new-version-info">A new <a @click.prevent="handleOpenVersion" href="#">version {{newVersionValue}}</a> is available</p>
         </div>
 
       </div>

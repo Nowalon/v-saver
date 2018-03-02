@@ -313,6 +313,29 @@ display: table-row;
   left: 0;
   bottom: 0;
 }
+.new-version-info {
+  position: absolute;
+  bottom: 0;
+  bottom: 0;
+  margin: 8px 0;
+  text-align: center;
+  right: 38%;
+  -webkit-animation: newVersionInfoAnimation 2s infinite;
+  animation: newVersionInfoAnimation 2s infinite;
+}
+.new-version-info, .new-version-info a { color: #9feaf9; }
+
+@-webkit-keyframes newVersionInfoAnimation {
+    0% {transform: scale(1);}
+    35% {transform: scale(1.06);}
+    100% {transform: scale(1);}
+}
+@keyframes newVersionInfoAnimation {
+    0% {transform: scale(1);}
+    35% {transform: scale(1.06);}
+    100% {transform: scale(1);}
+}
+
 .btn-notif { margin-left: 26px;}
 .run-saver-notif {
     display: table-cell;
@@ -363,8 +386,8 @@ display: table-row;
   left: 3px;
   z-index: 1;
   background: #fcfff4;
-  background: -webkit-gradient(linear, left top, left bottom, from(#fcfff4), color-stop(40%, #dfe5d7), to(#b3bead));
-  background: linear-gradient(to bottom, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+  background: -webkit-gradient(linear, left top, left bottom, from(#74b1be), color-stop(40%, #5b8c96), to(#3e595f));
+  background: linear-gradient(to bottom, #74b1be 0%, #5b8c96 40%, #3e595f 100%);
   border-radius: 50px;
   -webkit-transition: all 0.4s ease;
   transition: all 0.4s ease;

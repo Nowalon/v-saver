@@ -109,6 +109,9 @@ height: 1080px;
     transition: margin-top 0.75s;
     display: inline-block;
   }
+  #clockTime.is-clock-am-pm {
+    margin-left: 16px;
+  }
   #clockTime .clock-am-pm {
     font-size: 0.4em;
     margin-right: 2px;

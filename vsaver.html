@@ -22,6 +22,7 @@
         <div id="clockTime"
              v-if="settings.showSystemClockTime"
              :style="clockTimeStylePosition"
+             :class="{'is-clock-am-pm' : clockAMPMValue}"
              ><span v-if="clockAMPMValue" class="clock-am-pm">{{ clockAMPMValue }}</span>{{ clockTimeValue }}
         </div>
         <div id="currentTime"
@@ -32,7 +33,7 @@
         <div id="playNext">next</div>
         <div id="videoFileName"
              :class="{'show-file-name' : showAnimateFileName, 'show-no-video': isNoVideoClass}">
-          {{ videoFileName }}
+          <span>{{ activeVideoNumber }}/{{ totalVideoCount }} : </span>{{ videoFileName }}
         </div>
 
         <svg id="internetConnectionIco"

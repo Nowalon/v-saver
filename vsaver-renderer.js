@@ -13,9 +13,10 @@
 // * TODO: handle/change the tray icon if suspended;
 // * TODO: change/optimize the tray icon;
 // * TODO: app version check/notify;
-// TODO: showFileName count/total info ===> change avery 30 min  behavior;
-// TODO: reset isSuspendSaver after ~ 2h idle;
-// -> TODO: clock am/pm text/size/position => use if clockAMPMValue do decrease left margin value;
+// * TODO: showFileName count/total info ===> * change every 30 min  behavior;
+// * TODO: reset isSuspendSaver after ~ 2h idle;
+// * TODO: clock am/pm text/size/position => use if clockAMPMValue do decrease left margin value;
+// TODO: check/try to use tray badge to indicate connection;
 // TODO: check multiscreen;
 
 
@@ -152,6 +153,18 @@ var saverApp = new Vue({
     videoStorage () {
       return this.settings.files;
     },
+    activeVideoNumber () {
+      return this.activeVideoIndex + 1
+    },
+    totalVideoCount () {
+      if (this.filesRandom && this.filesRandom.length) {
+        return this.filesRandom.length
+      } else if (this.files && this.files.length) {
+        return this.files.length
+      } else {
+        return 0
+      }
+    }
 
 /*
     filesCount () {

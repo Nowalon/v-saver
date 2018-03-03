@@ -214,7 +214,7 @@ app.on('ready', () => {
   checkSystemIdle();
 
 
-console.log(" ========================= check ======================== "); //return true;
+console.log(" ========================= v-saver ======================== "); //return true;
 //setInterval(() => {
 ////console.log("screen.getCursorScreenPoint(): ", electron.screen.getCursorScreenPoint()); //return true;
 //console.log(desktopIdle.getIdleTime());
@@ -519,7 +519,7 @@ function checkConnection() {
         if (done) { return false; }
         var delta = ((new Date()).getTime() - start);
         done = true;
-console.log(" ++++++ checkConnection RES: ", {hostname: hostname, time: delta}); //return true;
+//console.log(" ++++++ checkConnection RES: ", {hostname: hostname, time: delta}); //return true;
         resolve({hostname: hostname, time: delta});
       }
     });

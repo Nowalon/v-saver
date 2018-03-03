@@ -45,7 +45,8 @@ let checkDnsLookUpTimeOut = 0
 let isRunByIdleTimer = false
 let newAppVersionValue = null
 
-const checkVersionUrl='https://raw.githubusercontent.com/Nowalon/v-saver/settings/package.json';
+//const checkVersionUrl='https://raw.githubusercontent.com/Nowalon/v-saver/settings/package.json';
+const checkVersionUrl='https://raw.githubusercontent.com/Nowalon/v-saver/dev/package.json';
 
 /* devDebugMode ONLY */ var isDevDebugMode = false;
 

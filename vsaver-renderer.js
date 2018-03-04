@@ -349,23 +349,10 @@ console.warn("keydown e.keyCode: ", e.keyCode);
       }, 600);
     }, false);
 
-
-
-
     var bodyNode = document.getElementsByTagName('body')[0];
-console.warn("document.getElementsByTagName('body'): ", document.getElementsByTagName('body'));
-
-
-
-setTimeout(() => {
-    this.size = { width: bodyNode.offsetWidth, height:  bodyNode.offsetHeight };
-console.warn("size: ", this.size);
-//}, 500);
-}, 100);
-
-
-
-
+    setTimeout(() => {
+        this.size = { width: bodyNode.offsetWidth, height:  bodyNode.offsetHeight };
+    }, 300);
 
 
   },
@@ -627,14 +614,8 @@ console.log("Settings loaded...: ", this.settings); //return true;
           this.clockTimeValue = timeValueStr;
         }
 
-console.log("this.size.height: ", this.size.height); //return true;
-//        if ((s % 30 === 0) && this.settings.showSystemClockTime){
-        if ((s % 10 === 0) && this.settings.showSystemClockTime){
-// !!! CHANGE IT !!!  this.clockTimeStylePosition = `margin-top: ${this.getRandomIntMinMax(200, 800)}px`;
+        if ((s % 30 === 0) && this.settings.showSystemClockTime){
           this.clockTimeStylePosition = `margin-top: ${this.getRandomIntMinMax(80, (this.size.height - 160))}px`;
-//          this.clockTimeStylePosition = `margin-top: ${this.getRandomIntMinMax(80, (this.size.height - 180)   )}px`;
-//          this.clockTimeStylePosition = `margin-top: ${80}px`;
-//          this.clockTimeStylePosition = `margin-top: ${this.size.height - 160}px`;
         }
         if (s % 10 === 0){
           if (this.settings.showInternetConnectionLostIndicator) {

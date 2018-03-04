@@ -19,6 +19,8 @@
 
       <div class="overlay" :class="{'overlay-fade-out': isOverlayfadeOut}">
 
+<span style="position:absolute; color: #fff;">{{size}}</span>
+
         <div id="clockTime"
              v-if="settings.showSystemClockTime"
              :style="clockTimeStylePosition"

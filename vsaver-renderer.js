@@ -122,6 +122,10 @@ var saverApp = new Vue({
     settings: {},
     files: [],
     filesRandom: [],
+
+
+size: {width: 0, height: 0},
+
 /*
     settings: {
       files: [],
@@ -344,6 +348,24 @@ console.warn("keydown e.keyCode: ", e.keyCode);
         mouseMoveTresholdArr = [];
       }, 600);
     }, false);
+
+
+
+
+    var bodyNode = document.getElementsByTagName('body')[0];
+console.warn("document.getElementsByTagName('body'): ", document.getElementsByTagName('body'));
+
+
+
+setTimeout(() => {
+    this.size = { width: bodyNode.offsetWidth, height:  bodyNode.offsetHeight };
+console.warn("size: ", this.size);
+}, 500);
+
+
+
+
+
 
   },
 

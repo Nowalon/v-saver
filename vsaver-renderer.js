@@ -124,7 +124,7 @@ var saverApp = new Vue({
     filesRandom: [],
 
 
-size: {width: 0, height: 0},
+size: {width: 0, height: 768},
 
 /*
     settings: {
@@ -351,7 +351,9 @@ console.warn("keydown e.keyCode: ", e.keyCode);
 
     var bodyNode = document.getElementsByTagName('body')[0];
     setTimeout(() => {
-        this.size = { width: bodyNode.offsetWidth, height:  bodyNode.offsetHeight };
+//        this.size = { width: bodyNode.offsetWidth, height:  bodyNode.offsetHeight };
+        this.size.width = bodyNode.offsetWidth;
+        this.size.height = bodyNode.offsetHeight;
     }, 300);
 
 

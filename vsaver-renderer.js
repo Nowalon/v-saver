@@ -625,7 +625,8 @@ console.log("Settings loaded...: ", this.settings); //return true;
         if (this.settings.showSystemClockTime) {
           this.clockTimeValue = timeValueStr;
         }
-        if ((s % 30 === 0) && this.settings.showSystemClockTime){
+//        if ((s % 30 === 0) && this.settings.showSystemClockTime){
+        if ((s % 10 === 0) && this.settings.showSystemClockTime){
           this.clockTimeStylePosition = `margin-top: ${this.getRandomIntMinMax(200, 800)}px`;
         }
         if (s % 10 === 0){

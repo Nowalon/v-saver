@@ -631,10 +631,10 @@ console.log("this.size.height: ", this.size.height); //return true;
 //        if ((s % 30 === 0) && this.settings.showSystemClockTime){
         if ((s % 10 === 0) && this.settings.showSystemClockTime){
 // !!! CHANGE IT !!!  this.clockTimeStylePosition = `margin-top: ${this.getRandomIntMinMax(200, 800)}px`;
-//          this.clockTimeStylePosition = `margin-top: ${this.getRandomIntMinMax(120, (this.size.height - 180)   )}px`;
+          this.clockTimeStylePosition = `margin-top: ${this.getRandomIntMinMax(80, (this.size.height - 160))}px`;
 //          this.clockTimeStylePosition = `margin-top: ${this.getRandomIntMinMax(80, (this.size.height - 180)   )}px`;
 //          this.clockTimeStylePosition = `margin-top: ${80}px`;
-          this.clockTimeStylePosition = `margin-top: ${this.size.height - 180}px`;
+//          this.clockTimeStylePosition = `margin-top: ${this.size.height - 160}px`;
         }
         if (s % 10 === 0){
           if (this.settings.showInternetConnectionLostIndicator) {

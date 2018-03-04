@@ -16,7 +16,7 @@
 // * TODO: showFileName count/total info ===> * change every 30 min  behavior;
 // * TODO: reset isSuspendSaver after ~ 2h idle;
 // * TODO: clock am/pm text/size/position => use if clockAMPMValue do decrease left margin value;
-// TODO: check/try to use tray badge to indicate connection;
+// * TODO: check/try to use tray badge to indicate connection;
 // TODO: check multiscreen;
 
 
@@ -190,6 +190,7 @@ var saverApp = new Vue({
       self.isVideoLoaded = true;
       setTimeout(() => {
         videoPlayer.currentTime = 0;
+        mainPlayFrameSec = 0;
       }, 10);
     }, false);
 
@@ -198,6 +199,7 @@ var saverApp = new Vue({
       self.isVideoLoaded = true;
       setTimeout(() => {
         videoPlayer.currentTime = 0;
+        mainPlayFrameSec = 0;
       }, 10);
     }, false);
 
@@ -672,7 +674,9 @@ console.warn("filenameStr: ", filenameStr);
             hgvf = setTimeout(() => {
 //                fileNameElem.classList.remove('show-file-name');
               this.showAnimateFileName = false;
-            }, 6000);
+//            }, 6000);
+            }, 8000);
+//            }, 58000);
         }, 1000);
     },
 

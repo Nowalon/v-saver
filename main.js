@@ -31,6 +31,8 @@ const { default: installExtension, VUEJS_DEVTOOLS } = require('electron-devtools
 // be closed automatically when the JavaScript object is garbage collected.
 let settingsWindow
 let saverWindow
+let saverWindowWidth = 1920
+let saverWindowHeight = 1080
 
 let appIcon = null
 let iconPathNorm
@@ -42,8 +44,15 @@ let idleTimer = 0
 let idleTimeOut = 0
 const resetIdleValue = 8640 // ~2.4h
 let checkDnsLookUpTimeOut = 0
+let isConnectedFlag = true
 let isRunByIdleTimer = false
 let newAppVersionValue = null
+var checkConnectionStatusChanged;
+
+
+// test
+// test
+
 
 //const checkVersionUrl='https://raw.githubusercontent.com/Nowalon/v-saver/settings/package.json';
 const checkVersionUrl='https://raw.githubusercontent.com/Nowalon/v-saver/dev/package.json';
@@ -100,10 +109,9 @@ function createSettingsWindow () {
 function createSaverWindow () {
 
   var windowOptions = {
-//    width: 800,
-    width: 1800,
-    minWidth: 1800,
-    height: 800,
+    width: saverWindowWidth,
+    minWidth: saverWindowWidth,
+    height: saverWindowHeight,
     alwaysOnTop: true,
     frame: false,
     title: app.getName()
@@ -123,7 +131,7 @@ function createSaverWindow () {
 
 //  saverWindow.setFullScreen(!saverWindow.isFullScreen())
   if(!isDevDebugMode) {
-    saverWindow.setFullScreen(!saverWindow.isFullScreen())
+    saverWindow.setFullScreen(true)
   }
 
   // Open the DevTools.
@@ -139,13 +147,27 @@ function createSaverWindow () {
     // when you should delete the corresponding element.
     saverWindow = null
   })
+
+  saverWindow.on('blur', (e) => {
+//console.log("ON BLUR ::: E: ", new Date(), e); //return true;
+    saverWindow && runSaverWindow();
+  });
+  saverWindow.on('move', (e) => {
+//console.log("ON MOVE ::: E: ", new Date(), e); //return true;
+    saverWindow && runSaverWindow();
+  });
+  saverWindow.on('leave-full-screen', (e) => {
+//console.log("ON LEAVE-FULL-SCREEN ::: E: ", new Date(), e); //return true;
+    saverWindow && runSaverWindow();
+  });
+
 }
 
 function runSaverWindow () {
   if (appSettings && saverWindow) {
     saverWindow.show()
     saverWindow.focus()
-    saverWindow.setFullScreen(!saverWindow.isFullScreen())
+    saverWindow.setFullScreen(true)
   } else {
     if (appSettings) {
       createSaverWindow()
@@ -185,16 +207,38 @@ if(isDevDebugMode){
         }
       }
       if(desktopIdleSec >= resetIdleValue) {
-        handleChangeContextMenuTemplate(false);
+        isSuspendSaver = false;
+        handleChangeContextMenuTemplate();
       }
     } else {
       isRunByIdleTimer = false;
     }
     checkSystemIdle();
+    if (!saverWindow) {
+      checkConnection().then(res => {
+        if (checkConnectionStatusChanged()) {
+          handleChangeContextMenuTemplate();
+        }
+      }).catch(err => {
+        if (checkConnectionStatusChanged()) {
+          handleChangeContextMenuTemplate();
+        }
+      });
+    }
   }, idleTimeOutValue); // set 10000
 }
 
-
+function connectionSwitched() {
+    var connected = null;
+  return function (_connected) {
+    if (connected !== isConnectedFlag) {
+      connected = isConnectedFlag;
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
 
 
 // This method will be called when Electron has finished
@@ -216,10 +260,21 @@ app.on('ready', () => {
 
 
 console.log(" ========================= v-saver ======================== "); //return true;
-//setInterval(() => {
-////console.log("screen.getCursorScreenPoint(): ", electron.screen.getCursorScreenPoint()); //return true;
+
+
+//const size = electron.screen.getPrimaryDisplay().size
+//console.log("size: ", size);
+//const bounds = electron.screen.getPrimaryDisplay().bounds
+//const {width, height} = electron.screen.getPrimaryDisplay().workAreaSize
+//const {width, height} = electron.screen.getPrimaryDisplay().workArea
+//console.log("width, height: ", width, height);
+//console.log("bounds: ", bounds);
+//console.log("electron.screen.getAllDisplays(): ", electron.screen.getAllDisplays());
+
+setInterval(() => {
+//console.log("screen.getCursorScreenPoint(): ", electron.screen.getCursorScreenPoint()); //return true;
 //console.log(desktopIdle.getIdleTime());
-//}, 3000);
+}, 3000);
 
 electron.screen.on('display-metrics-changed', (event) => {
 console.warn("???????????????????? display-metrics-changed EVENT: ", event);
@@ -237,9 +292,13 @@ console.warn("???????????????????? display-metrics-changed EVENT: ", event);
 
   const iconNameNormal = process.platform === 'win32' ? '/assets/img/v-saver.ico' : '/assets/img/v-saver__icon.png';
   const iconNameSuspended = process.platform === 'win32' ? '/assets/img/v-saver-suspended.ico' : '/assets/img/v-saver-suspended__icon.png';
-  iconPathNorm = path.join(__dirname, iconNameNormal)
-  iconPathSusp = path.join(__dirname, iconNameSuspended)
-  appIcon = new Tray(iconPathNorm)
+  const iconNameNormalDisconected = process.platform === 'win32' ? '/assets/img/disconnected__v-saver.ico' : '/assets/img/disconnected__v-saver__icon.png';
+  const iconNameSuspendedDisconected = process.platform === 'win32' ? '/assets/img/disconnected__v-saver-suspended.ico' : '/assets/img/disconnected__v-saver-suspended__icon.png';
+  iconPathNorm = path.join(__dirname, iconNameNormal);
+  iconPathSusp = path.join(__dirname, iconNameSuspended);
+  iconPathNormNoConnect = path.join(__dirname, iconNameNormalDisconected);
+  iconPathSuspNoConnect = path.join(__dirname, iconNameSuspendedDisconected);
+  appIcon = new Tray(iconPathNorm);
 
   var contextMenuTemplate = getContextMenuTemplate(true);
   let contextMenu = Menu.buildFromTemplate(contextMenuTemplate);
@@ -248,12 +307,18 @@ console.warn("???????????????????? display-metrics-changed EVENT: ", event);
   appIcon.setTitle('V-Saver')
   appIcon.setContextMenu(contextMenu)
 
+  checkConnectionStatusChanged = connectionSwitched();
   checkConnection().then(res => {
     checkVersion().then(isewVersionResult => {
       newAppVersionValue = isewVersionResult ? isewVersionResult : null;
     }).catch(versionErr => { /**/ });
-  }).catch(err => { /**/ });
+  }).catch(err => {
+    /**/
+  });
 
+  const primaryDisplaySize = electron.screen.getPrimaryDisplay().size;
+  saverWindowWidth = primaryDisplaySize.width;
+  saverWindowHeight = primaryDisplaySize.height;
 
 
 //console.log("settings.has('settings'): ", settings.has('settings'));
@@ -452,13 +517,16 @@ function getContextMenuTemplate(suspend) {
   const suspendItem = {
       label: 'Suspend screensaver running',
       click: function () {
-        handleChangeContextMenuTemplate(true);
+        isSuspendSaver = true;
+//        handleChangeContextMenuTemplate(true);
+        handleChangeContextMenuTemplate();
     }
   }
   const resumeItem = {
       label: 'Resume screensaver running',
       click: function () {
-        handleChangeContextMenuTemplate(false);
+        isSuspendSaver = false;
+        handleChangeContextMenuTemplate();
     }
   }
   contextMenuTemplate[0] = suspend ? suspendItem : resumeItem;
@@ -467,14 +535,23 @@ function getContextMenuTemplate(suspend) {
 
 
 function handleChangeContextMenuTemplate(suspend){
-  isSuspendSaver = suspend ? true : false;
+  // isSuspendSaver = suspend ? true : false;
   var contextMenuTemplate = getContextMenuTemplate(!isSuspendSaver);
   contextMenu = Menu.buildFromTemplate(contextMenuTemplate);
   appIcon.setContextMenu(contextMenu);
+
   if (isSuspendSaver) {
-    appIcon.setImage(iconPathSusp);
+    if (isConnectedFlag) {
+      appIcon.setImage(iconPathSusp);
+    } else {
+      appIcon.setImage(iconPathSuspNoConnect);
+    }
   } else {
-    appIcon.setImage(iconPathNorm);
+    if (isConnectedFlag) {
+      appIcon.setImage(iconPathNorm);
+    } else {
+      appIcon.setImage(iconPathNormNoConnect);
+    }
   }
 }
 
@@ -506,6 +583,7 @@ function checkConnection() {
     checkDnsLookUpTimeOut = setTimeout(() => {
       if (done) { return false; }
       done = true;
+      isConnectedFlag = false;
       reject(new Error('DNS lookup timout error'));
       return false;
     }, 4500);
@@ -515,12 +593,14 @@ function checkConnection() {
       if (error) {
         if (done) { return false; }
         done = true;
+        isConnectedFlag = false;
         reject(error);
       } else {
         if (done) { return false; }
         var delta = ((new Date()).getTime() - start);
         done = true;
 //console.log(" ++++++ checkConnection RES: ", {hostname: hostname, time: delta}); //return true;
+        isConnectedFlag = true;
         resolve({hostname: hostname, time: delta});
       }
     });

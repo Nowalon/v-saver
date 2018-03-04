@@ -360,7 +360,8 @@ console.warn("document.getElementsByTagName('body'): ", document.getElementsByTa
 setTimeout(() => {
     this.size = { width: bodyNode.offsetWidth, height:  bodyNode.offsetHeight };
 console.warn("size: ", this.size);
-}, 500);
+//}, 500);
+}, 100);
 
 
 
@@ -625,9 +626,12 @@ console.log("Settings loaded...: ", this.settings); //return true;
         if (this.settings.showSystemClockTime) {
           this.clockTimeValue = timeValueStr;
         }
+
+console.log("this.size.height: ", this.size.height); //return true;
 //        if ((s % 30 === 0) && this.settings.showSystemClockTime){
         if ((s % 10 === 0) && this.settings.showSystemClockTime){
-          this.clockTimeStylePosition = `margin-top: ${this.getRandomIntMinMax(200, 800)}px`;
+// !!! CHANGE IT !!!  this.clockTimeStylePosition = `margin-top: ${this.getRandomIntMinMax(200, 800)}px`;
+          this.clockTimeStylePosition = `margin-top: ${this.getRandomIntMinMax(120, (this.size.height - 180)   )}px`;
         }
         if (s % 10 === 0){
           if (this.settings.showInternetConnectionLostIndicator) {

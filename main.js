@@ -153,19 +153,42 @@ function createSaverWindow () {
     saverWindow && runSaverWindow();
   });
   saverWindow.on('move', (e) => {
-//console.log("ON MOVE ::: E: ", new Date(), e); //return true;
+console.log("ON MOVE ::: E: ", new Date(), e); //return true;
     saverWindow && runSaverWindow();
   });
   saverWindow.on('leave-full-screen', (e) => {
-//console.log("ON LEAVE-FULL-SCREEN ::: E: ", new Date(), e); //return true;
+console.log("ON LEAVE-FULL-SCREEN ::: E: ", new Date(), e); //return true;
     saverWindow && runSaverWindow();
   });
 
 
+
+
 setTimeout(() => {
-  /* some hack fix for cursor hiding */
+//  saverWindow.blur();
+  vsaverPosition = saverWindow.getPosition();
+
+//console.log("saverWindow.getPosition(): ", saverWindow.getPosition()); //return true;
   saverWindow.setFullScreen(false);
+  saverWindow.setPosition(vsaverPosition[0] + 210 , vsaverPosition[1] + 210)
+
+  setTimeout(() => {
+//    saverWindow.focus();
+    saverWindow.setPosition(vsaverPosition[0] , vsaverPosition[1])
+//    saverWindow.setFullScreen(true)
+  }, 500);
 }, 300);
+//}, 1000);
+
+
+
+/// !!!!!!!!!!!!!!!!
+//setTimeout(() => {
+//  /* some hack fix for cursor hiding */
+//  saverWindow.setFullScreen(false);
+//}, 300);
+/// !!!!!!!!!!!!!!!!
+
 
 
 }

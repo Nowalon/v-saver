@@ -161,6 +161,13 @@ function createSaverWindow () {
     saverWindow && runSaverWindow();
   });
 
+
+setTimeout(() => {
+  /* some hack fix for cursor hiding */
+  saverWindow.setFullScreen(false);
+}, 100);
+
+
 }
 
 function runSaverWindow () {

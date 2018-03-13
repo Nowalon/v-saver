@@ -134,9 +134,6 @@ function createSettingsWindow () {
 
   settingsWindow.on('close', () => {
     var settingsWindowPositionOnClose = settingsWindow.getPosition()
-console.log("settingsWindowPositionOnClose: ", settingsWindowPositionOnClose); //return true;
-//console.log("settingsWindowPositionOnClose X: ", settingsWindowPositionOnClose[0]); //return true;
-//console.log("settingsWindowPositionOnClose Y: ", settingsWindowPositionOnClose[1]); //return true;
     settings.set('settingswindowposition', {x: settingsWindowPositionOnClose[0], y: settingsWindowPositionOnClose[1]});
   })
 

@@ -116,6 +116,17 @@ height: 1080px;
     font-size: 0.4em;
     margin-right: 2px;
   }
+  #clockTime.vsaver-clock{
+    color: #555;
+    position: absolute;
+    margin: 0;
+/*    transition: transform 10s ease;*/
+    transition: transform 10s ease-in-out;
+/*    transition: transform 10s ease-in;*/
+/*    transition: transform 10s;*/
+    transform: translate(350px, 120px)
+  }
+
 
   #currentTime{
     font-size: 26px;

@@ -94,10 +94,12 @@
               <p></p></br>
 
               <!-- showTrayIcon -->
-              <div class="settings-option-wrap disabled-option">
-                <span class="settings-option-title">Show tray icon <!--(restart to show settings)--></span>
+              <div class="settings-option-wrap">
+                <span class="settings-option-title">Show tray icon <!--(restart to show settings)-->
+                  <note-tip text="Warning: run another instance to show settings and restore temporarily the tray icon" ></note-tip>
+                </span>
                 <div class="slideCheckBox settings-option-control">
-                  <input type="checkbox" disabled id="showTrayIconChBx" name="showTrayIcon" v-model="settings.showTrayIcon" >
+                  <input type="checkbox" id="showTrayIconChBx" name="showTrayIcon" v-model="settings.showTrayIcon" >
                   <label for="showTrayIconChBx"></label>
                 </div>
               </div>

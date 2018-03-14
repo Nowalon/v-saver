@@ -419,16 +419,17 @@ setInterval(() => {
 }, 3000);
 
 electron.screen.on('display-metrics-changed', (event) => {
-console.warn("############### display-metrics-changed EVENT: ", event);
+  checkExternalDisplay();
+});
+electron.screen.on('display-added', (event) => {
+  checkExternalDisplay();
+});
+electron.screen.on('display-removed', (event) => {
   checkExternalDisplay();
 });
 
 
-  settingsWindowX = parseInt((primaryWorkArea.width - settingsWindowWidth) / 2);
-  settingsWindowY = parseInt((primaryWorkArea.height - settingsWindowHeight) / 2);
 
-//console.log("settingsWindowX: ", settingsWindowX); //return true;
-//console.log("settingsWindowY: ", settingsWindowY); //return true;
 //console.log("process: ", process.timers); //return true;
 //console.log("os: ", os); //return true;
 //console.log("os.cpus: ", os.cpus() ); //return true;

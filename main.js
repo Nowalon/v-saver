@@ -65,6 +65,7 @@ let idleTimer = 0
 let idleTimeOut = 0
 const resetIdleValue = 8640 // ~2.4h
 let checkDnsLookUpTimeOut = 0
+let afterRunSaverWindowTimeOut = 0
 let isConnectedFlag = true
 let isRunByIdleTimer = false
 let newAppVersionValue = null
@@ -298,7 +299,13 @@ function runSaverWindow () {
   if (externalDisplay) {
     runSaverExternalWindow();
   }
+  afterRunSaverWindowTimeOut && clearTimeout(afterRunSaverWindowTimeOut);
+  afterRunSaverWindowTimeOut = setTimeout(() => {
+    clearTimeout(afterRunSaverWindowTimeOut);
+    afterRunSaverWindowTimeOut = 0;
+  }, 10000);
 }
+
 
 function checkSystemIdle () { // call after app.on('ready') and settings loaded only!
   idleTimeOut && clearTimeout(idleTimeOut);
@@ -540,7 +547,9 @@ ipc.on('close-vsaver-window', function (event) {
 console.log("====> ON CLOSE vsaver-window"); //return true;
 //console.log("appSettings.lockSystemOnExit: ", appSettings.lockSystemOnExit); //return true;
   if (appSettings && appSettings.lockSystemOnExit) {
-    lockSystem();
+    if (afterRunSaverWindowTimeOut === 0) {
+      lockSystem();
+    }
   }
   setTimeout(() => {
     saverWindow && saverWindow.close();

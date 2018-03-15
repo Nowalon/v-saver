@@ -20,7 +20,7 @@ const lockSystem = require('lock-system');
 const desktopIdle = require('desktop-idle');
 
 
-const { default: installExtension, VUEJS_DEVTOOLS } = require('electron-devtools-installer');
+/*const { default: installExtension, VUEJS_DEVTOOLS } = require('electron-devtools-installer');*/
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -313,9 +313,11 @@ app.on('ready', () => {
     createSettingsWindow()
   }
 
+/*
   isDevDebugMode && installExtension(VUEJS_DEVTOOLS)
       .then((name) => console.log(`Added Extension:  ${name}`))
       .catch((err) => console.log('An error occurred: ', err));
+*/
 
   checkSystemIdle();
   primaryWorkArea = electron.screen.getPrimaryDisplay().workArea

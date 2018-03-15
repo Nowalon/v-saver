@@ -23,7 +23,6 @@
     "appId": "org.nowalon.vsaver",
     "productName": "V-Saver",
     "copyright": "Copyright © 2018 Nowalon",
-    "nodeGypRebuild": true,
     "linux": {
       "target": [
         "AppImage",
@@ -44,9 +43,7 @@
   "devDependencies": {
     "electron": "~1.7.8",
     "electron-builder": "^20.5.1",
-    "electron-devtools-installer": "^2.2.3",
-    "electron-rebuild": "^1.7.3",
-    "vue-devtools": "^3.1.9"
+    "electron-rebuild": "^1.7.3"
   },
   "dependencies": {
     "desktop-idle": "^1.1.1",

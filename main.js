@@ -66,7 +66,7 @@ var checkConnectionStatusChanged;
 
 const mainAppName = 'V-Saver';
 const mainRepoUrl = 'https://github.com/Nowalon/v-saver';
-const checkVersionUrl='https://raw.githubusercontent.com/Nowalon/v-saver/dev/package.json';
+const checkVersionUrl='https://raw.githubusercontent.com/Nowalon/v-saver/master/package.json';
 
 /* devDebugMode ONLY */ var isDevDebugMode = false;
 

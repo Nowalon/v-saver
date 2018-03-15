@@ -12,8 +12,8 @@ X server development package and pkg-config are required:
 `apt install libxss-dev pkg-config`
 
 
-### 
-### 
+##
+###
 
 ### Video formats support
 
@@ -25,9 +25,9 @@ Multiscreen support implemented as 2 screens support: Primary and Secondary if c
 
 ### Download
 
-Deb: [v-saver_0.9.1_amd64.deb](https://github.com/Nowalon/v-saver/raw/dev/dist/v-saver_0.9.1_amd64.deb)
+Deb: [v-saver_0.9.1_amd64.deb](https://github.com/Nowalon/v-saver/raw/master/dist/v-saver_0.9.1_amd64.deb)
 
-AppImage: [v-saver-0.9.1-x86_64.AppImage](https://github.com/Nowalon/v-saver/raw/dev/dist/v-saver-0.9.1-x86_64.AppImage)
+AppImage: [v-saver-0.9.1-x86_64.AppImage](https://github.com/Nowalon/v-saver/raw/master/dist/v-saver-0.9.1-x86_64.AppImage)
 
 
 ### Start application automatically on login
@@ -51,14 +51,14 @@ Comment=v-saver
 ```
 
 
-### 
+##
 
 ### Issues
 
 There's still no a normal solution to detect fullscreen running applications (at least I haven't found yet) for Ubuntu, even for XScreensaver.
 In this reason v-saver has own suspend running mode as menu option with some reset timer.
 
-### 
+##
 
 ### TODO
 

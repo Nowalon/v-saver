@@ -1,4 +1,4 @@
-# <img src="https://github.com/Nowalon/v-saver/blob/dev/assets/img/videoscreensaver-gradient-icon.png?raw=true" width="60px" align="center" alt="Electron API Demos icon">   v-saver
+# <img src="https://github.com/Nowalon/v-saver/blob/dev/assets/img/videoscreensaver-gradient-icon.png?raw=true" width="60px" align="center" alt="V-Saver icon">   v-saver
 
 Electron + vue.js based desktop videoscreensaver (linux(ubuntu)-first)
 
@@ -22,6 +22,11 @@ MP4 works, AVI does not. In reason of Electron uses native Chromium browser wind
 ### Multiscreen support
 
 Multiscreen support implemented as 2 screens support: Primary and Secondary if connected, with simplified clock-saver window for Secondary/External display.
+
+##
+###
+
+### <img src="https://github.com/Nowalon/v-saver/blob/master/assets/img/screenshot01.jpg?raw=true" width="100%" align="center" alt="V-Saver screenshot">
 
 ##
 ###

@@ -23,9 +23,6 @@ MP4 works, AVI does not. In reason of Electron uses native Chromium browser wind
 
 Multiscreen support implemented as 2 screens support: Primary and Secondary if connected, with simplified clock-saver window for Secondary/External display.
 
-##
-###
-
 ### <img src="https://github.com/Nowalon/v-saver/blob/master/assets/img/screenshot01.jpg?raw=true" width="100%" align="center" alt="V-Saver screenshot">
 
 ##

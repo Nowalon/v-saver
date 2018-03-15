@@ -2,3 +2,10 @@ node_modules
 out
 npm-debug.log
 screen_icons
+OLD_webnuxsaver
+v__bak
+/dist/linux-unpacked
+/yarn-error.log
+/yarn.lock
+/package-lock.json
+package-lock.json

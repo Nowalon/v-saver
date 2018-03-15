@@ -1,8 +1,8 @@
 * {
   font-family: Roboto, -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", "Oxygen", "Ubuntu", "Cantarell", "Open Sans", sans-serif;
   color: #74b1be;
-  background-color: #2f3241;
   -webkit-font-smoothing: antialiased;
+  -webkit-app-region: no-drag;
 }
 .clearfix-divider:after{
   content: '';
@@ -11,13 +11,12 @@
   width: 100%;
   clear: both;
 }
-.right{float: right;}
 body {
   padding: 0;
-
   padding: 8px;
   margin: 0;
   height: 100%;
+  background-color: #2f3241;
 }
 .page-title{
   text-align: center;
@@ -25,6 +24,7 @@ body {
   margin: 0;
   margin-bottom: 8px;
   font-size: 20px;
+  -webkit-app-region: drag;
 }
 .logo{
   position: absolute;
@@ -52,7 +52,6 @@ body {
 #sectionsNav ul li{
   list-style: none;
   display: inline-block;
-  /*width: 49.5%;*/
   width: 49.8%;
 }
 #sectionsNav ul li.active{
@@ -65,6 +64,7 @@ body {
   width: 100%;
   font-size: 16px;
   outline: none;
+  background-color: #2f3241;
   border: 1px solid #74b1be;
   border-radius: 3px;
   transition: 0.2s all ease;
@@ -126,6 +126,7 @@ button.btn{
   border: 1px solid #74b1be;
   border-radius: 3px;
   transition: 0.2s all ease;
+  background-color: #2f3241;
 }
 button.btn:hover{
   color: #9feaf9;
@@ -138,7 +139,7 @@ button.btn[disabled]{
   background-color: inherit;
 }
 button.btn.btn-close{
-  margin-left: 8px;
+/* */
 }
 
 .settings-col{
@@ -147,7 +148,7 @@ button.btn.btn-close{
   display: inline-block;
   padding: 0;
   box-sizing: border-box;
-display: table;
+  display: table;
 }
 .settings-col.settings-col-1 {padding-right: 16px;}
 .settings-col.settings-col-2 {padding-left: 16px;}
@@ -296,6 +297,7 @@ display: table-row;
   vertical-align: middle;
   padding: 0;
   height: 28px;
+  position: relative;
 }
 
 .settings-option-control {
@@ -310,7 +312,36 @@ display: table-row;
   left: 0;
   bottom: 0;
 }
+.new-version-info {
+  position: absolute;
+  bottom: 0;
+  bottom: 0;
+  margin: 8px 0;
+  text-align: center;
+  right: 38%;
+  -webkit-animation: newVersionInfoAnimation 2s infinite;
+  animation: newVersionInfoAnimation 2s infinite;
+}
+.new-version-info, .new-version-info a { color: #9feaf9; }
+
+@-webkit-keyframes newVersionInfoAnimation {
+    0% {transform: scale(1);}
+    35% {transform: scale(1.06);}
+    100% {transform: scale(1);}
+}
+@keyframes newVersionInfoAnimation {
+    0% {transform: scale(1);}
+    35% {transform: scale(1.06);}
+    100% {transform: scale(1);}
+}
+
 .btn-notif { margin-left: 26px;}
+.run-saver-notif {
+    display: table-cell;
+    padding-top: 8px;
+    font-size: 0.9em;
+}
+
 
 
 /* .slideThree */ /* https://codepen.io/bbodine1/pen/novBm */
@@ -354,8 +385,8 @@ display: table-row;
   left: 3px;
   z-index: 1;
   background: #fcfff4;
-  background: -webkit-gradient(linear, left top, left bottom, from(#fcfff4), color-stop(40%, #dfe5d7), to(#b3bead));
-  background: linear-gradient(to bottom, #fcfff4 0%, #dfe5d7 40%, #b3bead 100%);
+  background: -webkit-gradient(linear, left top, left bottom, from(#74b1be), color-stop(40%, #5b8c96), to(#3e595f));
+  background: linear-gradient(to bottom, #74b1be 0%, #5b8c96 40%, #3e595f 100%);
   border-radius: 50px;
   -webkit-transition: all 0.4s ease;
   transition: all 0.4s ease;
@@ -423,6 +454,45 @@ display: table-row;
 }
 
 
+.note-tip-wr {
+  position: absolute;
+  width: auto;
+  min-width: 200px;
+  max-width: 260px;
+  height: auto;
+  top: 20px;
+  left: 0px;
+  font-size: 0.85em;
+  border-radius: 4px;
+  background-color: rgba(29, 30, 37, 0.7);
+  overflow: hidden;
+  transition: all 0.1s ease 0.1s;
+  padding: 0;
+  opacity: 0;
+  z-index: -9;
+  box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.5);
+}
+.settings-option-title:hover .note-tip-wr{
+  padding: 2px;
+  opacity: 1;
+  z-index: 9;
+  transition: all 0.2s ease 0.75s;
+}
+.note-tip-ct {
+  border: 1px solid #3e595f;
+  border-radius: 3px;
+  padding: 2px 3px;
+  overflow: hidden;
+}
+.note-tip-text {
+  color: #9feaf9;
+}
+.note-tip-img {
+  float: right;
+  margin-left: 6px;
+  max-width: 48px !important;
+  max-height: 48px !important;
+}
 
 
 
@@ -441,10 +511,12 @@ display: table-row;
 
 
 
-
-
-
-
-
-
+.right{float: right;}
+.mr-4{margin-right: 4px !important;}
+.mr-6{margin-right: 6px !important;}
+.mr-8{margin-right: 8px !important;}
+.mr-10{margin-right: 10px !important;}
+.mr-12{margin-right: 12px !important;}
+.mr-14{margin-right: 14px !important;}
+.mr-16{margin-right: 16px !important;}
 

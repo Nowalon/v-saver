@@ -11,9 +11,9 @@ X server development package and pkg-config are required:
 
 `apt install libxss-dev pkg-config`
 
-`npm install`
 
-
+### 
+### 
 
 ### Video formats support
 
@@ -51,14 +51,14 @@ Comment=v-saver
 ```
 
 
-###
+### 
 
 ### Issues
 
 There's still no a normal solution to detect fullscreen running applications (at least I haven't found yet) for Ubuntu, even for XScreensaver.
 In this reason v-saver has own suspend running mode as menu option with some reset timer.
 
-###
+### 
 
 ### TODO
 

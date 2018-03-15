@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="assets/css/settings.css">
+    <title>Settings - V-Sasver</title>
+  </head>
+  <body>
+
+    <h1 class="page-title" >
+      <img src="./assets/img/videoscreensaver-gradient-icon.png"
+           class="logo" id="logoImg"/>
+      Settings
+    </h1>
+
+    <div class="main-content" id="settings">
+
+      <p id="message" :class="{'show-message' : showMessage}">{{ message }}</p>
+      <div id="sectionsNav">
+        <ul>
+          <li :class="tab1ActiveClass">
+            <button id="go_tab1" @click.prevent="handleTabSwitch('tab1')">Appearance/Behavior</button>
+          </li>
+          <li :class="tab2ActiveClass">
+            <button id="go_tab2" @click.prevent="handleTabSwitch('tab2')">Files</button>
+          </li>
+        </ul>
+      </div>
+      <div id="sectionsWrapper">
+        <div id="sectionsSlider" :class="sectionsSliderClass">
+
+          <section id="appearanceSection" class="section">
+
+            <div class="settings-col settings-col-1">
+
+              <div class="settings-option-wrap">
+                <span class="settings-option-title">Run after idle (1-{{ maxRunInterval }}min)
+                  <note-tip text="Run screensaver after system idle time value. Switch off system screensaver, power management settings" ></note-tip>
+                </span>
+                <div class="settings-option-control">
+                  <input type="number" min="1"
+                         :max="maxRunInterval"
+                         v-model="settings.runInterval"
+                         class="settings-input number-input">
+                </div>
+              </div>
+
+              <div class="settings-option-wrap">
+                <span class="settings-option-title">Change video after:
+                  <note-tip text="Plays next video by certain defined interval or plays every video to end. Anyway plays next video if the previous one was over" ></note-tip>
+                </span>
+                <div class="vs-radioGroup settings-option-control">
+                  <input type="radio" id="changeAfterChoice1"
+                   name="change_after" value="interval" v-model="settings.changeAfter">
+                  <label for="changeAfterChoice1">Interval</label>
+
+                  <input type="radio" id="changeAfterChoice2"
+                   name="change_after" value="videoends" v-model="settings.changeAfter">
+                  <label for="changeAfterChoice2">Video ends</label>
+                </div>
+              </div>
+
+              <div class="settings-option-wrap" :class="{'disabled-option' : changeIntervalDisabled}">
+                <span class="settings-option-title">Change interval (1-30min)</span>
+                <div class="settings-option-control">
+                  <input type="number" min="1"
+                         :max="maxVideoChangeInterval"
+                         v-model="settings.changeInterval"
+                         :disabled="changeIntervalDisabled"
+                         class="settings-input number-input">
+                </div>
+              </div>
+
+              <div class="settings-option-wrap">
+                <span class="settings-option-title ">Shuffle video
+                  <note-tip text="Shuffle video sources playlist. Shuffling on saver start and periodically direcly in screensaver vindow, not in settings:Files" ></note-tip>
+                </span>
+                <div class="slideCheckBox settings-option-control">
+                  <input type="checkbox" id="randomizeVideoChBx" name="randomizeVideo" v-model="settings.randomizeVideo" >
+                  <label for="randomizeVideoChBx"></label>
+                </div>
+              </div>
+
+              <div class="settings-option-wrap">
+                <span class="settings-option-title">Lock system on exit
+                  <note-tip text="Lock system after screensaver exit" ></note-tip>
+                </span>
+                <div class="slideCheckBox settings-option-control">
+                  <input type="checkbox" id="lockSystemOnExitChBx" name="lockSystemOnExit" v-model="settings.lockSystemOnExit" >
+                  <label for="lockSystemOnExitChBx"></label>
+                </div>
+              </div>
+
+              <p></p></br>
+
+              <!-- showTrayIcon -->
+              <div class="settings-option-wrap">
+                <span class="settings-option-title">Show tray icon <!--(restart to show settings)-->
+                  <note-tip text="Warning: run another instance to show settings and restore temporarily the tray icon" ></note-tip>
+                </span>
+                <div class="slideCheckBox settings-option-control">
+                  <input type="checkbox" id="showTrayIconChBx" name="showTrayIcon" v-model="settings.showTrayIcon" >
+                  <label for="showTrayIconChBx"></label>
+                </div>
+              </div>
+              <!-- showTrayIcon -->
+
+              <div class="settings-option-wrap">
+                <span class="settings-option-title">Unlock 'Reset to default' option
+                  <note-tip text="Will not be saved in settings" ></note-tip>
+                </span>
+                <div class="slideCheckBox settings-option-control">
+                  <input type="checkbox" id="unlockResetToDefaultChBx" name="unlockResetToDefault" v-model="unlockResetToDefault" >
+                  <label for="unlockResetToDefaultChBx"></label>
+                </div>
+              </div>
+
+              <p></p></br>
+              <p></p></br>
+              <p></p></br>
+
+
+            <!--
+              <div v-if="showDevDebugOption" class="settings-option-wrap">
+                <span class="settings-option-title">dev/debug mode</span>
+                <div class="slideCheckBox settings-option-control">
+                  <input type="checkbox" id="devDebugModeChBx" name="devDebugMode" v-model="settings.devDebugMode" >
+                  <label for="devDebugModeChBx"></label>
+                </div>
+              </div>
+            -->
+
+
+            </div>
+
+
+            <div class="settings-col settings-col-2">
+
+              <div class="settings-option-wrap">
+                <span class="settings-option-title">Show system clock time
+                <note-tip text="Shows clock on left side of screensaver window periodically changing its vertical position" ></note-tip>
+                </span>
+                <div class="slideCheckBox settings-option-control">
+                  <input type="checkbox" id="showSystemClockTimeChBx" name="showSystemClockTime" v-model="settings.showSystemClockTime" >
+                  <label for="showSystemClockTimeChBx"></label>
+                </div>
+              </div>
+
+              <div class="settings-option-wrap" :class="{'disabled-option' : changeTimeFormatDisabled}">
+                <span class="settings-option-title">Time format:</span>
+                <div class="vs-radioGroup settings-option-control">
+                  <input type="radio" id="timeFormatChoice1"
+                   name="time_format" value="12" v-model="settings.clockTimeFormat" :disabled="changeTimeFormatDisabled">
+                  <label for="timeFormatChoice1">12h</label>
+
+                  <input type="radio" id="timeFormatChoice2"
+                   name="time_format" value="24" v-model="settings.clockTimeFormat" :disabled="changeTimeFormatDisabled">
+                  <label for="timeFormatChoice2">24h</label>
+                </div>
+              </div>
+
+              <div class="settings-option-wrap">
+                <span class="settings-option-title">Show video remaining time
+                </span>
+                <div class="slideCheckBox settings-option-control">
+                  <input type="checkbox" id="showVideoRemainingTimeChBx" name="showVideoRemainingTime" v-model="settings.showVideoRemainingTime" >
+                  <label for="showVideoRemainingTimeChBx"></label>
+                </div>
+              </div>
+
+              <div class="settings-option-wrap">
+                <span class="settings-option-title">Show video file name on change
+                <note-tip text="Shows video file name for a few seconds at the beginning of each video" ></note-tip>
+                </span>
+                <div class="slideCheckBox settings-option-control">
+                  <input type="checkbox" id="showVideoFileNameChBx" name="showVideoFileName" v-model="settings.showVideoFileName" >
+                  <label for="showVideoFileNameChBx"></label>
+                </div>
+              </div>
+
+              <div class="settings-option-wrap">
+                <span class="settings-option-title">Show Internet connection lost indicator
+                <note-tip
+                    text="Shows a pulsing red indicator in the top left corner when the Internet connection is lost. Based on external source ping" img-src="./assets/img/cloud-connection-2.svg"></note-tip>
+                </span>
+                <div class="slideCheckBox settings-option-control">
+                  <input type="checkbox" id="showInternetConnectionLostIndicatorChBx" name="showInternetConnectionLostIndicator" v-model="settings.showInternetConnectionLostIndicator" >
+                  <label for="showInternetConnectionLostIndicatorChBx"></label>
+                </div>
+              </div>
+
+              <p></p></br>
+              <p></p></br>
+
+              <button class="btn mr-6" @click="handleDeleteSettings" disabled>test/delete</button>
+              <button class="btn" @click="handleRunTestSaverWindow">Run screensaver</button>
+
+              <div class="settings-option-wrap">
+                <p class="run-saver-notif"><sup>*</sup>Press `H` in screesaver to show hotkeys help info</p>
+              </div>
+
+
+            </div>
+
+          </section>
+
+
+          <section id="filesSection" class="section">
+
+            <div class="settings-col settings-col-1">
+              <button class="btn" @click="handleAddFiles">Add files</button>
+              <span class="btn-notif">duplicates will be skipped</span>
+              <button class="btn right" @click="handleLoadDemoFiles">Load demo</button>
+            </div>
+            <div class="settings-col settings-col-2">
+              <button class="btn" @click="handleClearFiles">Remove all files</button>
+              <span class="btn-notif">Files count: {{ filesCount }}</span>
+            </div>
+
+            <div class="clearfix-divider"></div>
+
+            <div class="setting-files-wrap" id="settingFilesWrapNode">
+              <ul class="file-list" id="fileListNode">
+                <li v-for="filePath, filePathindex in settings.files" :index="filePathindex">
+                  <span class="file-name">{{ filePathindex }}: {{ filePath }}</span>
+                  <span class="file-action file-action-move-up"
+                        :class="{'disabled' : filePathindex === 0}"
+                        @click="handleMoveFilePathUp(filePath, filePathindex)"
+                        title="move up"> &#8679; </span>
+                  <span class="file-action file-action-move-down"
+                        @click="handleMoveFilePathDown(filePath, filePathindex)"
+                        :class="{'disabled' : filePathindex === (settings.files.length - 1) }"
+                        title="move down"> &#8681; </span>
+                  <span class="file-action file-action-delete"
+                        @click="handleRemoveFilePath(filePath, filePathindex)"
+                        title="remove"> &times; </span>
+                </li>
+              </ul>
+              <div class="file-list-scroller" v-if="showfileListScroll"><span>&varr;</span></div>
+            </div>
+
+          </section>
+
+        </div>
+
+        <div class="clearfix-divider"></div>
+
+        <div class="btn-controls">
+          <button class="btn mr-6" :disabled="!unlockResetToDefault" @click="handleResetSettings">Reset to default</button>
+          <button class="btn btn-close" @click="handleCloseSettings">Close</button>
+          <button class="btn right" @click="handleSaveSettings">Save</button>
+          <p v-if="isNewVersionavailable" class="new-version-info">A new <a @click.prevent="handleOpenVersion" href="#">version {{newVersionValue}}</a> is available</p>
+        </div>
+
+      </div>
+
+    </div>
+
+
+  <template id="noteTip">
+
+    <div class="note-tip-wr">
+      <div class="note-tip-ct">
+        <span class="note-tip-text">{{ text }}</span>
+        <img v-if="imgSrc" width="26" height="26" class="note-tip-img" :src="imgSrc"/>
+      </div>
+    </div>
+
+  </template>
+
+
+    <script>
+      require('./settings-renderer.js')
+    </script>
+  </body>
+</html>
+

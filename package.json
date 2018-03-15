@@ -1,0 +1,55 @@
+{
+  "name": "v-saver",
+  "version": "0.9.1",
+  "description": "Electron based desktop videoscreensaver (linux(ubuntu)-first) application",
+  "author": "Nowalon",
+  "email": "nowalon@mail.com",
+  "license": "NPOSL-3.0",
+  "repository": "https://github.com/Nowalon/v-saver",
+  "keywords": [
+    "Electron",
+    "videoscreensaver",
+    "screensaver",
+    "v-saver"
+  ],
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --debug",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "build": {
+    "appId": "org.nowalon.vsaver",
+    "productName": "V-Saver",
+    "copyright": "Copyright © 2018 Nowalon",
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "category": "Utility",
+      "packageCategory": "Utility",
+      "synopsis": "Electron based desktop wide-configured videoscreensaver"
+    },
+    "deb": {
+      "maintainer": "Nowalon",
+      "depends": [
+        "libxss-dev",
+        "pkg-config"
+      ]
+    }
+  },
+  "devDependencies": {
+    "electron": "~1.7.8",
+    "electron-builder": "^20.5.1",
+    "electron-rebuild": "^1.7.3"
+  },
+  "dependencies": {
+    "desktop-idle": "^1.1.1",
+    "electron-settings": "^3.1.4",
+    "lock-system": "^1.3.0",
+    "request": "^2.85.0",
+    "vue": "^2.5.13"
+  }
+}

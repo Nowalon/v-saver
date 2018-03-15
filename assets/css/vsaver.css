@@ -1,0 +1,302 @@
+  @font-face {
+      font-family: steelfishOutline;
+      src: url(../fonts/steelfish_outline.ttf);
+  }
+  @font-face {
+      font-family: GoffikOutline;
+      src: url(../fonts/Goffik-O.ttf);
+  }
+
+* {
+  -webkit-font-smoothing: antialiased;
+  cursor: none;
+}
+html {
+  height: 100%;
+  cursor: none;
+}
+.clearfix-divider:after{
+  content: '';
+  position: relative;
+  display: table;
+  width: 100%;
+  clear: both;
+}
+.right{float: right;}
+body {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  background-color: #000000;
+  overflow: hidden;
+  cursor: none;
+}
+
+.container { position:relative; }
+.container video {
+    position:relative;
+    z-index:0;
+}
+
+.main-content{
+  width: 100%;
+  height: 100%;
+  vertical-align: middle;
+}
+
+#videoPlayer{
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 0.85s;
+  cursor: none;
+}
+#videoPlayer.video-fade-out{
+  opacity: 0;
+}
+#videoPlayer.video-fade-in{
+  opacity: 1;
+}
+.overlay {
+  position:absolute;
+  top:0;
+  left:0;
+  z-index:1;
+  font-family: monospace;
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+  transition: opacity 0.85s ease;
+}
+.overlay.overlay-fade-out { opacity: 0; }
+
+  #clockTime{
+    font-size: 86px;
+    font-family: steelfishOutline;
+    color: white;
+    margin-left: 50px;
+    margin-top: 20%;
+    transition: margin-top 0.75s;
+    display: inline-block;
+  }
+  #clockTime.is-clock-am-pm {
+    margin-left: 16px;
+  }
+  #clockTime .clock-am-pm {
+    font-size: 0.4em;
+    margin-right: 2px;
+  }
+  #clockTime.vsaver-clock{
+    color: #555;
+    position: absolute;
+    margin: 0;
+    transition: transform 10s ease-in-out;
+    transform: translate(350px, 120px)
+  }
+
+
+  #currentTime{
+    font-size: 26px;
+    font-family: GoffikOutline;
+    color: black;
+    opacity: 1;
+    position: absolute;
+    top: 2%;
+    right: 2%;
+    transition: font-size 0s, opacity 0.1s;
+    -webkit-animation: currentTimeBlinkAnimation 3s infinite;
+    -moz-animation: currentTimeBlinkAnimation 3s infinite;
+    animation: currentTimeBlinkAnimation 3s infinite;
+  }
+    #currentTime.current-time-endtime{
+        animation: none;
+    }
+    #currentTime.current-time-go{
+        transition: font-size 0.52s, opacity 0.1s 0.35s;
+        font-size: 950px;
+        opacity: 0;
+    }
+
+    @-webkit-keyframes currentTimeBlinkAnimation {
+        0% {color: #333;}
+        50% {color: #ccc;}
+        100% {color: #333;}
+    }
+    @-moz-keyframes currentTimeBlinkAnimation {
+        0% {color: #333;}
+        50% {color: #ccc;}
+        100% {color: #333;}
+    }
+    @keyframes currentTimeBlinkAnimation {
+        0% {color: #333;}
+        50% {color: #ccc;}
+        100% {color: #333;}
+    }
+
+    #videoFileName{
+        position: absolute;
+        font-size: 20px;
+        bottom: -30px;
+        right: 0;
+        left: 0;
+        text-align: center;
+        font-family: GoffikOutline;
+        color: white;
+        margin: 0 auto;
+        transition: all 0.1s 0.75s;
+        transition: bottom 0.1s 0.75s, font-size 0.25s 0.55s, color 0.15s 0.9s;
+    }
+    #videoFileName.show-file-name{
+        bottom: 16px;
+    }
+    #videoFileName.show-file-name.show-no-video{
+      bottom: 48%;
+      font-size: 2.2em;
+      color: red;
+      color: brown;
+      color: firebrick;
+      transition: bottom 0.1s 0.75s, font-size 0.15s 0.9s, color 0.15s 0.2s;
+    }
+
+#internetConnectionIco{
+    display: none;
+    fill: red;
+    position: absolute;
+    top: 24px;
+    left: 28px;
+    width: 32px;
+    height: 32px;
+    overflow: hidden;
+    opacity: 1;
+    transform: scale(1);
+}
+#internetConnectionIco.show-connection-ico {
+    display: block;
+    -webkit-animation: internetConnectionIcoBlinkAnimation 2s infinite;
+    -moz-animation: internetConnectionIcoBlinkAnimation 2s infinite;
+    animation: internetConnectionIcoBlinkAnimation 2s infinite;
+}
+
+    @-webkit-keyframes internetConnectionIcoBlinkAnimation {
+        0% {opacity: 0; transform: scale(0.7);}
+        35% {opacity: 1.0; transform: scale(1);}
+        100% {opacity: 0; transform: scale(6.8);}
+    }
+
+    @-moz-keyframes internetConnectionIcoBlinkAnimation {
+        0% {opacity: 0; transform: scale(0.7);}
+        35% {opacity: 1.0; transform: scale(1);}
+        100% {opacity: 0; transform: scale(6.8);}
+    }
+    @keyframes internetConnectionIcoBlinkAnimation {
+        0% {opacity: 0; transform: scale(0.7);}
+        35% {opacity: 1.0; transform: scale(1);}
+        100% {opacity: 0; transform: scale(6.9);}
+    }
+
+
+#hotkeysHelp {
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  transform: translateY(-50%);
+  width: 400px;
+  min-width: 400px;
+  border: 2px solid rgba(85, 139, 150, 0.4);
+  border-radius: 6px;
+  color: #74b1be;
+  background-color: rgba(48, 48, 48, 0.7);
+  padding: 8px;
+  box-sizing: border-box;
+  opacity: 0;
+  box-shadow: 1px 4px 8px rgba(0, 0, 0, 0.5);
+  transition: opacity 0.7s ease;
+}
+#hotkeysHelp.show-hotkeys-help{
+  opacity: 0.9;
+}
+#hotkeysHelp .help-table{
+  display: table;
+  width: 100%;
+}
+#hotkeysHelp .help-row{
+  display: table-row;
+  width: 100%;
+}
+#hotkeysHelp .help-cell{
+  display: table-cell;
+  text-align: center;
+  padding: 4px;
+  width: 33.333%;
+}
+#hotkeysHelp .help-cell.help-descr{
+  font-size: 16px;
+  font-family: GoffikOutline;
+
+}
+#hotkeysHelp .help-cell pre{
+  font-size: 36px;
+  font-family: GoffikOutline;
+  padding: 0;
+  margin: 0;
+  width: 46px;
+  height: 38px;
+  line-height: 42px;
+  border: 1px solid rgba(116, 177, 190, 0.4);
+  border-radius: 4px;
+  margin: 0 auto;
+}
+
+#videoSrcError{
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  transform: translateY(-50%);
+  width: 70%;
+  min-width: 890px;
+  border: 2px solid rgba(255, 0, 0, 0.4);
+  border-radius: 6px;
+  color: red;
+  background-color: rgba(48, 48, 48, 0.7);
+  padding: 8px;
+  opacity: 0;
+  transition: opacity 0.1s ease;
+}
+#videoSrcError.video-src-error{
+  transition: opacity 0.7s ease;
+  opacity: 0.9;
+}
+#videoSrcError p{
+  font-family: GoffikOutline;
+  font-size: 1.6em;
+  color: red;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+
+
+
+#playNext{display: none;}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -19,8 +19,6 @@
 
       <div class="overlay" :class="{'overlay-fade-out': isOverlayfadeOut}">
 
-<!--<span style="position:absolute; color: #fff;">{{size}} -> {{ clockTimeStylePosition }}</span>-->
-
         <div id="clockTime"
              v-if="settings.showSystemClockTime"
              :style="clockTimeStylePosition"
@@ -55,7 +53,6 @@
               <polygon points="232,288 152,336 232,384 232,352 360,352 360,320 232,320 	"/>
           </g>
         </svg>
-        <!--<img id="internetConnectionIco" src="images/cloud-connection-2.svg"/>-->
 
         <div id="videoSrcError" :class="{'video-src-error' : showVideoLoadingError}">
           <p>The video source &laquo;{{ activeVideoSource }}&raquo; is not available:</p>
@@ -83,16 +80,8 @@
     </div>
 
 
-
-
-
-
-
     <script>
-      // You can also require other files to run in this process
       require('./vsaver-renderer.js')
-//      require('./checkInternetConnection.js')
-
     </script>
   </body>
 </html>

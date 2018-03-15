@@ -1,22 +1,8 @@
-// This file is required by the index.html file and will
+// This file is required by the settings.html file and will
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 
 'use strict';
-
-// * TODO: use radio-button for time-format choose 12/24 instead of on/off;
-// * TODO: settings save watch treshold
-// * TODO: default video
-// * TODO: note-tip transition decrease/fix for hovered;
-// * TODO: lock option for 'reset to default'
-// * TODO: settings window 'headline';
-// * TODO: set settings obj from default on-mounted before settings loading
-// TODO: files order - set move last down as first and vice versa;
-// TODO: try to fetch file duration time;
-
-/*
-commit:
-*/
 
 const ipc = require('electron').ipcRenderer
 const shell = require('electron').shell;
@@ -27,12 +13,10 @@ Vue.config.devtools = true
 
 var messageTimeout = 0;
 var changeSettingsThresholdTimeout = 0;
-
 var settingFilesWrapNode, fileListNode, logoImg;
 
 var settingsApp = new Vue({
   el: '#settings',
-
   data: {
     message: '',
     showMessage: false,
@@ -41,7 +25,6 @@ var settingsApp = new Vue({
     repoUrl: 'https://github.com/Nowalon/v-saver',
     isNewVersionavailable: false,
     newVersionValue: '0.0.0',
-
     defaultSettings: {
       files: [
         './assets/video/Starman - SpaceX.mp4',
@@ -53,42 +36,20 @@ var settingsApp = new Vue({
       changeInterval: 5,
       randomizeVideo: true,
       showSystemClockTime: true,
-      //use24TimeFormat: true,
       clockTimeFormat: 24,
       showVideoRemainingTime: true,
       showVideoFileName: true,
       showInternetConnectionLostIndicator: true,
       showTrayIcon: true,
-      devDebugMode: true // !!! devDebugMode
+      devDebugMode: false // !!! devDebugMode
     },
-    settings: {
-/*
-      files: [],
-      runInterval: 10,
-      lockSystemOnExit: false,
-      changeAfter: 'videoends',
-      changeInterval: 5,
-      randomizeVideo: true,
-
-      showSystemClockTime: true,
-      //use24TimeFormat: true,
-      clockTimeFormat: 24,
-      showVideoRemainingTime: true,
-      showVideoFileName: true,
-      showInternetConnectionLostIndicator: true,
-
-      showTrayIcon: true,
-      devDebugMode: true
-*/
-    },
+    settings: {},
+    showDevDebugOption: false, // !!! devDebugMode
     unlockResetToDefault: false,
     maxRunInterval: 60,
     maxVideoChangeInterval: 30,
-
     showfileListScroll: false
-
   },
-
 
   computed: {
     sectionsSliderClass () {
@@ -157,7 +118,6 @@ var settingsApp = new Vue({
         self.isNewVersionavailable = false;
       }
     });
-
 
     settingFilesWrapNode = document.getElementById('settingFilesWrapNode');
     fileListNode = document.getElementById('fileListNode');
@@ -310,7 +270,6 @@ var settingsApp = new Vue({
 
     'settings' : {
       handler: function (newValue, oldValue) {
-console.warn("settings newValue: ", newValue);
         changeSettingsThresholdTimeout && clearTimeout(changeSettingsThresholdTimeout);
         changeSettingsThresholdTimeout = setTimeout(() => {
           this.initLoadedOrReset && this.handleSaveSettings();
@@ -345,9 +304,6 @@ var noteTip = Vue.component('note-tip', {
     }
   }
 });
-
-
-
 
 
 

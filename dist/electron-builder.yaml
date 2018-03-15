@@ -1,0 +1,15 @@
+directories:
+  output: dist
+  buildResources: build
+appId: org.nowalon.vsaver
+productName: V-Saver
+copyright: Copyright © 2018 Nowalon
+linux:
+  maintainer: Nowalon
+  target:
+    - AppImage
+    - deb
+  category: Utility
+  packageCategory: Utility
+  synopsis: Electron based desktop wide-configured videoscreensaver
+electronVersion: 1.7.12

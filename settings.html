@@ -34,7 +34,7 @@
             <div class="settings-col settings-col-1">
 
               <div class="settings-option-wrap">
-                <span class="settings-option-title">Run <!--screensaver--> after idle (1-{{ maxRunInterval }}min)
+                <span class="settings-option-title">Run after idle (1-{{ maxRunInterval }}min)
                   <note-tip text="Run screensaver after system idle time value. Switch off system screensaver, power management settings" ></note-tip>
                 </span>
                 <div class="settings-option-control">
@@ -120,13 +120,15 @@
               <p></p></br>
 
 
-              <div class="settings-option-wrap">
+            <!--
+              <div v-if="showDevDebugOption" class="settings-option-wrap">
                 <span class="settings-option-title">dev/debug mode</span>
                 <div class="slideCheckBox settings-option-control">
                   <input type="checkbox" id="devDebugModeChBx" name="devDebugMode" v-model="settings.devDebugMode" >
                   <label for="devDebugModeChBx"></label>
                 </div>
               </div>
+            -->
 
 
             </div>
@@ -155,13 +157,6 @@
                    name="time_format" value="24" v-model="settings.clockTimeFormat" :disabled="changeTimeFormatDisabled">
                   <label for="timeFormatChoice2">24h</label>
                 </div>
-
-                <!--<div class="slideCheckBox settings-option-control">
-                  <input type="checkbox" id="use24TimeFormatChBx" name="use24TimeFormat"
-                         v-model="settings.use24TimeFormat"
-                         :disabled="changeTimeFormatDisabled" >
-                  <label for="use24TimeFormatChBx"></label>
-                </div>-->
               </div>
 
               <div class="settings-option-wrap">
@@ -275,9 +270,7 @@
 
 
     <script>
-      // You can also require other files to run in this process
       require('./settings-renderer.js')
-
     </script>
   </body>
 </html>

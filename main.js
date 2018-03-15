@@ -4,19 +4,12 @@ const app = electron.app
 const ipc = electron.ipcMain
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow
-// const {Menu, Tray} = require('electron')
 const Menu = electron.Menu
 const Tray = electron.Tray
 const dialog = electron.dialog
+const shell = electron.shell
 
 const settings = require('electron-settings');
-
-//const globalShortcut = electron.globalShortcut
-const shell = electron.shell // ????
-//const shell = require('electron').shell;
-
-//const os = require('os')
-
 
 const path = require('path');
 const url = require('url');
@@ -52,7 +45,6 @@ let saverExternalWindowY = 0
 let saverExternalWindowWidth = 1920
 let saverExternalWindowHeight = 1080
 
-
 let appIcon = null
 let showTrayIcon = true
 let iconPathNorm
@@ -72,13 +64,8 @@ let newAppVersionValue = null
 var checkConnectionStatusChanged;
 
 
-// test
-// test
-
 const mainAppName = 'V-Saver';
-
 const mainRepoUrl = 'https://github.com/Nowalon/v-saver';
-//const checkVersionUrl='https://raw.githubusercontent.com/Nowalon/v-saver/settings/package.json';
 const checkVersionUrl='https://raw.githubusercontent.com/Nowalon/v-saver/dev/package.json';
 
 /* devDebugMode ONLY */ var isDevDebugMode = false;
@@ -92,7 +79,6 @@ function createSettingsWindow () {
   checkSetSettingsWindowPosition();
   var windowOptions = {
     width: settingsWindowWidth,
-//    width: 1500,
     minWidth: settingsWindowWidth,
     height: settingsWindowHeight,
     x: settingsWindowX,
@@ -112,15 +98,12 @@ function createSettingsWindow () {
   // Create the browser window.
   settingsWindow = new BrowserWindow(windowOptions)
 
-  // and load the index.html of the app.
+  // and load the settings.html of the app.
   settingsWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'settings.html'),
     protocol: 'file:',
     slashes: true
   }))
-
-//settingsWindow.setFullScreen(!settingsWindow.isFullScreen())
-
 
   // Open the DevTools.
   isDevDebugMode && settingsWindow.webContents.openDevTools()
@@ -137,13 +120,10 @@ function createSettingsWindow () {
     var settingsWindowPositionOnClose = settingsWindow.getPosition()
     settings.set('settingswindowposition', {x: settingsWindowPositionOnClose[0], y: settingsWindowPositionOnClose[1]});
   })
-
-
 }
 
 
 function createSaverWindow () {
-
   var windowOptions = {
     width: saverWindowWidth,
     minWidth: saverWindowWidth,
@@ -157,27 +137,18 @@ function createSaverWindow () {
   if (process.platform === 'linux') {
     windowOptions.icon = path.join(__dirname, '/assets/img/videoscreensaver-gradient-icon.png')
   }
-  // Create the browser window.
   saverWindow = new BrowserWindow(windowOptions)
-
-  // and load the index.html of the app.
   saverWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'vsaver.html'),
-//    pathname: path.join(__dirname, 'vsaver-clock.html'),
     protocol: 'file:',
     slashes: true
   }))
 
-//  saverWindow.setFullScreen(!saverWindow.isFullScreen())
   if(!isDevDebugMode) {
     saverWindow.setFullScreen(true)
   }
-
   // Open the DevTools.
   isDevDebugMode && saverWindow.webContents.openDevTools()
-
-//  saverWindow.focus();
-//  saverWindow.focusOnWebView();
 
   // Emitted when the window is closed.
   saverWindow.on('closed', function () {
@@ -188,15 +159,12 @@ function createSaverWindow () {
   })
 
   saverWindow.on('blur', (e) => {
-//console.log("ON BLUR ::: E: ", new Date(), e); //return true;
     saverWindow && runSaverWindow();
   });
   saverWindow.on('move', (e) => {
-//console.log("ON MOVE ::: E: ", new Date(), e); //return true;
     saverWindow && runSaverWindow();
   });
   saverWindow.on('leave-full-screen', (e) => {
-//console.log("ON LEAVE-FULL-SCREEN ::: E: ", new Date(), e); //return true;
     saverWindow && runSaverWindow();
   });
 
@@ -204,13 +172,10 @@ function createSaverWindow () {
     /* some hack fix for cursor hiding */
     saverWindow.setFullScreen(false);
   }, 300);
-
 }
 
 
-
 function createSaverExternalWindow () {
-
   var windowOptions = {
     width: saverExternalWindowWidth,
     minWidth: saverExternalWindowWidth,
@@ -226,53 +191,29 @@ function createSaverExternalWindow () {
   }
   // Create the browser window.
   saverExternalWindow = new BrowserWindow(windowOptions)
-
-  // and load the index.html of the app.
   saverExternalWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'vsaver-clock.html'),
     protocol: 'file:',
     slashes: true
   }))
-
   if(!isDevDebugMode) {
     saverExternalWindow.setFullScreen(true)
   }
-
   // Open the DevTools.
   isDevDebugMode && saverExternalWindow.webContents.openDevTools()
-
   // Emitted when the window is closed.
   saverExternalWindow.on('closed', function () {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
     saverExternalWindow = null
   })
-
-  saverExternalWindow.on('blur', (e) => {
-//console.log("ON BLUR ::: E: ", new Date(), e); //return true;
-//    saverExternalWindow && runSaverExternalWindow();
-  });
-  saverExternalWindow.on('move', (e) => {
-//console.log("ON MOVE ::: E: ", new Date(), e); //return true;
-//    saverExternalWindow && runSaverExternalWindow();
-  });
-  saverExternalWindow.on('leave-full-screen', (e) => {
-//console.log("ON LEAVE-FULL-SCREEN ::: E: ", new Date(), e); //return true;
-//    saverExternalWindow && runSaverExternalWindow();
-  });
-
   setTimeout(() => {
     /* some hack fix for cursor hiding */
     saverExternalWindow.setFullScreen(false);
   }, 300);
-
 }
 
 function runSaverExternalWindow () {
   if (appSettings && saverExternalWindow) {
     saverExternalWindow.show()
-//    saverExternalWindow.focus()
     saverExternalWindow.setFullScreen(true)
   } else {
     if (appSettings) {
@@ -280,10 +221,6 @@ function runSaverExternalWindow () {
     }
   }
 }
-
-
-
-
 
 
 function runSaverWindow () {
@@ -309,36 +246,21 @@ function runSaverWindow () {
 
 function checkSystemIdle () { // call after app.on('ready') and settings loaded only!
   idleTimeOut && clearTimeout(idleTimeOut);
-//  idleTimer = appSettings.runInterval * 1;
   var idleTimerSec = appSettings.runInterval * 1 * 60;
   var idleTimeOutValue = 10000; // 10000~20000 ?
 
-//console.log("isDevDebugMode: ", isDevDebugMode, new Date()); //return true;
+  if(isDevDebugMode){
+    idleTimerSec = 99999999;
+    idleTimeOutValue = 2000;
+  }
 
-if(isDevDebugMode){
-  idleTimerSec = 50000000;
-  idleTimeOutValue = 2000;
-}
-  //setInterval(() => {
-//console.log("---> check appSettings: ", appSettings);
-//console.log("---> check appSettings.runInterval: ", typeof appSettings.runInterval, appSettings.runInterval);
-//console.log("---> check idleTimer: ", typeof idleTimer, idleTimer);
-//console.log("check idleTimerSec: ", /*typeof idleTimerSec,*/ idleTimerSec);
   idleTimeOut = setTimeout(() => {
     var desktopIdleSec = desktopIdle.getIdleTime();
-//    console.log("isSuspendSaver: ", isSuspendSaver);
-//    console.log("desktopIdleSec: ", /*typeof desktopIdleSec,*/ desktopIdleSec);
-//    console.log("idleTimerSec: ", idleTimerSec);
-    //console.log("screen.getCursorScreenPoint(): ", electron.screen.getCursorScreenPoint()); //return true;
-//console.log("isRunByIdleTimer: ", isRunByIdleTimer);
     if (desktopIdleSec >= idleTimerSec) {
       if (!isSuspendSaver) {
         if (!isRunByIdleTimer){
           isRunByIdleTimer = true;
           runSaverWindow();
-//          if (externalDisplay) {
-//runSaverExternalWindow();
-//          }
         }
       }
       if(desktopIdleSec >= resetIdleValue) {
@@ -362,8 +284,9 @@ if(isDevDebugMode){
     }
 
     checkSystemIdle();
-  }, idleTimeOutValue); // set 10000
+  }, idleTimeOutValue);
 }
+
 
 function connectionSwitched() {
     var connected = null;
@@ -385,7 +308,6 @@ app.on('ready', () => {
   if (settings.has('settings')) {
     appSettings = settings.get('settings');
     showTrayIcon = appSettings && appSettings.hasOwnProperty('showTrayIcon') ? appSettings.showTrayIcon : false;
-
     /* devDebugMode */ isDevDebugMode = appSettings && appSettings.hasOwnProperty('devDebugMode') ? appSettings.devDebugMode : false;
   } else {
     createSettingsWindow()
@@ -396,82 +318,31 @@ app.on('ready', () => {
       .catch((err) => console.log('An error occurred: ', err));
 
   checkSystemIdle();
-
-
-console.log(" ========================= v-saver ======================== "); //return true;
-
-
-const size = electron.screen.getPrimaryDisplay().size; // REMOVE
-console.log("size: ", size);
-//const primaryBounds = electron.screen.getPrimaryDisplay().bounds
-//const {width, height} = electron.screen.getPrimaryDisplay().workAreaSize
-//const {width, height} = electron.screen.getPrimaryDisplay().workArea
-primaryWorkArea = electron.screen.getPrimaryDisplay().workArea
-console.log("primaryWorkArea: ", primaryWorkArea);
-//console.log("bounds: ", bounds);
-//console.log("electron.screen.getAllDisplays(): ", electron.screen.getAllDisplays());
-
-
-
-setInterval(() => {
-//console.log("screen.getCursorScreenPoint(): ", electron.screen.getCursorScreenPoint()); //return true;
-//console.log(desktopIdle.getIdleTime());
-}, 3000);
-
-electron.screen.on('display-metrics-changed', (event) => {
+  primaryWorkArea = electron.screen.getPrimaryDisplay().workArea
+  electron.screen.on('display-metrics-changed', (event) => {
+    checkExternalDisplay();
+  });
+  electron.screen.on('display-added', (event) => {
+    checkExternalDisplay();
+  });
+  electron.screen.on('display-removed', (event) => {
+    checkExternalDisplay();
+  });
   checkExternalDisplay();
-});
-electron.screen.on('display-added', (event) => {
-  checkExternalDisplay();
-});
-electron.screen.on('display-removed', (event) => {
-  checkExternalDisplay();
-});
-
-
-
-//console.log("process: ", process.timers); //return true;
-//console.log("os: ", os); //return true;
-//console.log("os.cpus: ", os.cpus() ); //return true;
-//setInterval(() => {
-//console.log("screen.getCursorScreenPoint(): ", electron.screen.getCursorScreenPoint()); //return true;
-//}, 1000);
-
-  checkExternalDisplay();
-
   const primaryDisplaySize = electron.screen.getPrimaryDisplay().size;
   saverWindowWidth = primaryDisplaySize.width;
   saverWindowHeight = primaryDisplaySize.height;
-
   showTrayIcon && setTrayIconMenu();
-
-//console.log("settings.has('settings'): ", settings.has('settings'));
-//console.log("settings.get('settings'): ", settings.get('settings'));
-//console.log("appSettings: ", appSettings);
-//createSettingsWindow()
-//createSaverWindow();
-
-
 }) // ready
 
 
 
-
-
-// Quit when all windows are closed.
+// Force app keep in background when all windows are closed.
 app.on('window-all-closed', function () {
-  // On OS X it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
-//    if (appIcon) appIcon.destroy()
-//    app.quit()
-  }
+  return false;
 })
 
 app.on('quit', function () {
-console.log("ON-QUIT!!"); //return true;
-  // On OS X it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
     if (appIcon) appIcon.destroy()
     settingsWindow = null;
     saverWindow = null;
@@ -480,15 +351,9 @@ console.log("ON-QUIT!!"); //return true;
 })
 
 app.on('activate', function () {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
   if (settingsWindow === null) {
     createSettingsWindow()
   }
-})
-
-ipc.on('remove-tray', function () {
-//  appIcon.destroy() // !!!! unused
 })
 
 
@@ -539,14 +404,9 @@ ipc.on('close-settings', function (event, settingsData) {
 
 ipc.on('run-vsaver-window', function (event) {
   runSaverWindow();
-//  if (externalDisplay) {
-//    runSaverExternalWindow();
-//  }
 });
 
 ipc.on('close-vsaver-window', function (event) {
-console.log("====> ON CLOSE vsaver-window"); //return true;
-//console.log("appSettings.lockSystemOnExit: ", appSettings.lockSystemOnExit); //return true;
   if (appSettings && appSettings.lockSystemOnExit) {
     if (afterRunSaverWindowTimeOut === 0) {
       lockSystem();
@@ -578,8 +438,6 @@ ipc.on('check-app-version', function (event) {
   });
 });
 
-
-
 ipc.on('delete-settings', function (event, msg) {
   settings.deleteAll();
   appSettings = settings.get('settings');
@@ -596,8 +454,6 @@ function setTrayIconMenu() {
   iconPathSusp = path.join(__dirname, iconNameSuspended);
   iconPathNormNoConnect = path.join(__dirname, iconNameNormalDisconected);
   iconPathSuspNoConnect = path.join(__dirname, iconNameSuspendedDisconected);
-//console.log("appIcon: ", appIcon); //return true;
-
   if (!appIcon) {
     appIcon = new Tray(iconPathNorm);
   }
@@ -621,8 +477,6 @@ function setTrayIconMenu() {
 }
 
 
-
-
 function getContextMenuTemplate(suspend) {
   var contextMenuTemplate = [
     {
@@ -634,19 +488,7 @@ function getContextMenuTemplate(suspend) {
     {
       label: 'Run screensaver',
       click: function () {
-        /*if (appSettings && saverWindow) {
-          saverWindow.show()
-          saverWindow.focus()
-          saverWindow.setFullScreen(!saverWindow.isFullScreen())
-        } else {
-          if (appSettings) {
-            createSaverWindow()
-          }
-        }*/
         runSaverWindow();
-//        if (externalDisplay) {
-//          runSaverExternalWindow();
-//        }
       }
     },
     {
@@ -663,7 +505,6 @@ function getContextMenuTemplate(suspend) {
     {
       label: 'Remove tray icon',
       click: function () {
-        /*if (appIcon) appIcon.destroy()*/
         changeTrayIconVisible(false);
       }
     },
@@ -687,7 +528,6 @@ function getContextMenuTemplate(suspend) {
       }
     }
   ];
-
   var isNewVersionStr = newAppVersionValue ? '* New version ' + newAppVersionValue + ' is available' : '';
   const newVersionItem = {
       label: isNewVersionStr,
@@ -718,11 +558,9 @@ function getContextMenuTemplate(suspend) {
 
 
 function handleChangeContextMenuTemplate(suspend){
-  // isSuspendSaver = suspend ? true : false;
   var contextMenuTemplate = getContextMenuTemplate(!isSuspendSaver);
   contextMenu = Menu.buildFromTemplate(contextMenuTemplate);
   appIcon.setContextMenu(contextMenu);
-
   if (isSuspendSaver) {
     if (isConnectedFlag) {
       appIcon.setImage(iconPathSusp);
@@ -737,6 +575,7 @@ function handleChangeContextMenuTemplate(suspend){
     }
   }
 }
+
 
 function showAboutDialogMessage() {
   var isNewVersionStr = newAppVersionValue ? '\n\n A new version ' + newAppVersionValue + ' is available' : '';
@@ -758,6 +597,7 @@ function showAboutDialogMessage() {
   });
 }
 
+
 function checkConnection() {
   return new Promise(function(resolve, reject) {
     var done = false;
@@ -772,7 +612,6 @@ function checkConnection() {
     }, 4500);
     dns.lookupService('8.8.8.8', 53, function(error, hostname, service){
       // google-public-dns-a.google.com domain
-      //console.log("checkConnection: ", hostname, service, Date.now());
       if (error) {
         if (done) { return false; }
         done = true;
@@ -782,13 +621,13 @@ function checkConnection() {
         if (done) { return false; }
         var delta = ((new Date()).getTime() - start);
         done = true;
-//console.log(" ++++++ checkConnection RES: ", {hostname: hostname, time: delta}); //return true;
         isConnectedFlag = true;
         resolve({hostname: hostname, time: delta});
       }
     });
   });
 }
+
 
 function checkSetSettingsWindowPosition() {
   var positionObj = {x: 0, y: 0}
@@ -815,6 +654,7 @@ function checkSetSettingsWindowPosition() {
   }
 }
 
+
 function checkExternalDisplay() {
   let displays = electron.screen.getAllDisplays();
   externalDisplay = displays.find((display) => {
@@ -828,9 +668,8 @@ function checkExternalDisplay() {
   } else {
     externalDisplay = null
   }
-console.log(" -------------------------- "); //return true;
-console.log("externalDisplay: ", externalDisplay); //return true;
 }
+
 
 function checkVersion() {
   var repVersion;
@@ -852,6 +691,7 @@ function checkVersion() {
   });
 }
 
+
 function changeTrayIconVisible(show) {
   if (show) {
     showTrayIcon = true;
@@ -867,7 +707,6 @@ function changeTrayIconVisible(show) {
 }
 
 
-
 function showTrayIconWarnDialogMessage() {
   trayWarnDialog = dialog.showMessageBox({
     type: 'warning',
@@ -881,35 +720,6 @@ function showTrayIconWarnDialogMessage() {
 }
 
 
-
-
-
-
-
-setTimeout(function(){
-//  app.quit()
-//  settingsWindow = null
-//  settingsWindow.close()
-//  focusedWindow.setFullScreen(!focusedWindow.isFullScreen())
-//  settingsWindow.setFullScreen(!settingsWindow.isFullScreen())
-}, 5000);
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
-
-
-
-
-
-
-
-
-
-
-
-// ANOTHER EXAMPLES HERE
-
-
 // Make this app a single instance app.
 //
 // The main window will be restored and focused instead of a second window
@@ -920,14 +730,6 @@ setTimeout(function(){
 function makeSingleInstance () {
   if (process.mas) return false
   return app.makeSingleInstance(() => {
-console.warn("???? app.makeSingleInstance");
-/*
-    if (settingsWindow) {
-      if (settingsWindow.isMinimized()) settingsWindow.restore()
-      settingsWindow.focus()
-    }
-*/
-//    setTrayIconMenu();
     changeTrayIconVisible(true);
     if (settingsWindow) {
       settingsWindow.show()
@@ -937,41 +739,3 @@ console.warn("???? app.makeSingleInstance");
     }
   })
 }
-
-
-
-
-
-
-
-
-
-
-// TO USING
-
-// powerSaveBlocker
-// https://github.com/electron/electron/blob/master/docs/api/power-save-blocker.md
-// https://electronjs.org/docs/api/power-save-blocker
-
-// API to inhibit screensaver #1936
-// https://github.com/electron/electron/issues/1936
-
-// Is it possible to simulate keyboard/mouse event in NodeJS?
-// https://stackoverflow.com/questions/11178372/is-it-possible-to-simulate-keyboard-mouse-event-in-nodejs
-
-// node-key-sender
-// https://www.npmjs.com/package/node-key-sender
-
-// !!! lock-system
-// https://github.com/sindresorhus/lock-system
-
-// ??? CHECK SYSTEM IDLE ???
-// desktop-idle dev requires:
-// npm install --save-dev electron-rebuild
-// ./node_modules/.bin/electron-rebuild
-
-
-// MP4 works, AVI does not. The browsers don't support the AVI container format.
-
-
-

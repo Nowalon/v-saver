@@ -1,4 +1,4 @@
-# <img src="https://github.com/Nowalon/v-saver/blob/dev/assets/img/videoscreensaver-gradient-icon.png?raw=true" width="60px" align="center" alt="V-Saver icon">   v-saver
+# <img src="https://github.com/Nowalon/v-saver/blob/master/assets/img/videoscreensaver-gradient-icon.png?raw=true" width="60px" align="center" alt="V-Saver icon">   v-saver
 
 Electron + vue.js based desktop videoscreensaver (linux(ubuntu)-first)
 

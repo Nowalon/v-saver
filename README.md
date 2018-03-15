@@ -38,7 +38,7 @@ For Ubuntu I have used the following command in "Startup Applications" for start
 
 or make manually some autostart executable file as some "vsaver.sh.desktop" in `~/.config/autostart/` :
 
-`[Desktop Entry]
+```[Desktop Entry]
 Type=Application
 Exec=sh -c "sleep 15; exec v-saver &"
 Hidden=false
@@ -47,7 +47,8 @@ X-GNOME-Autostart-enabled=true
 Name[ru]=v-saver
 Name=v-saver
 Comment[en]=v-saver
-Comment=v-saver`
+Comment=v-saver
+```
 
 
 ###

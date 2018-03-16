@@ -41,7 +41,7 @@ For Ubuntu I have used the following command in "Startup Applications" for start
 
 `sh -c "sleep 15; exec v-saver &"`
 
-or make manually some autostart executable file as some "vsaver.sh.desktop" in `~/.config/autostart/` :
+or make manually some autostart executable file for example "vsaver.sh.desktop" in `~/.config/autostart/` :
 
 ```[Desktop Entry]
 Type=Application
@@ -71,3 +71,10 @@ In this reason v-saver has own suspend running mode as menu option with some res
 * show-file-name hotkey;
 * localization/language settings;
 * filelist ordering/sorting with mouse drag-n-drop (at the moment I think it is some extra);
+
+##
+
+### Changelog
+
+
+

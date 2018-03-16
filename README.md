@@ -49,7 +49,7 @@ Exec=sh -c "sleep 15; exec v-saver &"
 Hidden=false
 NoDisplay=false
 X-GNOME-Autostart-enabled=true
-Name[ru]=v-saver
+Name[en]=v-saver
 Name=v-saver
 Comment[en]=v-saver
 Comment=v-saver
@@ -67,6 +67,7 @@ In this reason v-saver has own suspend running mode as menu option with some res
 
 ### TODO
 
-* filelist ordering/sorting with mouse drag-n-drop (at the moment I think it is some extra);
 * make 'reset suspend mode during idle' inerval as settings option (now if system idle ~2.4 hardcoded hours it resets suspend status, e.g. if you finished watch movie the v-saver resumes its work after some time);
+* show-file-name hotkey;
 * localization/language settings;
+* filelist ordering/sorting with mouse drag-n-drop (at the moment I think it is some extra);

@@ -172,6 +172,10 @@ var saverApp = new Vue({
         self.checkConnection();
         return;
       }
+      if(e.keyCode === 70){ // 'f'
+        self.showVideoFileName(self.activeVideoSource, 10);
+        return;
+      }
       self.handleCloseExitSaverWindow(e);
 
     }, false);
@@ -422,9 +426,10 @@ var saverApp = new Vue({
     },
 
 
-    showVideoFileName(activeVideoSource) {
+    showVideoFileName(activeVideoSource, delay) {
         var filenameStr = this.getFileNameFromSrcLink(activeVideoSource);
         this.showAnimateFileName = false;
+        var _delay = delay || 1000;
         shvf && clearTimeout(shvf);
         hgvf && clearTimeout(hgvf);
         shvf = setTimeout(() => {
@@ -434,7 +439,7 @@ var saverApp = new Vue({
             hgvf = setTimeout(() => {
               this.showAnimateFileName = false;
             }, 8000);
-        }, 1000);
+        }, _delay);
     },
 
 

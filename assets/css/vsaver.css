@@ -203,8 +203,8 @@ body {
   right: 0;
   margin: 0 auto;
   transform: translateY(-50%);
-  width: 400px;
-  min-width: 400px;
+  width: 420px;
+  min-width: 420px;
   border: 2px solid rgba(85, 139, 150, 0.4);
   border-radius: 6px;
   color: #74b1be;
@@ -230,7 +230,6 @@ body {
   display: table-cell;
   text-align: center;
   padding: 4px;
-  width: 33.333%;
 }
 #hotkeysHelp .help-cell.help-descr{
   font-size: 16px;

@@ -305,12 +305,15 @@ function connectionSwitched() {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', () => {
+  primaryWorkArea = electron.screen.getPrimaryDisplay().workArea
   if (settings.has('settings')) {
     appSettings = settings.get('settings');
     showTrayIcon = appSettings && appSettings.hasOwnProperty('showTrayIcon') ? appSettings.showTrayIcon : false;
     /* devDebugMode */ isDevDebugMode = appSettings && appSettings.hasOwnProperty('devDebugMode') ? appSettings.devDebugMode : false;
   } else {
-    createSettingsWindow()
+    setTimeout(() => {
+      createSettingsWindow()
+    }, 300);
   }
 
 /*
@@ -319,8 +322,10 @@ app.on('ready', () => {
       .catch((err) => console.log('An error occurred: ', err));
 */
 
-  checkSystemIdle();
-  primaryWorkArea = electron.screen.getPrimaryDisplay().workArea
+  if (appSettings && appSettings.runInterval) {
+    checkSystemIdle();
+  }
+
   electron.screen.on('display-metrics-changed', (event) => {
     checkExternalDisplay();
   });
@@ -372,6 +377,13 @@ ipc.on('open-file-dialog', function (event) {
 })
 
 ipc.on('save-settings', function (event, settingsData) {
+  var isFirstNoSettingsRun;
+  if (settings.has('settings')) {
+    appSettings = settings.get('settings')
+    isFirstNoSettingsRun = false;
+  } else {
+    isFirstNoSettingsRun = true;
+  }
   settings.set('settings', settingsData);
   if (settingsData && settingsData.hasOwnProperty('showTrayIcon')) {
     if (settingsData.showTrayIcon !== showTrayIcon) {
@@ -380,7 +392,8 @@ ipc.on('save-settings', function (event, settingsData) {
   }
   appSettings = settings.get('settings');
   /* devDebugMode */ isDevDebugMode = appSettings && appSettings.hasOwnProperty('devDebugMode') ? appSettings.devDebugMode : false;
-  event.sender.send('save-settings-reply', 'Settings saved!')
+  event.sender.send('save-settings-reply', 'Settings saved!');
+  isFirstNoSettingsRun && checkSystemIdle();
 })
 
 ipc.on('load-settings', function (event, msg) {

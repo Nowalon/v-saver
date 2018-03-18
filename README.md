@@ -1,7 +1,5 @@
 # <img src="https://github.com/Nowalon/v-saver/blob/master/assets/img/videoscreensaver-gradient-icon.png?raw=true" width="60px" align="center" alt="V-Saver icon">   v-saver
 
-<<<<<<< HEAD
-=======
 Electron + vue.js based desktop videoscreensaver (linux(ubuntu)-first)
 
 
@@ -79,5 +77,3 @@ In this reason v-saver has own suspend running mode as menu option with some res
 ### Changelog
 
 0.9.2: Critical "initial no setting issue" fixed;
->>>>>>> origin/dev
-

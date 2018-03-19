@@ -75,6 +75,6 @@ In this reason v-saver has own suspend running mode as menu option with some res
 
 ### Changelog
 
-0.9.1: RC release;
-
 0.9.2: Critical "initial no setting issue" fixed; * show-file-name hotkey;
+
+0.9.1: RC release;

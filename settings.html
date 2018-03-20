@@ -120,7 +120,8 @@
               <p></p></br>
 
 
-<!--
+
+<!-- -->
               <div v-if="showDevDebugOption" class="settings-option-wrap">
                 <span class="settings-option-title">dev/debug mode</span>
                 <div class="slideCheckBox settings-option-control">
@@ -128,7 +129,8 @@
                   <label for="devDebugModeChBx"></label>
                 </div>
               </div>
--->
+<!-- -->
+
 
 
             </div>
@@ -188,6 +190,32 @@
                   <label for="showInternetConnectionLostIndicatorChBx"></label>
                 </div>
               </div>
+
+
+
+              :: {{ testSortType }} ::
+              <div class="settings-option-wrap">
+                <span class="settings-option-title">Reset suspending after
+                <note-tip
+                    text="Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor" img-src="./assets/img/cloud-connection-2.svg"></note-tip>
+                </span>
+
+                <div class="___slideCheckBox settings-option-control">
+
+<div class="dropdown-el-wrap">
+<span class="dropdown-el" @click.stop="handleClickPrettySelectDropdown">
+
+<template v-for="sortItem, index in testSortItems">
+    <input type="radio" name="sortType" :value="sortItem.value" :id="`sort-item-${index}`" v-model="testSortType"><label :for="`sort-item-${index}`">{{ sortItem.label }}</label>
+</template>
+
+  </span>
+</div>
+
+                </div>
+
+              </div>
+
 
               <p></p></br>
               <p></p></br>

@@ -48,7 +48,20 @@ var settingsApp = new Vue({
     unlockResetToDefault: false,
     maxRunInterval: 60,
     maxVideoChangeInterval: 30,
-    showfileListScroll: false
+    showfileListScroll: false,
+
+testSortItems: [
+  {label: '30 min', value: 30},
+  {label: '1 h', value: 60},
+  {label: '1 h 30 m', value: 90},
+  {label: '2 h', value: 120},
+  {label: '2 h 30 m', value: 150},
+  {label: '3 h', value: 180},
+  {label: '4 h', value: 240},
+  {label: '5 h', value: 300},
+  {label: '6 h', value: 360}
+],
+testSortType: 120
   },
 
   computed: {
@@ -262,6 +275,32 @@ var settingsApp = new Vue({
 
     handleOpenVersion () {
       shell.openExternal(this.repoUrl);
+    },
+
+    handleClickPrettySelectDropdown (e) {
+//console.warn("handleClickPrettySelectDropdown E: ", e);
+      e.preventDefault();
+      e.stopPropagation();
+      var targetNode = e.target;
+      var expandedClassName = 'expanded';
+      var parentNode;
+//console.warn("targetNode.classList: ", targetNode.classList);
+      if (targetNode.classList) {
+        if (targetNode.classList.contains('dropdown-el')) {
+          parentNode = targetNode;
+        } else {
+          parentNode = targetNode.parentNode;
+        }
+
+      var input = document.getElementById(targetNode.getAttribute('for'));
+      if (input && parentNode.classList.contains(expandedClassName)) {
+console.warn("SET ===> input.value: ", input.value);
+        /*input.setAttribute('checked', true);*/
+        this.testSortType = input.value;
+      }
+console.warn("handleClickPrettySelectDropdown parentNode: ", parentNode);
+      }
+      parentNode.classList.toggle(expandedClassName);
     }
 
   },

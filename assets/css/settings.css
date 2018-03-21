@@ -296,7 +296,7 @@ display: table-row;
   display: table-cell;
   vertical-align: middle;
   padding: 0;
-  height: 28px;
+  height: 30px;
   position: relative;
 }
 
@@ -485,15 +485,20 @@ display: table-row;
   border-radius: 3px;
   padding: 2px 3px;
   overflow: hidden;
+  display: table;
+  width: 96.8%;
 }
 .note-tip-text {
   color: #9feaf9;
+  display: table-cell;
+  vertical-align: middle;
 }
 .note-tip-img {
-  float: right;
   margin-left: 6px;
   max-height: 48px !important;
   width: auto;
+  display: table-cell;
+  vertical-align: middle;
 }
 
 

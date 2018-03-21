@@ -75,6 +75,8 @@ In this reason v-saver has own suspend running mode as menu option with some res
 
 ### Changelog
 
+0.9.3: Settings option as interval for switch off suspend mode after - resets the suspend mode after selected idle interval value; help note-tip styles, alignment update; settings options height increased;
+
 0.9.2: Critical "initial no setting issue" fixed; * show-file-name hotkey;
 
 0.9.1: RC release;

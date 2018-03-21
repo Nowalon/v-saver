@@ -63,17 +63,7 @@ var settingsApp = new Vue({
     unlockResetToDefault: false,
     maxRunInterval: 60,
     maxVideoChangeInterval: 30,
-    showfileListScroll: false,
-
-testSortItems: [
-  {label: 'Top Position', value: 'top'},
-  {label: 'Left Position', value: 'left'},
-  {label: 'Bottom Position', value: 'bottom'},
-  {label: 'Right Position', value: 'right'},
-  {label: 'Center Position', value: 'center'},
-  {label: 'Hidden', value: 'hide'}
-],
-testSortType: 'left'
+    showfileListScroll: false
   },
 
   computed: {

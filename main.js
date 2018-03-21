@@ -55,7 +55,7 @@ let trayWarnDialog = null
 let isSuspendSaver = false
 let idleTimer = 0
 let idleTimeOut = 0
-const resetIdleValue = 8640 // ~2.4h
+let resetIdleValue = 8640 // ~2.4h
 let checkDnsLookUpTimeOut = 0
 let afterRunSaverWindowTimeOut = 0
 let isConnectedFlag = true
@@ -248,6 +248,7 @@ function checkSystemIdle () { // call after app.on('ready') and settings loaded 
   idleTimeOut && clearTimeout(idleTimeOut);
   var idleTimerSec = appSettings.runInterval * 1 * 60;
   var idleTimeOutValue = 10000; // 10000~20000 ?
+  resetIdleValue = appSettings && appSettings.hasOwnProperty('resetSuspendInterval') ? appSettings.resetSuspendInterval * 1 * 60 : resetIdleValue;
 
   if(isDevDebugMode){
     idleTimerSec = 99999999;
@@ -310,6 +311,7 @@ app.on('ready', () => {
     appSettings = settings.get('settings');
     showTrayIcon = appSettings && appSettings.hasOwnProperty('showTrayIcon') ? appSettings.showTrayIcon : false;
     /* devDebugMode */ isDevDebugMode = appSettings && appSettings.hasOwnProperty('devDebugMode') ? appSettings.devDebugMode : false;
+    /* isDevDebugMode = true;  !!! REMOVE !!! */
   } else {
     setTimeout(() => {
       createSettingsWindow()

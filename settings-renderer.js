@@ -9,6 +9,8 @@ const shell = require('electron').shell;
 
 const Vue = require('vue/dist/vue.min.js')
 
+const vDropdown = require('./components/v-dropdown')
+
 Vue.config.devtools = true
 
 var messageTimeout = 0;
@@ -25,6 +27,18 @@ var settingsApp = new Vue({
     repoUrl: 'https://github.com/Nowalon/v-saver',
     isNewVersionavailable: false,
     newVersionValue: '0.0.0',
+    resetSuspendIntervalItems: [
+      {label: '30 min', value: 30},
+      {label: '1 h', value: 60},
+      {label: '1 h 30 m', value: 90},
+      {label: '2 h', value: 120},
+      {label: '2 h 30 m', value: 150},
+      {label: '3 h', value: 180},
+      {label: '4 h', value: 240},
+      {label: '5 h', value: 300},
+      {label: '6 h', value: 360}
+    ],
+
     defaultSettings: {
       files: [
         './assets/video/Starman - SpaceX.mp4',
@@ -41,6 +55,7 @@ var settingsApp = new Vue({
       showVideoFileName: true,
       showInternetConnectionLostIndicator: true,
       showTrayIcon: true,
+      resetSuspendInterval: 120,
       devDebugMode: false // !!! devDebugMode
     },
     settings: {},
@@ -51,17 +66,14 @@ var settingsApp = new Vue({
     showfileListScroll: false,
 
 testSortItems: [
-  {label: '30 min', value: 30},
-  {label: '1 h', value: 60},
-  {label: '1 h 30 m', value: 90},
-  {label: '2 h', value: 120},
-  {label: '2 h 30 m', value: 150},
-  {label: '3 h', value: 180},
-  {label: '4 h', value: 240},
-  {label: '5 h', value: 300},
-  {label: '6 h', value: 360}
+  {label: 'Top Position', value: 'top'},
+  {label: 'Left Position', value: 'left'},
+  {label: 'Bottom Position', value: 'bottom'},
+  {label: 'Right Position', value: 'right'},
+  {label: 'Center Position', value: 'center'},
+  {label: 'Hidden', value: 'hide'}
 ],
-testSortType: 120
+testSortType: 'left'
   },
 
   computed: {
@@ -275,32 +287,6 @@ testSortType: 120
 
     handleOpenVersion () {
       shell.openExternal(this.repoUrl);
-    },
-
-    handleClickPrettySelectDropdown (e) {
-//console.warn("handleClickPrettySelectDropdown E: ", e);
-      e.preventDefault();
-      e.stopPropagation();
-      var targetNode = e.target;
-      var expandedClassName = 'expanded';
-      var parentNode;
-//console.warn("targetNode.classList: ", targetNode.classList);
-      if (targetNode.classList) {
-        if (targetNode.classList.contains('dropdown-el')) {
-          parentNode = targetNode;
-        } else {
-          parentNode = targetNode.parentNode;
-        }
-
-      var input = document.getElementById(targetNode.getAttribute('for'));
-      if (input && parentNode.classList.contains(expandedClassName)) {
-console.warn("SET ===> input.value: ", input.value);
-        /*input.setAttribute('checked', true);*/
-        this.testSortType = input.value;
-      }
-console.warn("handleClickPrettySelectDropdown parentNode: ", parentNode);
-      }
-      parentNode.classList.toggle(expandedClassName);
     }
 
   },

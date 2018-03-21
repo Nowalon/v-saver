@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="assets/css/settings.css">
+    <link rel="stylesheet" href="components/v-dropdown/v-dropdown.css">
     <title>Settings - V-Sasver</title>
   </head>
   <body>
@@ -180,6 +181,30 @@
                 </div>
               </div>
 
+
+
+<!--
+              <div class="settings-option-wrap">
+                <span class="settings-option-title">Test test test test
+                <note-tip
+                    text="Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor" img-src="./assets/img/cloud-connection-2.svg"></note-tip>
+                </span>
+
+                <div class="settings-option-control">
+
+                  <v-dropdown style="padding-right: 70px;"
+                      v-model="testSortType"
+                      :select-options="testSortItems"
+                      select-name="testSortSelect"
+                              >
+                  </v-dropdown>
+
+                </div>
+              </div>
+-->
+
+
+
               <div class="settings-option-wrap">
                 <span class="settings-option-title">Show Internet connection lost indicator
                 <note-tip
@@ -191,31 +216,27 @@
                 </div>
               </div>
 
-
-
-              :: {{ testSortType }} ::
               <div class="settings-option-wrap">
-                <span class="settings-option-title">Reset suspending after
+                <span class="settings-option-title">Reset suspending after:
                 <note-tip
-                    text="Lorem ipsum dolor Lorem ipsum dolor Lorem ipsum dolor" img-src="./assets/img/cloud-connection-2.svg"></note-tip>
+                    text="Resets suspend mode after this idle interval value." img-src="./assets/img/v-saver__reset-suspend.png"></note-tip>
                 </span>
 
-                <div class="___slideCheckBox settings-option-control">
+                <div class="settings-option-control">
 
-<div class="dropdown-el-wrap">
-<span class="dropdown-el" @click.stop="handleClickPrettySelectDropdown">
-
-<template v-for="sortItem, index in testSortItems">
-    <input type="radio" name="sortType" :value="sortItem.value" :id="`sort-item-${index}`" v-model="testSortType"><label :for="`sort-item-${index}`">{{ sortItem.label }}</label>
-</template>
-
-  </span>
-</div>
+                  <v-dropdown class="__active"
+                      v-model="settings.resetSuspendInterval"
+                      :select-options="resetSuspendIntervalItems"
+                      select-name="resetSuspendInterval"
+                              >
+                  </v-dropdown>
 
                 </div>
-
               </div>
 
+              :: {{ settings.resetSuspendInterval }} ::
+              <br>
+              ** {{ testSortType }}  **
 
               <p></p></br>
               <p></p></br>
@@ -290,7 +311,7 @@
     <div class="note-tip-wr">
       <div class="note-tip-ct">
         <span class="note-tip-text">{{ text }}</span>
-        <img v-if="imgSrc" width="26" height="26" class="note-tip-img" :src="imgSrc"/>
+        <img v-if="imgSrc" width="22" height="22" class="note-tip-img" :src="imgSrc"/>
       </div>
     </div>
 

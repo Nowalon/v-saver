@@ -1,9 +1,9 @@
-version: 0.9.2
+version: 0.9.3
 files:
-  - url: v-saver-0.9.2-x86_64.AppImage
-    sha512: XEBrGQQ6Jw3sME98z+9gXLEXnlKj601cV+3Dw0GAZMIYIjJyEJZeZj/U/r2/8uRbe9Gg2hQZRWcx531GJY6Tbg==
-    size: 66984202
-    blockMapSize: 70222
-path: v-saver-0.9.2-x86_64.AppImage
-sha512: XEBrGQQ6Jw3sME98z+9gXLEXnlKj601cV+3Dw0GAZMIYIjJyEJZeZj/U/r2/8uRbe9Gg2hQZRWcx531GJY6Tbg==
-releaseDate: '2018-03-18T20:01:55.110Z'
+  - url: v-saver-0.9.3-x86_64.AppImage
+    sha512: DkTvIOWfLPrtldiIInIHFDc4UwXM0+PcymM+7tRd7jEzVlkV78rwy/OztBVSkq6+eg0Hv0Cp4GhyatuOqJu4fQ==
+    size: 66992574
+    blockMapSize: 70402
+path: v-saver-0.9.3-x86_64.AppImage
+sha512: DkTvIOWfLPrtldiIInIHFDc4UwXM0+PcymM+7tRd7jEzVlkV78rwy/OztBVSkq6+eg0Hv0Cp4GhyatuOqJu4fQ==
+releaseDate: '2018-03-21T18:04:25.319Z'

@@ -30,9 +30,9 @@ Multiscreen support implemented as 2 screens support: Primary and Secondary if c
 
 ### Download
 
-Deb: [v-saver_0.9.2_amd64.deb](https://github.com/Nowalon/v-saver/raw/master/dist/v-saver_0.9.2_amd64.deb)
+Deb: [v-saver_0.9.3_amd64.deb](https://github.com/Nowalon/v-saver/raw/master/dist/v-saver_0.9.3_amd64.deb)
 
-AppImage: [v-saver-0.9.2-x86_64.AppImage](https://github.com/Nowalon/v-saver/raw/master/dist/v-saver-0.9.2-x86_64.AppImage)
+AppImage: [v-saver-0.9.3-x86_64.AppImage](https://github.com/Nowalon/v-saver/raw/master/dist/v-saver-0.9.3-x86_64.AppImage)
 
 
 ### Start application automatically on login

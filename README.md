@@ -67,7 +67,6 @@ In this reason v-saver has own suspend running mode as menu option with some res
 
 ### TODO
 
-* make 'reset suspend mode during idle' inerval as settings option (now if system idle ~2.4 hardcoded hours it resets suspend status, e.g. if you finished watch movie the v-saver resumes its work after some time);
 * localization/language settings;
 * filelist ordering/sorting with mouse drag-n-drop (at the moment I think it is some extra);
 

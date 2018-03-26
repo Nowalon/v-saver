@@ -7,5 +7,3 @@ v__bak
 /dist/linux-unpacked
 /yarn-error.log
 /yarn.lock
-/package-lock.json
-package-lock.json

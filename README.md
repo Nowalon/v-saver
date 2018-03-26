@@ -30,9 +30,9 @@ Multiscreen support implemented as 2 screens support: Primary and Secondary if c
 
 ### Download
 
-Deb: [v-saver_0.9.3_amd64.deb](https://github.com/Nowalon/v-saver/raw/master/dist/v-saver_0.9.3_amd64.deb)
+Deb: [v-saver_0.9.4_amd64.deb](https://github.com/Nowalon/v-saver/raw/master/dist/v-saver_0.9.4_amd64.deb)
 
-AppImage: [v-saver-0.9.3-x86_64.AppImage](https://github.com/Nowalon/v-saver/raw/master/dist/v-saver-0.9.3-x86_64.AppImage)
+AppImage: [v-saver-0.9.4-x86_64.AppImage](https://github.com/Nowalon/v-saver/raw/master/dist/v-saver-0.9.4-x86_64.AppImage)
 
 
 ### Start application automatically on login
@@ -73,6 +73,8 @@ In this reason v-saver has own suspend running mode as menu option with some res
 ##
 
 ### Changelog
+
+0.9.4: electron, node updated;
 
 0.9.3: Settings option as interval for switch off suspend mode after - resets the suspend mode after selected idle interval value; help note-tip styles, alignment update; settings options height increased;
 

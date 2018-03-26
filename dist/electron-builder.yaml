@@ -16,4 +16,4 @@ deb:
   depends:
     - libxss-dev
     - pkg-config
-electronVersion: 1.7.12
+electronVersion: 1.8.4

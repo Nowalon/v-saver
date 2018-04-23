@@ -11,6 +11,12 @@
   -webkit-font-smoothing: antialiased;
   cursor: none;
 }
+::selection {
+background: none;
+}
+::-webkit-selection {
+background: none;
+}
 html {
   height: 100%;
   cursor: none;

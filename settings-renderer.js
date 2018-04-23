@@ -54,6 +54,7 @@ var settingsApp = new Vue({
       showVideoRemainingTime: true,
       showVideoFileName: true,
       showInternetConnectionLostIndicator: true,
+      showInternetConnectionNotification: true,
       showTrayIcon: true,
       resetSuspendInterval: 120,
       devDebugMode: false // !!! devDebugMode

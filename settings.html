@@ -191,6 +191,17 @@
               </div>
 
               <div class="settings-option-wrap">
+                <span class="settings-option-title">Show Internet connection lost notification
+                <note-tip
+                    text="Shows OS desktop notifications when the Internet connection is lost and then when connection established. Based on external source DNS lookup" img-src="./assets/img/cloud-connection-2.svg"></note-tip>
+                </span>
+                <div class="slideCheckBox settings-option-control">
+                  <input type="checkbox" id="showInternetConnectionNotificationChBx" name="showInternetConnectionNotification" v-model="settings.showInternetConnectionNotification" >
+                  <label for="showInternetConnectionNotificationChBx"></label>
+                </div>
+              </div>
+
+              <div class="settings-option-wrap">
                 <span class="settings-option-title">Switch off suspending after idle:
                 <note-tip
                     text="Resets the suspend mode after this idle interval value" img-src="./assets/img/v-saver__reset-suspend.png"></note-tip>

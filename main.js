@@ -7,6 +7,7 @@ const BrowserWindow = electron.BrowserWindow
 const Menu = electron.Menu
 const Tray = electron.Tray
 const dialog = electron.dialog
+const Notification = electron.Notification
 const shell = electron.shell
 
 const settings = require('electron-settings');
@@ -49,6 +50,9 @@ let appIcon = null
 let showTrayIcon = true
 let iconPathNorm
 let iconPathSusp
+let iconPathConnected
+let iconPathDisconnected
+let notification = null
 let appSettings = null
 let aboutDialog = null
 let trayWarnDialog = null
@@ -58,6 +62,7 @@ let idleTimeOut = 0
 let resetIdleValue = 8640 // ~2.4h
 let checkDnsLookUpTimeOut = 0
 let afterRunSaverWindowTimeOut = 0
+let notificationTimeOut = 0
 let isConnectedFlag = true
 let isRunByIdleTimer = false
 let newAppVersionValue = null
@@ -249,6 +254,7 @@ function checkSystemIdle () { // call after app.on('ready') and settings loaded 
   var idleTimerSec = appSettings.runInterval * 1 * 60;
   var idleTimeOutValue = 10000; // 10000~20000 ?
   resetIdleValue = appSettings && appSettings.hasOwnProperty('resetSuspendInterval') ? appSettings.resetSuspendInterval * 1 * 60 : resetIdleValue;
+  var showInternetConnectionNotification = (appSettings && appSettings.showInternetConnectionNotification) || false;
 
   if(isDevDebugMode){
     idleTimerSec = 99999999;
@@ -273,13 +279,22 @@ function checkSystemIdle () { // call after app.on('ready') and settings loaded 
     }
 
     if (!saverWindow && showTrayIcon) {
+      var connecNotifParams = {
+        title: `${mainAppName} - Internet connection`
+      };
       checkConnection().then(res => {
         if (checkConnectionStatusChanged()) {
           handleChangeContextMenuTemplate();
+          connecNotifParams.body = 'Internet connection established';
+          connecNotifParams.icon = iconPathConnected;
+          showInternetConnectionNotification && showNotification(connecNotifParams);
         }
       }).catch(err => {
         if (checkConnectionStatusChanged()) {
           handleChangeContextMenuTemplate();
+          connecNotifParams.body = 'Internet connection lost';
+          connecNotifParams.icon = iconPathDisconnected;
+          showInternetConnectionNotification && showNotification(connecNotifParams);
         }
       });
     }
@@ -290,8 +305,8 @@ function checkSystemIdle () { // call after app.on('ready') and settings loaded 
 
 
 function connectionSwitched() {
-    var connected = null;
-  return function (_connected) {
+  var connected = true;
+  return function () {
     if (connected !== isConnectedFlag) {
       connected = isConnectedFlag;
       return true;
@@ -323,6 +338,9 @@ app.on('ready', () => {
       .then((name) => console.log(`Added Extension:  ${name}`))
       .catch((err) => console.log('An error occurred: ', err));
 */
+
+  iconPathConnected = path.join(__dirname, '/assets/img/v-saver__icon.png');
+  iconPathDisconnected = path.join(__dirname, '/assets/img/cloud-connection.png');
 
   if (appSettings && appSettings.runInterval) {
     checkSystemIdle();
@@ -566,7 +584,19 @@ function getContextMenuTemplate(suspend) {
         handleChangeContextMenuTemplate();
     }
   }
+  const noConnectionItem = {
+      label: '!!  No Internet connection  !!',
+      click: function () {
+        checkConnection();
+    }
+  }
+
   contextMenuTemplate[0] = suspend ? suspendItem : resumeItem;
+
+  if (!isConnectedFlag) {
+    contextMenuTemplate.splice(0, 0, noConnectionItem)
+  }
+
   if (newAppVersionValue) {
     contextMenuTemplate.splice(contextMenuTemplate.length-2, 0, newVersionItem)
   }
@@ -574,7 +604,7 @@ function getContextMenuTemplate(suspend) {
 }
 
 
-function handleChangeContextMenuTemplate(suspend){
+function handleChangeContextMenuTemplate(){
   var contextMenuTemplate = getContextMenuTemplate(!isSuspendSaver);
   contextMenu = Menu.buildFromTemplate(contextMenuTemplate);
   appIcon.setContextMenu(contextMenu);
@@ -590,6 +620,22 @@ function handleChangeContextMenuTemplate(suspend){
     } else {
       appIcon.setImage(iconPathNormNoConnect);
     }
+  }
+}
+
+
+function showNotification(params) {
+  if (notification) {
+    notification.close();
+  }
+  if (Notification.isSupported()){
+    notification = new Notification(params);
+    notification.show();
+    notificationTimeOut && clearTimeout(notificationTimeOut);
+    notificationTimeOut = setTimeout(() => {
+      notification.close();
+      notification = null;
+    }, 5000);
   }
 }
 

@@ -4,6 +4,12 @@
   -webkit-font-smoothing: antialiased;
   -webkit-app-region: no-drag;
 }
+::selection {
+background: none;
+}
+::-webkit-selection {
+background: none;
+}
 .clearfix-divider:after{
   content: '';
   position: relative;
@@ -298,6 +304,7 @@ display: table-row;
   padding: 0;
   height: 30px;
   position: relative;
+  cursor: default;
 }
 
 .settings-option-control {

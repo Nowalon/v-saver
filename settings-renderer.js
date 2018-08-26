@@ -4,14 +4,14 @@
 
 'use strict';
 
-const ipc = require('electron').ipcRenderer
+const ipc = require('electron').ipcRenderer;
 const shell = require('electron').shell;
 
-const Vue = require('vue/dist/vue.min.js')
+const Vue = require('vue/dist/vue.min.js');
 window.Vue = Vue;
 
-const vDropdown = require('./components/v-dropdown')
-const vConfirmActionStateButton = require('./components/v-confirm-action-button')
+const vDropdown = require('./components/v-dropdown');
+const vConfirmActionStateButton = require('./components/v-confirm-action-button');
 
 Vue.config.devtools = false;
 
@@ -280,11 +280,11 @@ var settingsApp = new Vue({
 
 
     handleSaveSettings () {
-      ipc.send('save-settings', this.settings)
+      ipc.send('save-settings', this.settings);
     },
 
     loadSettings () {
-      ipc.send('load-settings', 'load')
+      ipc.send('load-settings', 'load');
     },
 
     updateLoadedSettings (settingsdata) {
@@ -300,15 +300,15 @@ var settingsApp = new Vue({
     },
 
     handleResetSettings () {
-      ipc.send('reset-settings', this.defaultSettings)
+      ipc.send('reset-settings', this.defaultSettings);
     },
 
     handleDeleteSettings () {
-      ipc.send('delete-settings', 'delete')
+      ipc.send('delete-settings', 'delete');
     },
 
     handleCloseSettings () {
-      ipc.send('close-settings')
+      ipc.send('close-settings');
     },
 
     handleRunTestSaverWindow () {
@@ -408,12 +408,12 @@ var noteTip = Vue.component('note-tip', {
 
 document.getElementById("closeBtnTitle").addEventListener('click', (e) => {
   e.preventDefault();
-  ipc.send('close-settings')
+  ipc.send('close-settings');
 });
 
 document.getElementById("minimizeBtnTitle").addEventListener('click', (e) => {
   e.preventDefault();
-  ipc.send('minimize-settings')
+  ipc.send('minimize-settings');
 });
 
 

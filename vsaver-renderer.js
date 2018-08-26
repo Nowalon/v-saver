@@ -4,11 +4,11 @@
 
 'use strict';
 
-const ipc = require('electron').ipcRenderer
+const ipc = require('electron').ipcRenderer;
 
-const Vue = require('vue/dist/vue.min.js')
+const Vue = require('vue/dist/vue.min.js');
 
-Vue.config.devtools = true
+Vue.config.devtools = false;
 
 var messageTimeout = 0;
 var settingFilesWrapNode, fileListNode, logoImg;
@@ -213,7 +213,7 @@ var saverApp = new Vue({
   methods: {
 
     loadSettings () {
-      ipc.send('load-settings', 'load')
+      ipc.send('load-settings', 'load');
     },
 
 

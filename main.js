@@ -1,14 +1,14 @@
-const electron = require('electron')
+const electron = require('electron');
 // Module to control application life.
-const app = electron.app
-const ipc = electron.ipcMain
+const app = electron.app;
+const ipc = electron.ipcMain;
 // Module to create native browser window.
-const BrowserWindow = electron.BrowserWindow
-const Menu = electron.Menu
-const Tray = electron.Tray
-const dialog = electron.dialog
-const Notification = electron.Notification
-const shell = electron.shell
+const BrowserWindow = electron.BrowserWindow;
+const Menu = electron.Menu;
+const Tray = electron.Tray;
+const dialog = electron.dialog;
+const Notification = electron.Notification;
+const shell = electron.shell;
 
 const settings = require('electron-settings');
 
@@ -27,47 +27,47 @@ const childProcess = require('child_process');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let primaryWorkArea
-let settingsWindow
-let saverWindow
-let saverExternalWindow
+let primaryWorkArea;
+let settingsWindow;
+let saverWindow;
+let saverExternalWindow;
 
-let settingsWindowX = 1920/2
-let settingsWindowY = 1080/2
-let settingsWindowWidth = 800
-let settingsWindowHeight = 600
+let settingsWindowX = 1920/2;
+let settingsWindowY = 1080/2;
+let settingsWindowWidth = 800;
+let settingsWindowHeight = 600;
 
-let saverWindowX = 0
-let saverWindowY = 0
-let saverWindowWidth = 1920
-let saverWindowHeight = 1080
+let saverWindowX = 0;
+let saverWindowY = 0;
+let saverWindowWidth = 1920;
+let saverWindowHeight = 1080;
 
 let externalDisplay = null;
-let saverExternalWindowX = 1920 + 20
-let saverExternalWindowY = 0
-let saverExternalWindowWidth = 1920
-let saverExternalWindowHeight = 1080
+let saverExternalWindowX = 1920 + 20;
+let saverExternalWindowY = 0;
+let saverExternalWindowWidth = 1920;
+let saverExternalWindowHeight = 1080;
 
-let appIcon = null
-let showTrayIcon = true
-let iconPathNorm
-let iconPathSusp
-let iconPathConnected
-let iconPathDisconnected
-let notification = null
-let appSettings = null
-let aboutDialog = null
-let trayWarnDialog = null
-let isSuspendSaver = false
-let idleTimer = 0
-let idleTimeOut = 0
-let resetIdleValue = 8640 // ~2.4h
-let checkDnsLookUpTimeOut = 0
-let afterRunSaverWindowTimeOut = 0
-let notificationTimeOut = 0
-let isConnectedFlag = true
-let isRunByIdleTimer = false
-let newAppVersionValue = null
+let appIcon = null;
+let showTrayIcon = true;
+let iconPathNorm;
+let iconPathSusp;
+let iconPathConnected;
+let iconPathDisconnected;
+let notification = null;
+let appSettings = null;
+let aboutDialog = null;
+let trayWarnDialog = null;
+let isSuspendSaver = false;
+let idleTimer = 0;
+let idleTimeOut = 0;
+let resetIdleValue = 8640; // ~2.4h
+let checkDnsLookUpTimeOut = 0;
+let afterRunSaverWindowTimeOut = 0;
+let notificationTimeOut = 0;
+let isConnectedFlag = true;
+let isRunByIdleTimer = false;
+let newAppVersionValue = null;
 var checkConnectionStatusChanged;
 let isShowSettingsOnLoad = false;
 
@@ -78,10 +78,10 @@ const checkVersionUrl='https://raw.githubusercontent.com/Nowalon/v-saver/master/
 
 /* devDebugMode ONLY */ var isDevDebugMode = false;
 
-app.setName(mainAppName)
+app.setName(mainAppName);
 
-var shouldQuit = makeSingleInstance()
-if (shouldQuit) return app.quit()
+var shouldQuit = makeSingleInstance();
+if (shouldQuit) return app.quit();
 
 function createSettingsWindow () {
   checkSetSettingsWindowPosition();
@@ -98,39 +98,39 @@ function createSettingsWindow () {
     title: app.getName(),
     backgroundColor: '#2f3241',
     webPreferences: {}
-  }
+  };
   if(isDevDebugMode) {
     windowOptions.width = 1500;
   }
   if (process.platform === 'linux') {
-    windowOptions.icon = path.join(__dirname, '/assets/img/videoscreensaver-gradient-icon.png')
+    windowOptions.icon = path.join(__dirname, '/assets/img/videoscreensaver-gradient-icon.png');
   }
   // Create the browser window.
-  settingsWindow = new BrowserWindow(windowOptions)
+  settingsWindow = new BrowserWindow(windowOptions);
 
   // and load the settings.html of the app.
   settingsWindow.loadURL(url.format({
     pathname: path.join(__dirname, 'settings.html'),
     protocol: 'file:',
     slashes: true
-  }))
+  }));
 
   // Open the DevTools.
-  isDevDebugMode && settingsWindow.webContents.openDevTools()
-// settingsWindow.webContents.openDevTools()
+  isDevDebugMode && settingsWindow.webContents.openDevTools();
+// settingsWindow.webContents.openDevTools();
 
   // Emitted when the window is closed.
   settingsWindow.on('closed', function () {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
-    settingsWindow = null
+    settingsWindow = null;
   });
 
   settingsWindow.on('close', () => {
-    var settingsWindowPositionOnClose = settingsWindow.getPosition()
+    var settingsWindowPositionOnClose = settingsWindow.getPosition();
     settings.set('settingswindowposition', {x: settingsWindowPositionOnClose[0], y: settingsWindowPositionOnClose[1]});
-  })
+  });
 }
 
 
@@ -147,9 +147,9 @@ function createSaverWindow () {
     frame: false,
     title: app.getName(),
     backgroundColor: '#000000'
-  }
+  };
   if (process.platform === 'linux') {
-    windowOptions.icon = path.join(__dirname, '/assets/img/videoscreensaver-gradient-icon.png')
+    windowOptions.icon = path.join(__dirname, '/assets/img/videoscreensaver-gradient-icon.png');
   }
   
   var saverTypeMain = appSettings && appSettings.hasOwnProperty('saverTypeMain') ? appSettings.saverTypeMain : 'video';
@@ -160,21 +160,21 @@ function createSaverWindow () {
     pathname: path.join(__dirname, saverWindowPath),
     protocol: 'file:',
     slashes: true
-  }))
+  }));
 
   if(!isDevDebugMode) {
-    saverWindow.setFullScreen(true)
+    saverWindow.setFullScreen(true);
   }
   // Open the DevTools.
-  isDevDebugMode && saverWindow.webContents.openDevTools()
+  isDevDebugMode && saverWindow.webContents.openDevTools();
 
   // Emitted when the window is closed.
   saverWindow.on('closed', function () {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
-    saverWindow = null
-  })
+    saverWindow = null;
+  });
 
   saverWindow.on('blur', (e) => {
     saverWindow && runSaverWindow();
@@ -206,29 +206,29 @@ function createSaverExternalWindow () {
     frame: false,
     title: app.getName(),
     backgroundColor: '#000000'
-  }
+  };
   if (process.platform === 'linux') {
-    windowOptions.icon = path.join(__dirname, '/assets/img/videoscreensaver-gradient-icon.png')
+    windowOptions.icon = path.join(__dirname, '/assets/img/videoscreensaver-gradient-icon.png');
   }
 
   var saverTypeExternal = appSettings && appSettings.hasOwnProperty('saverTypeExternal') ? appSettings.saverTypeExternal : 'clock';
   var saverWindowPath = saverTypeExternal === 'clock' ? 'vsaver-clock.html' : 'vsaver.html';
 
   // Create the browser window.
-  saverExternalWindow = new BrowserWindow(windowOptions)
+  saverExternalWindow = new BrowserWindow(windowOptions);
   saverExternalWindow.loadURL(url.format({
     pathname: path.join(__dirname, saverWindowPath),
     protocol: 'file:',
     slashes: true
-  }))
+  }));
   if(!isDevDebugMode) {
-    saverExternalWindow.setFullScreen(true)
+    saverExternalWindow.setFullScreen(true);
   }
   // Open the DevTools.
-  isDevDebugMode && saverExternalWindow.webContents.openDevTools()
+  isDevDebugMode && saverExternalWindow.webContents.openDevTools();
   // Emitted when the window is closed.
   saverExternalWindow.on('closed', function () {
-    saverExternalWindow = null
+    saverExternalWindow = null;
   })
   setTimeout(() => {
     /* some hack fix for cursor hiding */
@@ -243,11 +243,11 @@ function createSaverExternalWindow () {
 
 function runSaverExternalWindow () {
   if (appSettings && saverExternalWindow) {
-    saverExternalWindow.show()
-    saverExternalWindow.setFullScreen(true)
+    saverExternalWindow.show();
+    saverExternalWindow.setFullScreen(true);
   } else {
     if (appSettings) {
-      createSaverExternalWindow()
+      createSaverExternalWindow();
     }
   }
 }
@@ -255,12 +255,12 @@ function runSaverExternalWindow () {
 
 function runSaverWindow () {
   if (appSettings && saverWindow) {
-    saverWindow.show()
-    saverWindow.focus()
-    saverWindow.setFullScreen(true)
+    saverWindow.show();
+    saverWindow.focus();
+    saverWindow.setFullScreen(true);
   } else {
     if (appSettings) {
-      createSaverWindow()
+      createSaverWindow();
     }
   }
   if (externalDisplay) {
@@ -360,7 +360,7 @@ app.on('ready', () => {
     /* isDevDebugMode = true;  !!! REMOVE !!! */
   } else {
     setTimeout(() => {
-      createSettingsWindow()
+      createSettingsWindow();
     }, 300);
   }
 
@@ -403,21 +403,21 @@ app.on('ready', () => {
 // Force app keep in background when all windows are closed.
 app.on('window-all-closed', function () {
   return false;
-})
+});
 
 app.on('quit', function () {
-    if (appIcon) appIcon.destroy()
+    if (appIcon) appIcon.destroy();
     settingsWindow = null;
     saverWindow = null;
     aboutDialog = null;
-    app.quit()
-})
+    app.quit();
+});
 
 app.on('activate', function () {
   if (settingsWindow === null) {
-    createSettingsWindow()
+    createSettingsWindow();
   }
-})
+});
 
 
 ipc.on('open-file-dialog', function (event) {
@@ -430,12 +430,12 @@ ipc.on('open-file-dialog', function (event) {
   }, function (filePaths) {
     if (filePaths) event.sender.send('selected-files-reply', filePaths)
   })
-})
+});
 
 ipc.on('save-settings', function (event, settingsData) {
   var isFirstNoSettingsRun;
   if (settings.has('settings')) {
-    appSettings = settings.get('settings')
+    appSettings = settings.get('settings');
     isFirstNoSettingsRun = false;
   } else {
     isFirstNoSettingsRun = true;
@@ -453,7 +453,7 @@ ipc.on('save-settings', function (event, settingsData) {
   /* devDebugMode */ isDevDebugMode = appSettings && appSettings.hasOwnProperty('devDebugMode') ? appSettings.devDebugMode : false;
   event.sender.send('save-settings-reply', 'Settings saved!');
   isFirstNoSettingsRun && checkSystemIdle();
-})
+});
 
 ipc.on('load-settings', function (event, msg) {
   if (settings.has('settings')) {
@@ -463,7 +463,7 @@ ipc.on('load-settings', function (event, msg) {
     appSettings.externalDisplay = externalDisplay ? true : false;
   }
   event.sender.send('load-settings-reply', appSettings)
-})
+});
 
 ipc.on('reset-settings', function (event, settingsData) {
   settings.set('settings', settingsData);
@@ -472,15 +472,15 @@ ipc.on('reset-settings', function (event, settingsData) {
     appSettings.externalDisplay = externalDisplay ? true : false;
   }
   event.sender.send('reset-settings-reply', appSettings);
-})
+});
 
 ipc.on('open-about-dialog', function (event, arg) {
   showAboutDialogMessage();
-})
+});
 
 ipc.on('close-settings', function (event, settingsData) {
   settingsWindow.close();
-})
+});
 
 ipc.on('minimize-settings', function (event) {
   settingsWindow.minimize();
@@ -504,29 +504,29 @@ ipc.on('close-vsaver-window', function (event) {
 
 ipc.on('check-internet-connection', function (event) {
   checkConnection().then(res => {
-    event.sender.send('check-internet-connection-reply', true)
+    event.sender.send('check-internet-connection-reply', true);
   }).catch(err => {
-    event.sender.send('check-internet-connection-reply', false)
+    event.sender.send('check-internet-connection-reply', false);
   });
 });
 
 ipc.on('check-app-version', function (event) {
   checkConnection().then(res => {
     checkVersion().then(isewVersionResult => {
-      event.sender.send('check-app-version-reply', isewVersionResult)
+      event.sender.send('check-app-version-reply', isewVersionResult);
     }).catch(versionErr => {
-      event.sender.send('check-app-version-reply', false)
+      event.sender.send('check-app-version-reply', false);
     });
   }).catch(err => {
-    event.sender.send('check-app-version-reply', false)
+    event.sender.send('check-app-version-reply', false);
   });
 });
 
 ipc.on('delete-settings', function (event, msg) {
   settings.deleteAll();
   appSettings = settings.get('settings');
-  event.sender.send('delete-settings-reply', appSettings)
-})
+  event.sender.send('delete-settings-reply', appSettings);
+});
 
 ipc.on('show-notification', function (event, arg) {
   showNotification(arg);
@@ -547,9 +547,9 @@ function setTrayIconMenu() {
   var contextMenuTemplate = getContextMenuTemplate(true);
   let contextMenu = Menu.buildFromTemplate(contextMenuTemplate);
 
-  appIcon.setToolTip(mainAppName)
-  appIcon.setTitle(mainAppName)
-  appIcon.setContextMenu(contextMenu)
+  appIcon.setToolTip(mainAppName);
+  appIcon.setTitle(mainAppName);
+  appIcon.setContextMenu(contextMenu);
 
   checkConnectionStatusChanged = connectionSwitched();
   checkConnection().then(res => {
@@ -582,10 +582,10 @@ function getContextMenuTemplate(suspend) {
       label: 'Settings',
       click: function () {
         if (settingsWindow) {
-          settingsWindow.show()
-          settingsWindow.focus()
+          settingsWindow.show();
+          settingsWindow.focus();
         } else {
-          createSettingsWindow()
+          createSettingsWindow();
         }
       }
     },
@@ -612,7 +612,7 @@ function getContextMenuTemplate(suspend) {
     {
       label: 'Exit',
       click: function () {
-        if (appIcon) appIcon.destroy()
+        if (appIcon) appIcon.destroy();
         app.exit()
       }
     }
@@ -648,11 +648,11 @@ function getContextMenuTemplate(suspend) {
   contextMenuTemplate[0] = suspend ? suspendItem : resumeItem;
 
   if (!isConnectedFlag) {
-    contextMenuTemplate.splice(0, 0, noConnectionItem)
+    contextMenuTemplate.splice(0, 0, noConnectionItem);
   }
 
   if (newAppVersionValue) {
-    contextMenuTemplate.splice(contextMenuTemplate.length-2, 0, newVersionItem)
+    contextMenuTemplate.splice(contextMenuTemplate.length-2, 0, newVersionItem);
   }
   return contextMenuTemplate;
 }
@@ -798,10 +798,10 @@ function checkDisplays() {
       saverExternalWindowWidth = externalDisplay.size.width;
       saverExternalWindowHeight = externalDisplay.size.height;
     } else {
-      externalDisplay = null
+      externalDisplay = null;
     }
   } else {
-    externalDisplay = null
+    externalDisplay = null;
   }
 }
 
@@ -899,14 +899,14 @@ function relaunch(showSettings) {
 // Returns true if the current version of the app should quit instead of
 // launching.
 function makeSingleInstance () {
-  if (process.mas) return false
+  if (process.mas) return false;
   return app.makeSingleInstance(() => {
     changeTrayIconVisible(true);
     if (settingsWindow) {
-      settingsWindow.show()
-      settingsWindow.focus()
+      settingsWindow.show();
+      settingsWindow.focus();
     } else {
-      createSettingsWindow()
+      createSettingsWindow();
     }
-  })
+  });
 }

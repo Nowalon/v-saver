@@ -1,7 +1,7 @@
 const util = require('util');
 const execFile = util.promisify(require('child_process').execFile);
 const path = require('path');
-const testFullscreenShPath = path.join(__dirname, './test_fullscreen.sh')
+const testFullscreenShPath = path.join(__dirname, './test_fullscreen.sh');
 
 async function execdetectFullscreenShell() {
   let status = null;

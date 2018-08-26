@@ -55,6 +55,7 @@ var saverApp = new Vue({
     isCurrentVideoTimeGo: false, // 'current-time-go'
     videoFileName: '',
     showAnimateFileName: false,
+    showFullPathFileName: false,
     showHotkeysHelp: false,
     settings: {},
     files: [],
@@ -144,6 +145,7 @@ var saverApp = new Vue({
         if (!goNextAvailable) {
           return false;
         }
+        self.showFullPathFileName = false;
         showVideoLoadingErrorTimeOut && clearTimeout(showVideoLoadingErrorTimeOut);
         this.showVideoLoadingError = false;
         self.goPlayer();
@@ -173,6 +175,9 @@ var saverApp = new Vue({
         return;
       }
       if(e.keyCode === 70){ // 'f'
+        if (self.showAnimateFileName) {
+          self.showFullPathFileName = true;
+        }
         self.showVideoFileName(self.activeVideoSource, 10);
         return;
       }
@@ -354,6 +359,10 @@ var saverApp = new Vue({
 
 
     getFileNameFromSrcLink (srcLink) {
+        var self = this;
+        if (self.showFullPathFileName) {
+          return srcLink;
+        }
         var srcParts_arr = [];
         srcParts_arr = srcLink.split('/');
         return srcParts_arr[srcParts_arr.length-1];
@@ -438,6 +447,7 @@ var saverApp = new Vue({
             this.showAnimateFileName = true;
             hgvf = setTimeout(() => {
               this.showAnimateFileName = false;
+              this.showFullPathFileName = false;
             }, 8000);
         }, _delay);
     },

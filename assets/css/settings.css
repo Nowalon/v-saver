@@ -32,6 +32,68 @@ body {
   font-size: 20px;
   -webkit-app-region: drag;
 }
+
+.title-window-actions{
+  position: absolute;
+  top: 4px;
+  right: 10px;
+}
+.title-button {
+  margin-left: 6px;
+  border: 0 none;
+  position: relative;
+  outline: none;
+  top: 0;
+  left: 0;
+  display: inline-block;
+  color: #333;
+  font-size: 18px;
+  padding: 0;
+  padding-bottom: 2px;
+  width: 24px;
+  height: 16px;
+  text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  z-index: 9;
+  line-height: 14px;
+  background: #fcfff4;
+  background: -webkit-gradient(linear, left top, left bottom, from(#5d7e86), color-stop(40%, #53767d), to(#283e44));
+  background: linear-gradient(to bottom, #5d7e86 0%, #53767d 40%, #283e44 100%);
+  border-radius: 50px;
+  -webkit-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.3);
+          box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.3);
+}
+.title-button:active {
+  -webkit-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.3);
+  height: 15px;
+}
+#minimizeBtnTitle:hover {
+  background: -webkit-gradient(linear, left top, left bottom, from(#81adb7), color-stop(40%, #748d92), to(#333d40));
+  background: linear-gradient(to bottom, #81adb7 0%, #748d92 40%, #333d40 100%);
+}
+#closeBtnTitle:hover {
+  background: -webkit-gradient(linear, left top, left bottom, from(#bea074), color-stop(40%, #98695b), to(#562a15));
+  background: linear-gradient(to bottom, #bea074 0%, #98695b 40%, #562a15 100%);
+}
+.title-button:after {
+  content: '';
+  display: block;
+  z-index: 8;
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  width: 28px;
+  height: 19px;
+  border-radius: 50px;
+  -webkit-box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.5), 0px 1px 0px rgba(255, 255, 255, 0.2);
+          box-shadow: inset 0px 1px 1px rgba(0, 0, 0, 0.5), 0px 1px 0px rgba(255, 255, 255, 0.2);
+}
+.title-button:active:after {
+  -webkit-box-shadow: inset 0px 3px 4px rgba(0, 0, 0, 0.5), 0px 1px 0px rgba(255, 255, 255, 0.2);
+          box-shadow: inset 0px 3px 4px rgba(0, 0, 0, 0.5), 0px 1px 0px rgba(255, 255, 255, 0.2);
+}
+
 .logo{
   position: absolute;
   height: 38px;
@@ -94,9 +156,11 @@ body {
 #sectionsSlider{
   position: relative;
   width: 200%;
-  height: 100%;
+  height: 93.5%;
+  height: calc(100% - 30px);
   transform: translateX(0%);
   transition: transform 0.3s;
+  z-index: 9;
 }
 #sectionsSlider.slider-tab1{
   transform: translateX(0%);
@@ -116,9 +180,12 @@ body {
 #message {
   position: absolute;
   top: -25px;
-  right: 40px;
+  right: 90px;
   color: #9feaf9;
   transition: 0.3s top ease;
+}
+#message.is-error-message {
+  color: #ff450a;
 }
 #message.show-message {
   top: 12px;
@@ -347,6 +414,49 @@ display: table-row;
     display: table-cell;
     padding-top: 8px;
     font-size: 0.9em;
+}
+
+
+#fileDropHolder {
+  position: fixed;
+  width: 50%;
+  height: 100%;
+  max-height: 376px;
+  opacity: 1;
+  background-color: rgba(47, 50, 65, 0.2);
+  padding: 20px 0;
+  box-sizing: border-box;
+  z-index: 0;
+}
+#fileDropHolder:after {
+  content: 'Press «Add files» button \00000a or drag and drop files here';
+  white-space: pre;
+  display: block;
+  position: relative;
+  left: 0;
+  top: 0;
+  width: 94%;
+  height: auto;
+  margin: 0 auto;
+  padding: 16.9% 0;
+  opacity: 0;
+  color: #456369;
+  text-shadow: #74b1be 0px 1px 0px;
+  background-color: rgba(47, 50, 65, 0.85);
+  border: 1px solid #74b1be;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 3em;
+  text-align: center;
+  transition: opacity 0.5s;
+}
+#fileDropHolder.show {
+  display: block;
+  background-color: rgba(47, 50, 65, 0.7);
+  z-index: 99999;
+}
+#fileDropHolder.show:after {
+  opacity: 1;
 }
 
 

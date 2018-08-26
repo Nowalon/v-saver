@@ -19,6 +19,8 @@ const request = require('request');
 
 const lockSystem = require('lock-system');
 const desktopIdle = require('desktop-idle');
+const detectFullscreen = require('./assets/detect-fullscreen/');
+const childProcess = require('child_process');
 
 
 /*const { default: installExtension, VUEJS_DEVTOOLS } = require('electron-devtools-installer');*/
@@ -67,6 +69,7 @@ let isConnectedFlag = true
 let isRunByIdleTimer = false
 let newAppVersionValue = null
 var checkConnectionStatusChanged;
+let isShowSettingsOnLoad = false;
 
 
 const mainAppName = 'V-Saver';
@@ -92,7 +95,9 @@ function createSettingsWindow () {
     titleBarStyle: 'hidden',
     frame: false,
     opacity: 0.8,
-    title: app.getName()
+    title: app.getName(),
+    backgroundColor: '#2f3241',
+    webPreferences: {}
   }
   if(isDevDebugMode) {
     windowOptions.width = 1500;
@@ -112,6 +117,7 @@ function createSettingsWindow () {
 
   // Open the DevTools.
   isDevDebugMode && settingsWindow.webContents.openDevTools()
+// settingsWindow.webContents.openDevTools()
 
   // Emitted when the window is closed.
   settingsWindow.on('closed', function () {
@@ -119,7 +125,7 @@ function createSettingsWindow () {
     // in an array if your app supports multi windows, this is the time
     // when you should delete the corresponding element.
     settingsWindow = null
-  })
+  });
 
   settingsWindow.on('close', () => {
     var settingsWindowPositionOnClose = settingsWindow.getPosition()
@@ -136,15 +142,22 @@ function createSaverWindow () {
     x: saverWindowX,
     y: saverWindowY,
     alwaysOnTop: true,
+    fullscreen: true,
+    skipTaskbar: true,
     frame: false,
-    title: app.getName()
+    title: app.getName(),
+    backgroundColor: '#000000'
   }
   if (process.platform === 'linux') {
     windowOptions.icon = path.join(__dirname, '/assets/img/videoscreensaver-gradient-icon.png')
   }
-  saverWindow = new BrowserWindow(windowOptions)
+  
+  var saverTypeMain = appSettings && appSettings.hasOwnProperty('saverTypeMain') ? appSettings.saverTypeMain : 'video';
+  var saverWindowPath = saverTypeMain === 'video' ? 'vsaver.html' : 'vsaver-clock.html';
+
+  saverWindow = new BrowserWindow(windowOptions);
   saverWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'vsaver.html'),
+    pathname: path.join(__dirname, saverWindowPath),
     protocol: 'file:',
     slashes: true
   }))
@@ -188,16 +201,23 @@ function createSaverExternalWindow () {
     x: saverExternalWindowX,
     y: saverExternalWindowY,
     alwaysOnTop: true,
+    fullscreen: true,
+    skipTaskbar: true,
     frame: false,
-    title: app.getName()
+    title: app.getName(),
+    backgroundColor: '#000000'
   }
   if (process.platform === 'linux') {
     windowOptions.icon = path.join(__dirname, '/assets/img/videoscreensaver-gradient-icon.png')
   }
+
+  var saverTypeExternal = appSettings && appSettings.hasOwnProperty('saverTypeExternal') ? appSettings.saverTypeExternal : 'clock';
+  var saverWindowPath = saverTypeExternal === 'clock' ? 'vsaver-clock.html' : 'vsaver.html';
+
   // Create the browser window.
   saverExternalWindow = new BrowserWindow(windowOptions)
   saverExternalWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'vsaver-clock.html'),
+    pathname: path.join(__dirname, saverWindowPath),
     protocol: 'file:',
     slashes: true
   }))
@@ -212,7 +232,12 @@ function createSaverExternalWindow () {
   })
   setTimeout(() => {
     /* some hack fix for cursor hiding */
-    saverExternalWindow.setFullScreen(false);
+    saverExternalWindow.setFullScreen(false); // ??? TODO check: not for secondary
+/* some TODO */
+    setTimeout(() => {
+      saverExternalWindow.setFullScreen(true); // ??? TODO check: not for secondary
+    }, 300);
+/* some TODO */
   }, 300);
 }
 
@@ -249,7 +274,7 @@ function runSaverWindow () {
 }
 
 
-function checkSystemIdle () { // call after app.on('ready') and settings loaded only!
+async function checkSystemIdle () { // call after app.on('ready') and settings loaded only!
   idleTimeOut && clearTimeout(idleTimeOut);
   var idleTimerSec = appSettings.runInterval * 1 * 60;
   var idleTimeOutValue = 10000; // 10000~20000 ?
@@ -261,13 +286,18 @@ function checkSystemIdle () { // call after app.on('ready') and settings loaded 
     idleTimeOutValue = 2000;
   }
 
+  const isSomeFullscreenExists = await detectFullscreen();
+
   idleTimeOut = setTimeout(() => {
+    const isSystemLocked = checkIsGnomeScreenLocked();
     var desktopIdleSec = desktopIdle.getIdleTime();
     if (desktopIdleSec >= idleTimerSec) {
       if (!isSuspendSaver) {
         if (!isRunByIdleTimer){
           isRunByIdleTimer = true;
-          runSaverWindow();
+          if (!isSystemLocked && !isSomeFullscreenExists) {
+            runSaverWindow();
+          }
         }
       }
       if(desktopIdleSec >= resetIdleValue) {
@@ -321,9 +351,10 @@ function connectionSwitched() {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', () => {
-  primaryWorkArea = electron.screen.getPrimaryDisplay().workArea
+  primaryWorkArea = electron.screen.getPrimaryDisplay().workArea;
   if (settings.has('settings')) {
     appSettings = settings.get('settings');
+    isShowSettingsOnLoad = appSettings && appSettings.hasOwnProperty('showSettingsOnLoad') ? appSettings.showSettingsOnLoad : false;
     showTrayIcon = appSettings && appSettings.hasOwnProperty('showTrayIcon') ? appSettings.showTrayIcon : false;
     /* devDebugMode */ isDevDebugMode = appSettings && appSettings.hasOwnProperty('devDebugMode') ? appSettings.devDebugMode : false;
     /* isDevDebugMode = true;  !!! REMOVE !!! */
@@ -347,20 +378,25 @@ app.on('ready', () => {
   }
 
   electron.screen.on('display-metrics-changed', (event) => {
-    checkExternalDisplay();
+    checkDisplays();
   });
   electron.screen.on('display-added', (event) => {
-    checkExternalDisplay();
+    checkDisplays();
   });
   electron.screen.on('display-removed', (event) => {
-    checkExternalDisplay();
+    checkDisplays();
   });
-  checkExternalDisplay();
+  checkDisplays();
   const primaryDisplaySize = electron.screen.getPrimaryDisplay().size;
   saverWindowWidth = primaryDisplaySize.width;
   saverWindowHeight = primaryDisplaySize.height;
   showTrayIcon && setTrayIconMenu();
-}) // ready
+
+  if (isShowSettingsOnLoad && process.argv.indexOf('--relaunch') >=0) {
+    createSettingsWindow();
+  }
+
+}); // ready
 
 
 
@@ -405,12 +441,15 @@ ipc.on('save-settings', function (event, settingsData) {
     isFirstNoSettingsRun = true;
   }
   settings.set('settings', settingsData);
+  appSettings = settings.get('settings');
   if (settingsData && settingsData.hasOwnProperty('showTrayIcon')) {
     if (settingsData.showTrayIcon !== showTrayIcon) {
       changeTrayIconVisible(settingsData.showTrayIcon);
+      if (!settingsData.showTrayIcon) {
+        relaunch(true);
+      }
     }
   }
-  appSettings = settings.get('settings');
   /* devDebugMode */ isDevDebugMode = appSettings && appSettings.hasOwnProperty('devDebugMode') ? appSettings.devDebugMode : false;
   event.sender.send('save-settings-reply', 'Settings saved!');
   isFirstNoSettingsRun && checkSystemIdle();
@@ -420,13 +459,19 @@ ipc.on('load-settings', function (event, msg) {
   if (settings.has('settings')) {
     appSettings = settings.get('settings')
   }
+  if (appSettings) {
+    appSettings.externalDisplay = externalDisplay ? true : false;
+  }
   event.sender.send('load-settings-reply', appSettings)
 })
 
 ipc.on('reset-settings', function (event, settingsData) {
   settings.set('settings', settingsData);
   appSettings = settings.get('settings');
-  event.sender.send('reset-settings-reply', 'Default settings restored...')
+  if (appSettings) {
+    appSettings.externalDisplay = externalDisplay ? true : false;
+  }
+  event.sender.send('reset-settings-reply', appSettings);
 })
 
 ipc.on('open-about-dialog', function (event, arg) {
@@ -436,6 +481,10 @@ ipc.on('open-about-dialog', function (event, arg) {
 ipc.on('close-settings', function (event, settingsData) {
   settingsWindow.close();
 })
+
+ipc.on('minimize-settings', function (event) {
+  settingsWindow.minimize();
+});
 
 ipc.on('run-vsaver-window', function (event) {
   runSaverWindow();
@@ -479,6 +528,9 @@ ipc.on('delete-settings', function (event, msg) {
   event.sender.send('delete-settings-reply', appSettings)
 })
 
+ipc.on('show-notification', function (event, arg) {
+  showNotification(arg);
+});
 
 function setTrayIconMenu() {
   const iconNameNormal = process.platform === 'win32' ? '/assets/img/v-saver.ico' : '/assets/img/v-saver__icon.png';
@@ -517,7 +569,7 @@ function getContextMenuTemplate(suspend) {
     {
       label: 'Suspend saver',
       click: function () {
-        //
+        // just the template item to be conditionally replaced
       }
     },
     {
@@ -537,10 +589,12 @@ function getContextMenuTemplate(suspend) {
         }
       }
     },
+    /* TODO: check/remove */
     {
       label: 'Remove tray icon',
       click: function () {
         changeTrayIconVisible(false);
+        // relaunch(); /* TODO: check/remove */
       }
     },
     {
@@ -628,6 +682,10 @@ function showNotification(params) {
   if (notification) {
     notification.close();
   }
+  
+  params.title = params.title ? params.title : mainAppName;
+  params.icon = params.icon ? params.icon : iconPathConnected;
+  // TODO check notification icon (GNOME)
   if (Notification.isSupported()){
     notification = new Notification(params);
     notification.show();
@@ -718,18 +776,46 @@ function checkSetSettingsWindowPosition() {
 }
 
 
-function checkExternalDisplay() {
+function checkDisplays() {
   let displays = electron.screen.getAllDisplays();
-  externalDisplay = displays.find((display) => {
-    return display.bounds.x !== 0 || display.bounds.y !== 0
-  })
-  if (externalDisplay) {
-    saverExternalWindowX = externalDisplay.bounds.x + 30;
-    saverExternalWindowY = externalDisplay.bounds.y + 30;
-    saverExternalWindowWidth = externalDisplay.size.width;
-    saverExternalWindowHeight = externalDisplay.size.height;
+  let primaryDisplay = {};
+  if (displays.length > 1) {
+    primaryDisplay = displays.find((display) => {
+      return (primaryWorkArea.x == display.workArea.x && primaryWorkArea.y == display.workArea.y);
+    });
+    externalDisplay = displays.find((display) => {
+      return (primaryWorkArea.x !== display.workArea.x && primaryWorkArea.y !== display.workArea.y);
+    });
+
+    if (primaryDisplay && primaryDisplay.workArea) {
+      saverWindowX = primaryDisplay.workArea.x;
+      saverWindowY = primaryDisplay.workArea.y;
+    }
+
+    if (externalDisplay.bounds) {
+      saverExternalWindowX = externalDisplay.bounds.x + 30;
+      saverExternalWindowY = externalDisplay.bounds.y + 30;
+      saverExternalWindowWidth = externalDisplay.size.width;
+      saverExternalWindowHeight = externalDisplay.size.height;
+    } else {
+      externalDisplay = null
+    }
   } else {
     externalDisplay = null
+  }
+}
+
+
+function checkIsGnomeScreenLocked() {
+  const commandName = 'gnome-screensaver-command';
+  try {
+    const result = childProcess.execFileSync('which', [commandName], {encoding: 'utf8'});
+    if (result && result.length > 0) {
+      let execGnomeScreensaverCommand = childProcess.execFileSync(commandName, ['-t']).toString('utf8');
+      return (/\d/g).test(execGnomeScreensaverCommand);
+    }
+  } catch (err) {
+    return false;
   }
 }
 
@@ -763,8 +849,8 @@ function changeTrayIconVisible(show) {
     showTrayIconWarnDialogMessage();
     if (appIcon) {
       showTrayIcon = false;
-      appIcon.destroy()
-      appIcon = null
+      appIcon.destroy();
+      appIcon = null;
     }
   }
 }
@@ -777,9 +863,31 @@ function showTrayIconWarnDialogMessage() {
     message: 'Warning',
     detail: `Run another ${mainAppName} instance to show settings and restore temporarily the tray icon`,
     buttons: ['Ok'],
-  }, () => {
-    /* https://electronjs.org/docs/api/dialog  :  If a callback is passed, the dialog will not block the process. The API call will be asynchronous and the result will be passed via callback(response) */
-  });
+  }
+  // , () => {
+  //   /* https://electronjs.org/docs/api/dialog  :  If a callback is passed, the dialog will not block the process. The API call will be asynchronous and the result will be passed via callback(response) */
+  // }
+  );
+}
+
+
+function relaunch(showSettings) {
+  showSettings = settingsWindow ? true : false;
+
+  let argsArr = process.argv.slice(1);
+  let args = argsArr.filter(arg => { return arg !== '--relaunch'});
+  if (appSettings) {
+    appSettings.showSettingsOnLoad = showSettings;
+    settings.set('settings', appSettings);
+  }
+  setTimeout(() => {
+    if (showSettings) {
+      app.relaunch({args: args.concat(['--relaunch'])});
+    } else {
+      app.relaunch();
+    }
+    app.exit(0);
+  }, 300);
 }
 
 

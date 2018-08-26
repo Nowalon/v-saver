@@ -8,13 +8,16 @@ const ipc = require('electron').ipcRenderer
 const shell = require('electron').shell;
 
 const Vue = require('vue/dist/vue.min.js')
+window.Vue = Vue;
 
 const vDropdown = require('./components/v-dropdown')
+const vConfirmActionStateButton = require('./components/v-confirm-action-button')
 
-Vue.config.devtools = true
+Vue.config.devtools = false;
 
 var messageTimeout = 0;
 var changeSettingsThresholdTimeout = 0;
+var showDropHolderThresholdTimeout = 0;
 var settingFilesWrapNode, fileListNode, logoImg;
 
 var settingsApp = new Vue({
@@ -22,6 +25,7 @@ var settingsApp = new Vue({
   data: {
     message: '',
     showMessage: false,
+    isErrorMessage: false,
     activeTab: 'tab1',
     initLoadedOrReset: false,
     repoUrl: 'https://github.com/Nowalon/v-saver',
@@ -36,7 +40,8 @@ var settingsApp = new Vue({
       {label: '3 h', value: 180},
       {label: '4 h', value: 240},
       {label: '5 h', value: 300},
-      {label: '6 h', value: 360}
+      {label: '6 h', value: 360},
+      {label: '12 h', value: 720}
     ],
 
     defaultSettings: {
@@ -46,6 +51,9 @@ var settingsApp = new Vue({
       ],
       runInterval: 10,
       lockSystemOnExit: false,
+      saverTypeMain: 'video',
+      saverTypeExternal: 'clock',
+      externalDisplay: false,
       changeAfter: 'videoends',
       changeInterval: 5,
       randomizeVideo: true,
@@ -61,10 +69,11 @@ var settingsApp = new Vue({
     },
     settings: {},
     showDevDebugOption: false, // !!! devDebugMode
-    unlockResetToDefault: false,
     maxRunInterval: 60,
     maxVideoChangeInterval: 30,
-    showfileListScroll: false
+    showfileListScroll: false,
+    showFileDropHolder: false,
+    isFileDropHolderGreeted: false
   },
 
   computed: {
@@ -85,8 +94,12 @@ var settingsApp = new Vue({
       return (this.settings && this.settings.files) ? this.settings.files.length : 0;
     },
 
+    videoOptionsDisabled () {
+      return (this.settings.saverTypeMain !== 'video' && !this.settings.externalDisplay) || (this.settings.externalDisplay && (this.settings.saverTypeMain !== 'video' && this.settings.saverTypeExternal !== 'video'));
+    },
+
     changeIntervalDisabled () {
-      return !this.settings.changeAfter || this.settings.changeAfter !== 'interval'
+      return this.videoOptionsDisabled || !this.settings.changeAfter || this.settings.changeAfter !== 'interval';
     },
 
     changeTimeFormatDisabled () {
@@ -113,14 +126,12 @@ var settingsApp = new Vue({
 
     ipc.on('save-settings-reply', function (event, arg) {
       self.handleShowMessage(arg);
-      self.unlockResetToDefault = false;
     })
 
     ipc.on('reset-settings-reply', function (event, arg) {
       self.initLoadedOrReset = false;
-      self.settings = self.defaultSettings;
-      self.handleShowMessage(arg);
-      self.unlockResetToDefault = false;
+      self.settings = arg;
+      self.handleShowMessage('Default settings restored...');
       setTimeout(() => {
         self.initLoadedOrReset = true;
       }, 100);
@@ -152,15 +163,23 @@ var settingsApp = new Vue({
   methods: {
     handleTabSwitch (tab) {
       this.activeTab = tab;
+      if (this.activeTab === 'tab2' && !this.isFileDropHolderGreeted) {
+        this.showFileDropHolder = true;
+        setTimeout(() => {
+          this.showFileDropHolder = false;
+        }, 2000);
+        this.isFileDropHolderGreeted = true;
+      }
     },
 
-    handleShowMessage (message, timeout) {
+    handleShowMessage (message, timeout, isError) {
       var _timeout = timeout || 3000;
+      var _isError = isError || false;
       if (this.showMessage && messageTimeout) {
         this.showMessage = false;
         clearTimeout(messageTimeout);
         setTimeout(() => {
-          this.handleShowMessage (message, timeout);
+          this.handleShowMessage (message, timeout, _isError);
         }, 300)
       } else {
         if (messageTimeout) {
@@ -168,6 +187,7 @@ var settingsApp = new Vue({
         }
         this.message = message;
         this.showMessage = true;
+        this.isErrorMessage = _isError;
         messageTimeout = setTimeout(() => {
           this.showMessage = false;
         }, _timeout);
@@ -186,8 +206,10 @@ var settingsApp = new Vue({
         }
       });
       this.settings.files = settingsFilesArray;
+      setTimeout(this.updateFileListScroll, 400);
     },
 
+/*
     handleMoveFilePathUp (path, pathIndex) {
       var allowed = pathIndex > 0;
       if (allowed && pathIndex > -1) {
@@ -205,6 +227,28 @@ var settingsApp = new Vue({
       if (allowed && pathIndex > -1) {
         settingsFilesArray.splice(pathIndex, 1);
         var newPathIndex = pathIndex + 1;
+        settingsFilesArray.splice(newPathIndex, 0, path);
+        this.settings.files = settingsFilesArray;
+      }
+    },
+*/
+
+    handleMoveFilePathUp (path, pathIndex) {
+      var allowed = pathIndex > 0;
+      var settingsFilesArray = [...this.settings.files];
+      if (pathIndex > -1) {
+        settingsFilesArray.splice(pathIndex, 1);
+        var newPathIndex = (pathIndex - 1 < 0) ? (this.settings.files.length - 1) : pathIndex - 1;
+        settingsFilesArray.splice(newPathIndex, 0, path);
+        this.settings.files = settingsFilesArray;
+      }
+    },
+
+    handleMoveFilePathDown (path, pathIndex) {
+      var settingsFilesArray = [...this.settings.files];
+      if (pathIndex > -1) {
+        settingsFilesArray.splice(pathIndex, 1);
+        var newPathIndex = (pathIndex + 1 >= this.settings.files.length) ? 0 : pathIndex + 1;
         settingsFilesArray.splice(newPathIndex, 0, path);
         this.settings.files = settingsFilesArray;
       }
@@ -257,7 +301,6 @@ var settingsApp = new Vue({
 
     handleResetSettings () {
       ipc.send('reset-settings', this.defaultSettings)
-      this.unlockResetToDefault = false;
     },
 
     handleDeleteSettings () {
@@ -278,6 +321,47 @@ var settingsApp = new Vue({
 
     handleOpenVersion () {
       shell.openExternal(this.repoUrl);
+    },
+
+    handleFileDragover (e) {
+      this.showFileDropHolder = true;
+    },
+
+    handleFileDragleave (e) {
+      showDropHolderThresholdTimeout && clearTimeout(showDropHolderThresholdTimeout);
+      showDropHolderThresholdTimeout = setTimeout(() => {
+        this.showFileDropHolder = false;
+      }, 300);
+
+    },
+
+    handleFileDrop (e) {
+      let filesToAdd = [];
+      let notAllowedTimeout = 0;
+      const allowedTypes = ['video/webm', 'video/mp4'];
+      let notAllowedTypes = [];
+      for (let f of e.dataTransfer.files) {
+        if (allowedTypes.indexOf(f.type) >= 0) {
+          filesToAdd.push(f.path);
+        } else {
+          notAllowedTypes.push(f.type);
+        }
+      }
+      this.showFileDropHolder = false;
+      if (filesToAdd.length) {
+        this.setUpdateFiles(filesToAdd);
+        notAllowedTimeout = 3000;
+      }
+      if (notAllowedTypes.length) {
+        setTimeout(() => {
+          this.handleShowMessage('webm, mp4 types only are allowed', null, true);
+        }, notAllowedTimeout);
+      }
+    },
+
+    updateFileListScroll(){
+      var element = document.getElementById("settingFilesWrapNode");
+      element.scrollTop = element.scrollHeight;
     }
 
   },
@@ -322,4 +406,32 @@ var noteTip = Vue.component('note-tip', {
 });
 
 
+document.getElementById("closeBtnTitle").addEventListener('click', (e) => {
+  e.preventDefault();
+  ipc.send('close-settings')
+});
 
+document.getElementById("minimizeBtnTitle").addEventListener('click', (e) => {
+  e.preventDefault();
+  ipc.send('minimize-settings')
+});
+
+
+
+document.addEventListener('drop', function (e) {
+  e.preventDefault();
+  e.stopPropagation();
+  return false;
+});
+
+document.addEventListener('dragover', function (e) {
+  e.preventDefault();
+  e.stopPropagation();
+  return false;
+});
+
+document.addEventListener('dragleave', function (e) {
+  e.preventDefault();
+  e.stopPropagation();
+  return false;
+});

@@ -60,7 +60,8 @@ var saverApp = new Vue({
     settings: {},
     files: [],
     filesRandom: [],
-    size: {width: 0, height: 768}
+    size: {width: 0, height: 768},
+    playByIndexData: null
   },
 
 
@@ -69,15 +70,15 @@ var saverApp = new Vue({
       return this.settings.files;
     },
     activeVideoNumber () {
-      return this.activeVideoIndex + 1
+      return this.activeVideoIndex + 1;
     },
     totalVideoCount () {
       if (this.filesRandom && this.filesRandom.length) {
-        return this.filesRandom.length
+        return this.filesRandom.length;
       } else if (this.files && this.files.length) {
-        return this.files.length
+        return this.files.length;
       } else {
-        return 0
+        return 0;
       }
     }
   },
@@ -85,6 +86,8 @@ var saverApp = new Vue({
 
   mounted () {
     var self = this;
+
+    self.playByIndexData = this.getProcessArguments(['--filepathindex', '--filepath']);
 
     videoPlayer = document.getElementById('videoPlayer');
     videoPlayer.addEventListener('loadedmetadata', () => {
@@ -251,6 +254,14 @@ var saverApp = new Vue({
         this.activeVideoIndex = 0;
       }
       this.activeVideoSource = videoStorage[this.activeVideoIndex];
+
+      if (this.playByIndexData) {
+        if (videoStorage.indexOf(this.playByIndexData.filepath) > -1) {
+          this.activeVideoSource = videoStorage[videoStorage.indexOf(this.playByIndexData.filepath)];
+        }
+        this.playByIndexData = null;
+      }
+
       setTimeout(() => {
         videoPlayer.currentTime = 0;
         mainPlayFrameSec = 0;
@@ -450,6 +461,21 @@ var saverApp = new Vue({
               this.showFullPathFileName = false;
             }, 8000);
         }, _delay);
+    },
+
+
+    getProcessArguments(keysArr) {
+      if (!keysArr && !keysArr.length) { return null;}
+      let resultObj = {};
+      if (process.argv.length) {
+        process.argv.forEach(arg => {
+          const argSplitted = arg.split('=');
+          if (keysArr.indexOf(argSplitted[0]) > -1){
+            resultObj[argSplitted[0].replace('--', '')] = (argSplitted.length > 1 && argSplitted[1]) ? argSplitted[1] : '';
+          }
+        });
+        return Object.keys(resultObj).length ? resultObj : null;
+      }
     },
 
 

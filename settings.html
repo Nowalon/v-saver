@@ -289,8 +289,12 @@
 
               <ul class="file-list" id="fileListNode">
                 <li v-for="filePath, filePathindex in settings.files" :index="filePathindex">
-                  <span class="file-name">{{ filePathindex }}: {{ filePath }}</span>
+                  <!--<span class="file-name">{{ filePathindex }}: {{ filePath }}</span>-->
+                  <span class="file-name"><span class="file-name-cont">{{ filePathindex + 1  }}: {{ filePath }}</span></span>
                   <!--:class="{'disabled' : filePathindex === 0}"-->
+                  <span class="file-action file-action-play"
+                        @click="handlePlayFileByIndex(filePath, filePathindex)"
+                        title="play"> &#03; </span><!-- &#17; -->
                   <span class="file-action file-action-move-up"
                         @click="handleMoveFilePathUp(filePath, filePathindex)"
                         title="move up"> &#8679; </span>

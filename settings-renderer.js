@@ -195,7 +195,7 @@ var settingsApp = new Vue({
     },
 
     handleAddFiles () {
-      ipc.send('open-file-dialog')
+      ipc.send('open-file-dialog');
     },
 
     setUpdateFiles (pathsArr) {
@@ -207,6 +207,13 @@ var settingsApp = new Vue({
       });
       this.settings.files = settingsFilesArray;
       setTimeout(this.updateFileListScroll, 400);
+    },
+
+    handlePlayFileByIndex(filePath, filePathindex) {
+      var filtered = this.settings.files.filter(item => {
+        return item === filePath;
+      });
+      ipc.send('play-by-index', {filePath, filePathindex});
     },
 
 /*

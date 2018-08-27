@@ -134,7 +134,13 @@ function createSettingsWindow () {
 }
 
 
-function createSaverWindow () {
+function createSaverWindow (playOpts) {
+  const _playOpts = playOpts || null;
+  let addArgsArr = [];
+  if (_playOpts && _playOpts.filePath) {
+    addArgsArr = [`--filepathindex=${_playOpts.filePathindex}`, `--filepath=${_playOpts.filePath}`];
+  }
+
   var windowOptions = {
     width: saverWindowWidth,
     minWidth: saverWindowWidth,
@@ -146,7 +152,11 @@ function createSaverWindow () {
     skipTaskbar: true,
     frame: false,
     title: app.getName(),
-    backgroundColor: '#000000'
+    backgroundColor: '#000000',
+    webPreferences: {
+      additionArguments: addArgsArr, // some fallback for https://github.com/electron/electron/issues/12420
+      additionalArguments: addArgsArr
+    }
   };
   if (process.platform === 'linux') {
     windowOptions.icon = path.join(__dirname, '/assets/img/videoscreensaver-gradient-icon.png');
@@ -253,14 +263,15 @@ function runSaverExternalWindow () {
 }
 
 
-function runSaverWindow () {
+function runSaverWindow (playParams) {
+  const _playParams = playParams || null;
   if (appSettings && saverWindow) {
     saverWindow.show();
     saverWindow.focus();
     saverWindow.setFullScreen(true);
   } else {
     if (appSettings) {
-      createSaverWindow();
+      createSaverWindow(_playParams);
     }
   }
   if (externalDisplay) {
@@ -488,6 +499,11 @@ ipc.on('minimize-settings', function (event) {
 
 ipc.on('run-vsaver-window', function (event) {
   runSaverWindow();
+});
+
+ipc.on('play-by-index', function (event, playData) {
+  const _playData = playData || null;
+  runSaverWindow (_playData);
 });
 
 ipc.on('close-vsaver-window', function (event) {

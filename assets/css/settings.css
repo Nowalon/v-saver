@@ -277,6 +277,14 @@ button.btn.btn-close{
   color: inherit;
   background-color: inherit;
 }
+.setting-files-wrap ul.file-list li .file-name .file-name-cont {
+  position: relative;
+  display: block;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  width: 88.8%;
+  overflow: hidden;
+}
 .setting-files-wrap ul.file-list li .file-action{
   position: absolute;
   width: 22px;
@@ -297,6 +305,11 @@ button.btn.btn-close{
 }
 .setting-files-wrap ul.file-list li .file-action.file-action-delete {
   right: 0;
+}
+.setting-files-wrap ul.file-list li .file-action.file-action-play {
+  right: 64px;
+  font-size: 1.4em;
+  line-height: 1.6em;
 }
 .setting-files-wrap ul.file-list li .file-action.file-action-move-up {
   right: 44px;

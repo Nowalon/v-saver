@@ -247,6 +247,21 @@
                 </div>
               </div>
 
+              <div class="settings-option-wrap">
+                <span class="settings-option-title">Ignore fullscreen after idle:
+                <note-tip
+                        text="Ceases to consider the fullscreen applications states after this idle interval value and starts saver if no suspend mode is switched on" ></note-tip>
+                </span>
+                <div class="settings-option-control">
+                  <v-dropdown class="__active"
+                              v-model="settings.resetFullScreenInterval"
+                              :select-options="resetFullScreenIntervalItems"
+                              select-name="resetFullScreenInterval"
+                  >
+                  </v-dropdown>
+                </div>
+              </div>
+
               <br>
 
               <p></p></br>

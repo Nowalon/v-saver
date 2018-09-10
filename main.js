@@ -59,9 +59,10 @@ let appSettings = null;
 let aboutDialog = null;
 let trayWarnDialog = null;
 let isSuspendSaver = false;
-let idleTimer = 0;
+// let idleTimer = 0;
 let idleTimeOut = 0;
 let resetIdleValue = 8640; // ~2.4h
+let resetFullScreenValue = 8640; // ~2.4h
 let checkDnsLookUpTimeOut = 0;
 let afterRunSaverWindowTimeOut = 0;
 let notificationTimeOut = 0;
@@ -256,11 +257,11 @@ function createSaverExternalWindow () {
   })
   setTimeout(() => {
     /* some hack fix for cursor hiding */
-    saverExternalWindow.setFullScreen(false); // ??? TODO check: not for secondary
+    // saverExternalWindow.setFullScreen(false); // ??? TODO check: not for secondary
 /* some TODO */
-    setTimeout(() => {
-      saverExternalWindow.setFullScreen(true); // ??? TODO check: not for secondary
-    }, 300);
+    // setTimeout(() => {
+    //   saverExternalWindow.setFullScreen(true); // ??? TODO check: not for secondary
+    // }, 300);
 /* some TODO */
   }, 300);
   setTimeout(() => {
@@ -316,6 +317,8 @@ async function checkSystemIdle () { // call after app.on('ready') and settings l
   var idleTimerSec = appSettings.runInterval * 1 * 60;
   var idleTimeOutValue = 10000; // 10000~20000 ?
   resetIdleValue = appSettings && appSettings.hasOwnProperty('resetSuspendInterval') ? appSettings.resetSuspendInterval * 1 * 60 : resetIdleValue;
+  resetFullScreenValue = appSettings && appSettings.hasOwnProperty('resetFullScreenInterval') ?
+    appSettings.resetFullScreenInterval * 1 * 60 : resetFullScreenValue;
   var showInternetConnectionNotification = (appSettings && appSettings.showInternetConnectionNotification) || false;
 
   if(isDevDebugMode){
@@ -329,10 +332,10 @@ async function checkSystemIdle () { // call after app.on('ready') and settings l
     const isSystemLocked = checkIsGnomeScreenLocked();
     var desktopIdleSec = desktopIdle.getIdleTime();
     if (desktopIdleSec >= idleTimerSec) {
-      if (!isSuspendSaver) {
+      if (!isSuspendSaver && (!isSomeFullscreenExists || (desktopIdleSec >= resetFullScreenValue))) {
         if (!isRunByIdleTimer){
           isRunByIdleTimer = true;
-          if (!isSystemLocked && !isSomeFullscreenExists) {
+          if (!isSystemLocked) {
             runSaverWindow();
           }
         }
@@ -639,13 +642,15 @@ function getContextMenuTemplate(suspend) {
       }
     },
     /* TODO: check/remove */
+/*
     {
       label: 'Remove tray icon',
       click: function () {
         changeTrayIconVisible(false);
-        // relaunch(); /* TODO: check/remove */
+        // relaunch(); /!* TODO: check/remove *!/
       }
     },
+*/
     {
       label: 'Lock system',
       click: () => {

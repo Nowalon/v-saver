@@ -7,6 +7,8 @@
 const ipc = require('electron').ipcRenderer;
 const shell = require('electron').shell;
 
+const getVideoDuration = require('./get-video-duration.js');
+
 const Vue = require('vue/dist/vue.min.js');
 window.Vue = Vue;
 
@@ -49,6 +51,7 @@ var settingsApp = new Vue({
         './assets/video/Starman - SpaceX.mp4',
         './assets/video/Orion Nebula - 360 Video.mp4'
       ],
+      durations: [],
       runInterval: 10,
       lockSystemOnExit: false,
       saverTypeMain: 'video',
@@ -68,6 +71,7 @@ var settingsApp = new Vue({
       devDebugMode: false // !!! devDebugMode
     },
     settings: {},
+    durationsArr: [],
     showDevDebugOption: false, // !!! devDebugMode
     maxRunInterval: 60,
     maxVideoChangeInterval: 30,
@@ -94,6 +98,22 @@ var settingsApp = new Vue({
       return (this.settings && this.settings.files) ? this.settings.files.length : 0;
     },
 
+    filesWithDurations () {
+      let resArr = [];
+      const _durationsArr = (this.settings.durations && this.settings.durations.length) ? this.settings.durations : [];
+      this.settings && this.settings.files && this.settings.files.forEach(filePath => {
+        let fileWithDuration = _durationsArr.find(fileObj => {
+          return fileObj.path === filePath;
+        });
+        if (fileWithDuration) {
+          resArr.push({filePath: filePath, duration: fileWithDuration.duration});
+        } else {
+          resArr.push({filePath: filePath, duration: '--:--'});
+        }
+      });
+      return resArr;
+    },
+
     videoOptionsDisabled () {
       return (this.settings.saverTypeMain !== 'video' && !this.settings.externalDisplay) || (this.settings.externalDisplay && (this.settings.saverTypeMain !== 'video' && this.settings.saverTypeExternal !== 'video'));
     },
@@ -118,15 +138,15 @@ var settingsApp = new Vue({
       if (paths && paths.length) {
         self.setUpdateFiles(paths);
       }
-    })
+    });
 
     ipc.on('load-settings-reply', function (event, arg) {
       self.updateLoadedSettings(arg);
-    })
+    });
 
     ipc.on('save-settings-reply', function (event, arg) {
       self.handleShowMessage(arg);
-    })
+    });
 
     ipc.on('reset-settings-reply', function (event, arg) {
       self.initLoadedOrReset = false;
@@ -135,7 +155,7 @@ var settingsApp = new Vue({
       setTimeout(() => {
         self.initLoadedOrReset = true;
       }, 100);
-    })
+    });
 
     ipc.on('check-app-version-reply', function (event, arg) {
       if (arg && arg.length) {
@@ -207,6 +227,7 @@ var settingsApp = new Vue({
       });
       this.settings.files = settingsFilesArray;
       setTimeout(this.updateFileListScroll, 400);
+      this.compareDurations();
     },
 
     handlePlayFileByIndex(filePath, filePathindex) {
@@ -267,6 +288,7 @@ var settingsApp = new Vue({
         settingsFilesArray.splice(pathIndex, 1);
         this.settings.files = settingsFilesArray;
       }
+      this.cleanupDurations();
     },
 
     handleLoadDemoFiles () {
@@ -304,6 +326,7 @@ var settingsApp = new Vue({
       setTimeout(() => {
         this.initLoadedOrReset = true;
       }, 650);
+      this.compareDurations();
     },
 
     handleResetSettings () {
@@ -369,6 +392,67 @@ var settingsApp = new Vue({
     updateFileListScroll(){
       var element = document.getElementById("settingFilesWrapNode");
       element.scrollTop = element.scrollHeight;
+    },
+
+    compareDurations() {
+      let arrToLoadDuration = [];
+      if (this.settings && this.settings.files && this.settings.files.length) {
+
+        if (!this.settings.durations || !this.settings.durations.length) {
+          this.settings.durations = [];
+          setTimeout(() => {
+            this.getCalculateDurations(this.settings.files);
+          }, 1000);
+          return;
+        }
+
+        arrToLoadDuration = this.settings.files.filter(filePath => {
+          const fileWithDuration = this.settings.durations.find(fileObj => {
+            return fileObj.path === filePath;
+          });
+          if (fileWithDuration) {
+            return false;
+          } else {
+            return true;
+          }
+        });
+      } else {
+        this.cleanupDurations();
+      }
+      this.getCalculateDurations(arrToLoadDuration);
+    },
+
+    getCalculateDurations(videoFiles) {
+      var self = this;
+      let resultArr = [];
+      let _settings = {...this.settings};
+      videoFiles.forEach((file, fi) => {
+        getVideoDuration(file).then((duration) => {
+          const total_s = Math.floor(duration) % 60;
+          var totalDurationMin = ( isNaN(parseInt(duration / 60)) || isNaN(total_s) ) ? "0:00" : parseInt(duration / 60) + ":" + ( total_s < 10 ? "0" + total_s : total_s );
+          resultArr.push({path: file, duration: totalDurationMin});
+          if(resultArr.length === videoFiles.length) {
+            _settings.durations = [..._settings.durations, ...resultArr];
+            self.settings = _settings;
+          }
+        }).catch(e => {
+          console.log('ERROR: ', e);
+          resultArr.push({path: file, duration: 'error'});
+          if(resultArr.length === videoFiles.length) {
+            _settings.durations = [..._settings.durations, ...resultArr];
+            self.settings = _settings;
+          }
+        });
+      });
+    },
+
+    cleanupDurations () {
+      let _settings = {...this.settings};
+      const updSettingsDurations = _settings.durations.filter(durObj => {
+        return _settings.files.indexOf(durObj.path) > -1;
+      });
+      _settings.durations = updSettingsDurations;
+      this.settings = _settings;
     }
 
   },

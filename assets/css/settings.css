@@ -285,7 +285,8 @@ button.btn.btn-close{
   width: 88.8%;
   overflow: hidden;
 }
-.setting-files-wrap ul.file-list li .file-action{
+.setting-files-wrap ul.file-list li .file-action,
+.setting-files-wrap ul.file-list li .file-duration{
   position: absolute;
   width: 22px;
   text-align: center;
@@ -303,6 +304,24 @@ button.btn.btn-close{
   transform: scale(1);
   transition: 0.2s all ease;
 }
+.setting-files-wrap ul.file-list li .file-duration{
+  opacity: 1;
+  width: auto;
+  transform: none;
+  font-size: 1em;
+  font-weight: normal;
+  line-height: 26px;
+  text-align: right;
+  padding-right: 4px;
+}
+.setting-files-wrap ul.file-list li .file-duration.duration-error {
+  color: #ff450a;
+}
+.setting-files-wrap ul.file-list li:hover .file-duration{
+  cursor: pointer;
+  opacity: 0;
+}
+
 .setting-files-wrap ul.file-list li .file-action.file-action-delete {
   right: 0;
 }

@@ -285,25 +285,30 @@
 
             <div class="setting-files-wrap" id="settingFilesWrapNode">
 
-              <div id="fileDropHolder" :class="{'show' : showFileDropHolder}" @dragleave.prevent.stop="handleFileDragleave"></div>
+              <div id="fileDropHolder"
+                   :class="{'show' : showFileDropHolder}"
+                   @dragleave.prevent.stop="handleFileDragleave"
+                   @click.prevent.stop="showFileDropHolder=false;"
+              ></div>
 
               <ul class="file-list" id="fileListNode">
-                <li v-for="filePath, filePathindex in settings.files" :index="filePathindex">
+                <li v-for="file, filePathindex in filesWithDurations" :index="filePathindex" :key="filePathindex">
                   <!--<span class="file-name">{{ filePathindex }}: {{ filePath }}</span>-->
-                  <span class="file-name"><span class="file-name-cont">{{ filePathindex + 1  }}: {{ filePath }}</span></span>
+                  <span class="file-name"><span class="file-name-cont">{{ filePathindex + 1  }}: {{ file.filePath }}</span></span>
                   <!--:class="{'disabled' : filePathindex === 0}"-->
+                  <span class="file-duration" :class="{'duration-error': file.duration === 'error'}"> {{ file.duration }} </span>
                   <span class="file-action file-action-play"
-                        @click="handlePlayFileByIndex(filePath, filePathindex)"
+                        @click="handlePlayFileByIndex(file.filePath, filePathindex)"
                         title="play"> &#03; </span><!-- &#17; -->
                   <span class="file-action file-action-move-up"
-                        @click="handleMoveFilePathUp(filePath, filePathindex)"
+                        @click="handleMoveFilePathUp(file.filePath, filePathindex)"
                         title="move up"> &#8679; </span>
                   <!--:class="{'disabled' : filePathindex === (settings.files.length - 1) }"-->
                   <span class="file-action file-action-move-down"
-                        @click="handleMoveFilePathDown(filePath, filePathindex)"
+                        @click="handleMoveFilePathDown(file.filePath, filePathindex)"
                         title="move down"> &#8681; </span>
                   <span class="file-action file-action-delete"
-                        @click="handleRemoveFilePath(filePath, filePathindex)"
+                        @click="handleRemoveFilePath(file.filePath, filePathindex)"
                         title="remove"> &times; </span>
                 </li>
               </ul>

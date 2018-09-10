@@ -501,6 +501,10 @@ var saverApp = new Vue({
 
     getRandomIntMinMax (min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
+    },
+
+    checkTestSend (data) {
+      ipc.send('check-test-send', data);
     }
 
   }

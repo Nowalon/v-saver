@@ -9,7 +9,7 @@
 
 * {
   -webkit-font-smoothing: antialiased;
-  cursor: none;
+  cursor: none !important;
 }
 ::selection {
 background: none;
@@ -19,7 +19,7 @@ background: none;
 }
 html {
   height: 100%;
-  cursor: none;
+  cursor: none !important;
 }
 .clearfix-divider:after{
   content: '';
@@ -35,13 +35,14 @@ body {
   height: 100%;
   background-color: #000000;
   overflow: hidden;
-  cursor: none;
+  cursor: none !important;
 }
 
 .container { position:relative; }
 .container video {
     position:relative;
     z-index:0;
+    cursor: none !important;
 }
 
 .main-content{
@@ -55,7 +56,7 @@ body {
   height: 100%;
   opacity: 0;
   transition: opacity 0.85s;
-  cursor: none;
+  cursor: none !important;
 }
 #videoPlayer.video-fade-out{
   opacity: 0;

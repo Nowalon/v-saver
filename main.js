@@ -200,6 +200,20 @@ function createSaverWindow (playOpts) {
     /* some hack fix for cursor hiding */
     saverWindow.setFullScreen(false);
   }, 300);
+
+  /* strange, but it looks as it works ... */
+  setTimeout(() => {
+    const eventObj = {
+      type: 'mouseMove',
+      x: 10,
+      y: 10,
+      globalX: 10,
+      globalY: 10,
+      movementX: 10,
+      movementY: 10
+    };
+    saverWindow.webContents.sendInputEvent(eventObj)
+  }, 3000);
 }
 
 
@@ -249,6 +263,18 @@ function createSaverExternalWindow () {
     }, 300);
 /* some TODO */
   }, 300);
+  setTimeout(() => {
+    const eventObj = {
+      type: 'mouseMove',
+      x: 10,
+      y: 10,
+      globalX: 10,
+      globalY: 10,
+      movementX: 10,
+      movementY: 10
+    };
+    saverExternalWindow.webContents.sendInputEvent(eventObj)
+  }, 3000);
 }
 
 function runSaverExternalWindow () {
@@ -362,6 +388,8 @@ function connectionSwitched() {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', () => {
+  // process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
+  // process.env['ELECTRON_ENABLE_SECURITY_WARNINGS'] = 'false';
   primaryWorkArea = electron.screen.getPrimaryDisplay().workArea;
   if (settings.has('settings')) {
     appSettings = settings.get('settings');
@@ -473,7 +501,7 @@ ipc.on('load-settings', function (event, msg) {
   if (appSettings) {
     appSettings.externalDisplay = externalDisplay ? true : false;
   }
-  event.sender.send('load-settings-reply', appSettings)
+  event.sender.send('load-settings-reply', appSettings);
 });
 
 ipc.on('reset-settings', function (event, settingsData) {
@@ -516,7 +544,7 @@ ipc.on('close-vsaver-window', function (event) {
     saverWindow && saverWindow.close();
     saverExternalWindow && saverExternalWindow.close();
   }, 1600); // 1800
-})
+});
 
 ipc.on('check-internet-connection', function (event) {
   checkConnection().then(res => {
@@ -547,6 +575,11 @@ ipc.on('delete-settings', function (event, msg) {
 ipc.on('show-notification', function (event, arg) {
   showNotification(arg);
 });
+
+// ipc.on('check-test-send', function (event, arg) {
+//   console.log(' ------------ check-test-send data: ', arg)
+// });
+
 
 function setTrayIconMenu() {
   const iconNameNormal = process.platform === 'win32' ? '/assets/img/v-saver.ico' : '/assets/img/v-saver__icon.png';

@@ -16,11 +16,12 @@ const path = require('path');
 const url = require('url');
 const dns = require('dns');
 const request = require('request');
+const childProcess = require('child_process');
 
 const lockSystem = require('lock-system');
 const desktopIdle = require('desktop-idle');
-const detectFullscreen = require('./assets/detect-fullscreen/');
-const childProcess = require('child_process');
+const detectFullscreen = require('./assets/detect-fullscreen');
+// const Utils = require('./assets/utils');
 
 
 /*const { default: installExtension, VUEJS_DEVTOOLS } = require('electron-devtools-installer');*/
@@ -326,7 +327,8 @@ async function checkSystemIdle () { // call after app.on('ready') and settings l
     idleTimeOutValue = 2000;
   }
 
-  const isSomeFullscreenExists = await detectFullscreen();
+  let isSomeFullscreenExists = await detectFullscreen();
+  if (isSomeFullscreenExists === null) isSomeFullscreenExists = false;
 
   idleTimeOut = setTimeout(() => {
     const isSystemLocked = checkIsGnomeScreenLocked();
@@ -437,6 +439,13 @@ app.on('ready', () => {
   if (isShowSettingsOnLoad && process.argv.indexOf('--relaunch') >=0) {
     createSettingsWindow();
   }
+
+  process
+    .on('unhandledRejection', (reason, p) => console.error(reason, 'Unhandled Rejection at Promise', p))
+    .on('uncaughtException', err => {
+      console.error(err, 'Uncaught Exception thrown');
+      process.exit(1);
+    });
 
 }); // ready
 

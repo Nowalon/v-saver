@@ -23,6 +23,7 @@ body {
   margin: 0;
   height: 100%;
   background-color: #2f3241;
+  font-size: 12px;
 }
 .page-title{
   text-align: center;
@@ -254,8 +255,10 @@ button.btn.btn-close{
   margin: 0;
   list-style: none;
   width: 100%;
+
+  cursor: default;
 }
-.setting-files-wrap ul.file-list li {
+.setting-files-wrap ul.file-list li, .drag-sortable-list-item {
   border: 1px solid #3e595f;
   border-radius: 3px;
   padding: 6px 0;
@@ -265,19 +268,38 @@ button.btn.btn-close{
   position: relative;
   transition: 0.2s all ease;
   overflow: hidden;
+  list-style: none;
+}
+.drag-sortable-list-item {
+  cursor: grab;
+  cursor: -webkit-grab;
+}
+
+.setting-files-wrap ul.file-list:active {
+  cursor: grab;
+  cursor: -webkit-grab;
+}
+
+/*.setting-files-wrap ul.file-list li:, .drag-sortable-list-item:active,*/
+.setting-files-wrap ul.file-list li:active, .drag-sortable-list-item:active {
+  cursor: grab;
+  cursor: -webkit-grab;
 }
 .setting-files-wrap ul.file-list li:first-child {}
+.drag-sortable-list-item,
 .setting-files-wrap ul.file-list li:hover {
   color: #9feaf9;
   background-color: #393d50;
 }
-.setting-files-wrap ul.file-list li .file-name{
+.setting-files-wrap ul.file-list li .file-name {
+/*.drag-sortable-list-item .file-name{*/
   display: inline-block;
   width: 100%;
   color: inherit;
   background-color: inherit;
 }
-.setting-files-wrap ul.file-list li .file-name .file-name-cont {
+.setting-files-wrap ul.file-list li .file-name .file-name-cont,
+.drag-sortable-list-item .file-name .file-name-cont {
   position: relative;
   display: block;
   white-space: nowrap;
@@ -285,6 +307,7 @@ button.btn.btn-close{
   width: 88.8%;
   overflow: hidden;
 }
+.drag-sortable-list-item .file-duration,
 .setting-files-wrap ul.file-list li .file-action,
 .setting-files-wrap ul.file-list li .file-duration{
   position: absolute;
@@ -304,6 +327,7 @@ button.btn.btn-close{
   transform: scale(1);
   transition: 0.2s all ease;
 }
+.drag-sortable-list-item .file-duration,
 .setting-files-wrap ul.file-list li .file-duration{
   opacity: 1;
   width: auto;
@@ -314,6 +338,7 @@ button.btn.btn-close{
   text-align: right;
   padding-right: 4px;
 }
+.btn-notif.duration-error,
 .setting-files-wrap ul.file-list li .file-duration.duration-error {
   color: #ff450a;
 }
@@ -359,6 +384,9 @@ button.btn.btn-close{
   cursor: default;
   transform: scale(1);
   transition: none !important;
+}
+.drag-sortable-list-item .file-action {
+  display: none;
 }
 
 .disabled-option {

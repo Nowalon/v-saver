@@ -16,4 +16,5 @@ deb:
   depends:
     - libxss-dev
     - pkg-config
-electronVersion: 1.8.4
+    - ffmpeg
+electronVersion: 2.0.7

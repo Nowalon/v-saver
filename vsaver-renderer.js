@@ -36,32 +36,34 @@ var isVideoLoadedTimeOut = 0;
 
 var saverApp = new Vue({
   el: '#vSaver',
-  data: {
-    activeVideoIndex: -1, // 0 index -1
-    activeVideoSource: null,
-    isVideoLoaded: false,
-    showVideoLoadingError: false,
-    nextVideoErrorTimeoutSec: 15,
-    nextVideoErrorCountDownSec: 0,
-    isVideoFadeInClass: false,
-    isOverlayfadeOut: false,
-    isConnectedFlag: true,
-    clockAMPMValue: null,
-    clockTimeValue: null,
-    clockTimeStylePosition: null,
-    currentVideoTimeValue: '0:00',
-    currentFileDuration: '0:00',
-    isNoVideoClass: false,
-    isCurrentVideoTimeGo: false, // 'current-time-go'
-    videoFileName: '',
-    showAnimateFileName: false,
-    showFullPathFileName: false,
-    showHotkeysHelp: false,
-    settings: {},
-    files: [],
-    filesRandom: [],
-    size: {width: 0, height: 768},
-    playByIndexData: null
+  data: () => {
+    return {
+      activeVideoIndex: -1, // 0 index -1
+      activeVideoSource: null,
+      isVideoLoaded: false,
+      showVideoLoadingError: false,
+      nextVideoErrorTimeoutSec: 15,
+      nextVideoErrorCountDownSec: 0,
+      isVideoFadeInClass: false,
+      isOverlayfadeOut: false,
+      isConnectedFlag: true,
+      clockAMPMValue: null,
+      clockTimeValue: null,
+      clockTimeStylePosition: null,
+      currentVideoTimeValue: '0:00',
+      currentFileDuration: '0:00',
+      isNoVideoClass: false,
+      isCurrentVideoTimeGo: false, // 'current-time-go'
+      videoFileName: '',
+      showAnimateFileName: false,
+      showFullPathFileName: false,
+      showHotkeysHelp: false,
+      settings: {},
+      files: [],
+      filesRandom: [],
+      size: {width: 0, height: 768},
+      playByIndexData: null
+    }
   },
 
 

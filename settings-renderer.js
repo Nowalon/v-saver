@@ -7,13 +7,57 @@
 const ipc = require('electron').ipcRenderer;
 const shell = require('electron').shell;
 
-const getVideoDuration = require('./get-video-duration.js');
+const getVideoDuration = require('./assets/get-video-duration.js');
 
 const Vue = require('vue/dist/vue.min.js');
+
+var slicksort = require('vue-slicksort');
+var ContainerMixin = slicksort.ContainerMixin;
+var ElementMixin = slicksort.ElementMixin;
+
 window.Vue = Vue;
 
 const vDropdown = require('./components/v-dropdown');
 const vConfirmActionStateButton = require('./components/v-confirm-action-button');
+
+const SortableList = {
+  mixins: [ContainerMixin],
+  template: `
+    <ul class="file-list" id="fileListNode" >
+      <slot />
+    </ul>
+  `
+};
+
+const SortableItem = {
+  mixins: [ElementMixin],
+  props: [
+    'file',
+    'file-pathindex',
+    'handle-play-file-by-index',
+    'handle-move-file-path-up',
+    'handle-move-file-path-down',
+    'handle-remove-file-path'
+  ],
+  template: `
+    <li class="list-item">
+      <span class="file-name"><span class="file-name-cont">{{ filePathindex + 1  }}: {{ file.filePath }}</span></span>
+      <span class="file-duration" :class="{'duration-error': file.duration === 'error'}"> {{ file.duration }} </span>
+      <span class="file-action file-action-play"
+            @click="handlePlayFileByIndex(file.filePath, filePathindex)"
+            title="play"> &#03; </span><!-- &#17; -->
+      <span class="file-action file-action-move-up"
+            @click="handleMoveFilePathUp(file.filePath, filePathindex)"
+            title="move up"> &#8679; </span>
+      <span class="file-action file-action-move-down"
+            @click="handleMoveFilePathDown(file.filePath, filePathindex)"
+            title="move down"> &#8681; </span>
+      <span class="file-action file-action-delete"
+            @click="handleRemoveFilePath(file.filePath, filePathindex)"
+            title="remove"> &times; </span>
+    </li>
+  `
+};
 
 Vue.config.devtools = false;
 
@@ -24,72 +68,78 @@ var settingFilesWrapNode, fileListNode, logoImg;
 
 var settingsApp = new Vue({
   el: '#settings',
-  data: {
-    message: '',
-    showMessage: false,
-    isErrorMessage: false,
-    activeTab: 'tab1',
-    initLoadedOrReset: false,
-    repoUrl: 'https://github.com/Nowalon/v-saver',
-    isNewVersionavailable: false,
-    newVersionValue: '0.0.0',
-    resetSuspendIntervalItems: [
-      {label: '30 min', value: 30},
-      {label: '1 h', value: 60},
-      {label: '1 h 30 m', value: 90},
-      {label: '2 h', value: 120},
-      {label: '2 h 30 m', value: 150},
-      {label: '3 h', value: 180},
-      {label: '4 h', value: 240},
-      {label: '5 h', value: 300},
-      {label: '6 h', value: 360},
-      {label: '12 h', value: 720}
-    ],
-    resetFullScreenIntervalItems: [
-      {label: '30 min', value: 30},
-      {label: '1 h', value: 60},
-      {label: '1 h 30 m', value: 90},
-      {label: '2 h', value: 120},
-      {label: '2 h 30 m', value: 150},
-      {label: '3 h', value: 180},
-      {label: '4 h', value: 240},
-      {label: '5 h', value: 300},
-      {label: '6 h', value: 360}
-    ],
-
-    defaultSettings: {
-      files: [
-        './assets/video/Starman - SpaceX.mp4',
-        './assets/video/Orion Nebula - 360 Video.mp4'
+  components: {
+    SortableItem,
+    SortableList
+  },
+  data: () => {
+    return {
+      message: '',
+      showMessage: false,
+      isErrorMessage: false,
+      activeTab: 'tab1',
+      initLoadedOrReset: false,
+      repoUrl: 'https://github.com/Nowalon/v-saver',
+      isNewVersionavailable: false,
+      newVersionValue: '0.0.0',
+      resetSuspendIntervalItems: [
+        {label: '30 min', value: 30},
+        {label: '1 h', value: 60},
+        {label: '1 h 30 m', value: 90},
+        {label: '2 h', value: 120},
+        {label: '2 h 30 m', value: 150},
+        {label: '3 h', value: 180},
+        {label: '4 h', value: 240},
+        {label: '5 h', value: 300},
+        {label: '6 h', value: 360},
+        {label: '12 h', value: 720}
       ],
-      durations: [],
-      runInterval: 10,
-      lockSystemOnExit: false,
-      saverTypeMain: 'video',
-      saverTypeExternal: 'clock',
-      externalDisplay: false,
-      changeAfter: 'videoends',
-      changeInterval: 5,
-      randomizeVideo: true,
-      showSystemClockTime: true,
-      clockTimeFormat: 24,
-      showVideoRemainingTime: true,
-      showVideoFileName: true,
-      showInternetConnectionLostIndicator: true,
-      showInternetConnectionNotification: true,
-      showTrayIcon: true,
-      resetSuspendInterval: 120,
-      resetFullScreenInterval: 120,
-      devDebugMode: false // !!! devDebugMode
-    },
-    settings: {},
-    durationsArr: [],
-    showDevDebugOption: false, // !!! devDebugMode
-    maxRunInterval: 60,
-    maxVideoChangeInterval: 30,
-    showfileListScroll: false,
-    showFileDropHolder: false,
-    isFileDropHolderGreeted: false
+      resetFullScreenIntervalItems: [
+        {label: '30 min', value: 30},
+        {label: '1 h', value: 60},
+        {label: '1 h 30 m', value: 90},
+        {label: '2 h', value: 120},
+        {label: '2 h 30 m', value: 150},
+        {label: '3 h', value: 180},
+        {label: '4 h', value: 240},
+        {label: '5 h', value: 300},
+        {label: '6 h', value: 360}
+      ],
+
+      defaultSettings: {
+        files: [
+          './assets/video/Starman - SpaceX.mp4',
+          './assets/video/Orion Nebula - 360 Video.mp4'
+        ],
+        durations: [],
+        runInterval: 10,
+        lockSystemOnExit: false,
+        saverTypeMain: 'video',
+        saverTypeExternal: 'clock',
+        externalDisplay: false,
+        changeAfter: 'videoends',
+        changeInterval: 5,
+        randomizeVideo: true,
+        showSystemClockTime: true,
+        clockTimeFormat: 24,
+        showVideoRemainingTime: true,
+        showVideoFileName: true,
+        showInternetConnectionLostIndicator: true,
+        showInternetConnectionNotification: true,
+        showTrayIcon: true,
+        resetSuspendInterval: 120,
+        resetFullScreenInterval: 120,
+        devDebugMode: false // !!! devDebugMode
+      },
+      settings: {},
+      durationsArr: [],
+      showDevDebugOption: false, // !!! devDebugMode
+      maxRunInterval: 60,
+      maxVideoChangeInterval: 30,
+      showfileListScroll: false,
+      showFileDropHolder: false,
+      isFileDropHolderGreeted: false
+    }
   },
 
   computed: {
@@ -108,6 +158,10 @@ var settingsApp = new Vue({
 
     filesCount () {
       return (this.settings && this.settings.files) ? this.settings.files.length : 0;
+    },
+
+    fileErrorsCount () {
+      return this.filesWithDurations.filter(fileItem => { return fileItem.duration === 'error'}).length;
     },
 
     filesWithDurations () {
@@ -345,6 +399,13 @@ var settingsApp = new Vue({
       ipc.send('reset-settings', this.defaultSettings);
     },
 
+    handleFileListSortInput (sorted/*, index, newIndex*/) {
+      if (sorted && sorted.length) {
+        const sortedPathes = sorted.map(sortedItem => sortedItem.filePath);
+        this.settings.files = sortedPathes;
+      }
+    },
+
     handleDeleteSettings () {
       ipc.send('delete-settings', 'delete');
     },
@@ -442,7 +503,11 @@ var settingsApp = new Vue({
         getVideoDuration(file).then((duration) => {
           const total_s = Math.floor(duration) % 60;
           var totalDurationMin = ( isNaN(parseInt(duration / 60)) || isNaN(total_s) ) ? "0:00" : parseInt(duration / 60) + ":" + ( total_s < 10 ? "0" + total_s : total_s );
-          resultArr.push({path: file, duration: totalDurationMin});
+          if (duration < 2 ) {
+            resultArr.push({path: file, duration: 'error'});
+          } else {
+            resultArr.push({path: file, duration: totalDurationMin});
+          }
           if(resultArr.length === videoFiles.length) {
             _settings.durations = [..._settings.durations, ...resultArr];
             self.settings = _settings;

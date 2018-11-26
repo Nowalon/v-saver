@@ -45,6 +45,7 @@ checkFullscreen()
 		for i in $TEST_WIN_IDs; do
 
 			isWinFullscreen=`DISPLAY=${CURRENT_DISPLAY}.${display} xprop -id "$i" | grep _NET_WM_STATE_FULLSCREEN`
+#			isWinFullscreen=`DISPLAY=${CURRENT_DISPLAY}.2 xprop -id "$i" | grep _NET_WM_STATE_FULLSCREEN`
 
 			if [[ "$isWinFullscreen" == *NET_WM_STATE_FULLSCREEN* ]];then
 

@@ -11,6 +11,10 @@ async function execdetectFullscreenShell() {
       throw new Error(stderr);
       return status;
     }
+    if (error) {
+      throw new Error(error);
+      return status;
+    }
     try {
       if (stdout) {
         const parsed = JSON.parse(stdout);
@@ -18,11 +22,11 @@ async function execdetectFullscreenShell() {
       }
       return status;
     } catch(e) {
-      console.log('parse error: ', e);
+      console.log('detect-fullscreen parse error: ', e);
       return status;
     }
   } catch(e) {
-    console.log('error: ', e);
+    console.log('detect-fullscreen exec error: ', e);
     return status;
   }
 }

@@ -1,9 +1,9 @@
 version: 0.9.4
 files:
   - url: v-saver-0.9.4-x86_64.AppImage
-    sha512: r1WOAkIQVp/VEkXC7yqi/ks64v5Uhde2d1ulXrlk2vskw1nZNDpLv3+6zXxEOo1K7ZfqgMrzAgHPRaZHPxybAg==
-    size: 67119440
-    blockMapSize: 70292
+    sha512: uqr9TNncz3a/p0RLXaXMNTu6G/63xAI9sIjXb3UWL1/f/XJ3z0vnjoCUHeasc7B+U6kG0W6vlfvR6XcKm1iFsg==
+    size: 69162117
+    blockMapSize: 73161
 path: v-saver-0.9.4-x86_64.AppImage
-sha512: r1WOAkIQVp/VEkXC7yqi/ks64v5Uhde2d1ulXrlk2vskw1nZNDpLv3+6zXxEOo1K7ZfqgMrzAgHPRaZHPxybAg==
-releaseDate: '2018-03-26T18:21:31.062Z'
+sha512: uqr9TNncz3a/p0RLXaXMNTu6G/63xAI9sIjXb3UWL1/f/XJ3z0vnjoCUHeasc7B+U6kG0W6vlfvR6XcKm1iFsg==
+releaseDate: '2018-09-20T18:38:10.751Z'

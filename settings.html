@@ -294,6 +294,7 @@
               >
               </v-confirm-action-state-button>
               <span class="btn-notif">Files count: {{ filesCount }}</span>
+              <span v-if="fileErrorsCount > 0" class="btn-notif duration-error">Errors: {{ fileErrorsCount }}</span>
             </div>
 
             <div class="clearfix-divider"></div>
@@ -306,27 +307,30 @@
                    @click.prevent.stop="showFileDropHolder=false;"
               ></div>
 
-              <ul class="file-list" id="fileListNode">
-                <li v-for="file, filePathindex in filesWithDurations" :index="filePathindex" :key="filePathindex">
-                  <!--<span class="file-name">{{ filePathindex }}: {{ filePath }}</span>-->
-                  <span class="file-name"><span class="file-name-cont">{{ filePathindex + 1  }}: {{ file.filePath }}</span></span>
-                  <!--:class="{'disabled' : filePathindex === 0}"-->
-                  <span class="file-duration" :class="{'duration-error': file.duration === 'error'}"> {{ file.duration }} </span>
-                  <span class="file-action file-action-play"
-                        @click="handlePlayFileByIndex(file.filePath, filePathindex)"
-                        title="play"> &#03; </span><!-- &#17; -->
-                  <span class="file-action file-action-move-up"
-                        @click="handleMoveFilePathUp(file.filePath, filePathindex)"
-                        title="move up"> &#8679; </span>
-                  <!--:class="{'disabled' : filePathindex === (settings.files.length - 1) }"-->
-                  <span class="file-action file-action-move-down"
-                        @click="handleMoveFilePathDown(file.filePath, filePathindex)"
-                        title="move down"> &#8681; </span>
-                  <span class="file-action file-action-delete"
-                        @click="handleRemoveFilePath(file.filePath, filePathindex)"
-                        title="remove"> &times; </span>
-                </li>
-              </ul>
+              <sortable-list lock-axis="y"
+                             helper-class="drag-sortable-list-item"
+                             v-model="filesWithDurations"
+                             press-threshold="10"
+                             distance="6"
+                             lock-to-container-edges="true"
+                             @sortStart="handleFileListSortStart($event)"
+                             @sort-start="handleFileListSortStart($event)"
+                             @sortEnd="handleFileListSortEnd($event)"
+                             @sort-end="handleFileListSortEnd($event)"
+                             @input="handleFileListSortInput"
+              >
+                <sortable-item v-for="(file, filePathindex) in filesWithDurations"
+                               :index="filePathindex"
+                               :key="filePathindex"
+                               :file="file"
+                               :file-pathindex="filePathindex"
+                               :handle-play-file-by-index="handlePlayFileByIndex"
+                               :handle-move-file-path-up="handleMoveFilePathUp"
+                               :handle-move-file-path-down="handleMoveFilePathDown"
+                               :handle-remove-file-path="handleRemoveFilePath"
+                />
+              </sortable-list>
+
               <div class="file-list-scroller" v-if="showfileListScroll"><span>&varr;</span></div>
             </div>
 

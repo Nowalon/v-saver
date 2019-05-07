@@ -61,11 +61,11 @@ Comment=v-saver
 ### Issues
 
 ~~There's still no a normal solution to detect fullscreen running applications (at least I haven't found yet) for Ubuntu, even for XScreensaver.~~
-In this reason v-saver has own suspend running mode as menu option with some reset timer.
+~~In this reason~~ v-saver has own suspend running mode as menu option with some reset timer.
 
 **UPDATED:**
 
-The issue has been researched anew and finally solution for Xserver was discovered, reworked for node.js module using, no dependencies (wmctrl) required - 
+The issue has been researched anew and finally solution for Xserver was discovered, reworked for node.js module using, no dependencies (e.g. wmctrl) required - 
 by `xvinfo` - for X displays detection and `xprop` - windows properties in an X server - to check windows fullscreen state;
 
 displays detection with flexible checking fix;

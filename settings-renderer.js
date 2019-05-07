@@ -34,6 +34,7 @@ const SortableItem = {
   props: [
     'file',
     'file-pathindex',
+    'saver-type',
     'handle-play-file-by-index',
     'handle-move-file-path-up',
     'handle-move-file-path-down',
@@ -44,6 +45,7 @@ const SortableItem = {
       <span class="file-name"><span class="file-name-cont">{{ filePathindex + 1  }}: {{ file.filePath }}</span></span>
       <span class="file-duration" :class="{'duration-error': file.duration === 'error'}"> {{ file.duration }} </span>
       <span class="file-action file-action-play"
+            :class="{'disabled' : saverType !== 'video'}"
             @click="handlePlayFileByIndex(file.filePath, filePathindex)"
             title="play"> &#03; </span><!-- &#17; -->
       <span class="file-action file-action-move-up"
@@ -297,6 +299,7 @@ var settingsApp = new Vue({
     },
 
     handlePlayFileByIndex(filePath, filePathindex) {
+      if (this.settings.saverTypeMain !== 'video') return;
       var filtered = this.settings.files.filter(item => {
         return item === filePath;
       });

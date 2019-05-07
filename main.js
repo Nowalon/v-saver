@@ -65,6 +65,7 @@ let idleTimeOut = 0;
 let resetIdleValue = 8640; // ~2.4h
 let resetFullScreenValue = 8640; // ~2.4h
 let checkDnsLookUpTimeOut = 0;
+let checkDnsLookUpAttempt = 0;
 let afterRunSaverWindowTimeOut = 0;
 let notificationTimeOut = 0;
 let isConnectedFlag = true;
@@ -139,8 +140,10 @@ function createSettingsWindow () {
 function createSaverWindow (playOpts) {
   const _playOpts = playOpts || null;
   let addArgsArr = [];
+  let forceVideoMode = false;
   if (_playOpts && _playOpts.filePath) {
     addArgsArr = [`--filepathindex=${_playOpts.filePathindex}`, `--filepath=${_playOpts.filePath}`];
+    forceVideoMode = true;
   }
 
   var windowOptions = {
@@ -165,7 +168,7 @@ function createSaverWindow (playOpts) {
   }
   
   var saverTypeMain = appSettings && appSettings.hasOwnProperty('saverTypeMain') ? appSettings.saverTypeMain : 'video';
-  var saverWindowPath = saverTypeMain === 'video' ? 'vsaver.html' : 'vsaver-clock.html';
+  var saverWindowPath = saverTypeMain === 'video' || forceVideoMode ? 'vsaver.html' : 'vsaver-clock.html';
 
   saverWindow = new BrowserWindow(windowOptions);
   saverWindow.loadURL(url.format({
@@ -214,7 +217,7 @@ function createSaverWindow (playOpts) {
       movementX: 10,
       movementY: 10
     };
-    saverWindow.webContents.sendInputEvent(eventObj)
+    saverWindow && saverWindow.webContents.sendInputEvent(eventObj);
   }, 3000);
 }
 
@@ -255,16 +258,7 @@ function createSaverExternalWindow () {
   // Emitted when the window is closed.
   saverExternalWindow.on('closed', function () {
     saverExternalWindow = null;
-  })
-  setTimeout(() => {
-    /* some hack fix for cursor hiding */
-    // saverExternalWindow.setFullScreen(false); // ??? TODO check: not for secondary
-/* some TODO */
-    // setTimeout(() => {
-    //   saverExternalWindow.setFullScreen(true); // ??? TODO check: not for secondary
-    // }, 300);
-/* some TODO */
-  }, 300);
+  });
   setTimeout(() => {
     const eventObj = {
       type: 'mouseMove',
@@ -367,6 +361,7 @@ async function checkSystemIdle () { // call after app.on('ready') and settings l
           connecNotifParams.body = 'Internet connection lost';
           connecNotifParams.icon = iconPathDisconnected;
           showInternetConnectionNotification && showNotification(connecNotifParams);
+          console.log(err);
         }
       });
     }
@@ -401,7 +396,6 @@ app.on('ready', () => {
     isShowSettingsOnLoad = appSettings && appSettings.hasOwnProperty('showSettingsOnLoad') ? appSettings.showSettingsOnLoad : false;
     showTrayIcon = appSettings && appSettings.hasOwnProperty('showTrayIcon') ? appSettings.showTrayIcon : false;
     /* devDebugMode */ isDevDebugMode = appSettings && appSettings.hasOwnProperty('devDebugMode') ? appSettings.devDebugMode : false;
-    /* isDevDebugMode = true;  !!! REMOVE !!! */
   } else {
     setTimeout(() => {
       createSettingsWindow();
@@ -630,7 +624,7 @@ function getContextMenuTemplate(suspend) {
     {
       label: 'Suspend saver',
       click: function () {
-        // just the template item to be conditionally replaced
+        // just the template array item to be conditionally replaced
       }
     },
     {
@@ -686,27 +680,27 @@ function getContextMenuTemplate(suspend) {
       click: function () {
       shell.openExternal(mainRepoUrl);
     }
-  }
+  };
   const suspendItem = {
       label: 'Suspend screensaver running',
       click: function () {
         isSuspendSaver = true;
         handleChangeContextMenuTemplate();
     }
-  }
+  };
   const resumeItem = {
       label: 'Resume screensaver running',
       click: function () {
         isSuspendSaver = false;
         handleChangeContextMenuTemplate();
     }
-  }
+  };
   const noConnectionItem = {
       label: '!!  No Internet connection  !!',
       click: function () {
         checkConnection();
     }
-  }
+  };
 
   contextMenuTemplate[0] = suspend ? suspendItem : resumeItem;
 
@@ -790,22 +784,35 @@ function checkConnection() {
     checkDnsLookUpTimeOut = setTimeout(() => {
       if (done) { return false; }
       done = true;
-      isConnectedFlag = false;
-      reject(new Error('DNS lookup timout error'));
-      return false;
+      checkDnsLookUpAttempt++;
+      if (checkDnsLookUpAttempt === 1) {
+        checkConnection();
+      } else {
+        isConnectedFlag = false;
+        reject(new Error('DNS lookup timout error'));
+        return false;
+      }
     }, 4500);
     dns.lookupService('8.8.8.8', 53, function(error, hostname, service){
       // google-public-dns-a.google.com domain
       if (error) {
+        console.log('dns.lookup ERROR: ', error);
         if (done) { return false; }
         done = true;
-        isConnectedFlag = false;
-        reject(error);
+
+        checkDnsLookUpAttempt++;
+        if (checkDnsLookUpAttempt === 1) {
+          checkConnection();
+        } else {
+          isConnectedFlag = false;
+          reject(error);
+        }
       } else {
         if (done) { return false; }
         var delta = ((new Date()).getTime() - start);
         done = true;
         isConnectedFlag = true;
+        checkDnsLookUpAttempt = 0;
         resolve({hostname: hostname, time: delta});
       }
     });
@@ -855,7 +862,7 @@ function checkDisplays() {
       saverWindowY = primaryDisplay.workArea.y;
     }
 
-    if (externalDisplay.bounds) {
+    if (externalDisplay && externalDisplay.bounds) {
       saverExternalWindowX = externalDisplay.bounds.x + 30;
       saverExternalWindowY = externalDisplay.bounds.y + 30;
       saverExternalWindowWidth = externalDisplay.size.width;

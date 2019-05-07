@@ -1,0 +1,99 @@
+button.v-confirm-action-btn{
+  margin: 0;
+  border: none;
+  font-size: 14px;
+  outline: none;
+  border: 1px solid #74b1be;
+  border-radius: 3px;
+  transition: 0.2s all ease;
+  background-color: #2f3241;
+
+  padding: 0 10px;
+  min-width: 74px;
+  min-height: 30px;
+  height: 30px;
+}
+button.v-confirm-action-btn:hover{
+  color: #9feaf9;
+  background-color: #393d50;
+}
+button.v-confirm-action-btn:active{background-color: #303030;}
+button.v-confirm-action-btn[disabled]{
+  opacity: 0.4;
+  color: inherit;
+  background-color: inherit;
+}
+button.v-confirm-action-btn.confirm-required{
+  transition: none;
+}
+button.v-confirm-action-btn span {
+  color: #74b1be;
+  transition: 0.2s color ease;
+}
+button.v-confirm-action-btn:hover span {
+  color: #9feaf9;
+}
+button.v-confirm-action-btn.confirm-required span {
+  display: inline-block;
+/*  -webkit-animation: softPulseAnimation 1.2s infinite;*/
+/*  animation: softPulseAnimation 1.2s infinite;*/
+
+    -webkit-animation: shakeAnimation 0.82s 0.7s cubic-bezier(.36,.07,.19,.97) both;
+    animation: shakeAnimation 0.82s 0.7s cubic-bezier(.36,.07,.19,.97) both;
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+button.v-confirm-action-btn.btn-close{
+/* */
+}
+
+/*
+@-webkit-keyframes softPulseAnimation {
+    0% {transform: scale(1); }
+    35% {transform: scale(1.2); color: #9feaf9;}
+    100% {transform: scale(1);}
+}
+@keyframes softPulseAnimation {
+    0% {transform: scale(1);}
+    35% {transform: scale(1.2); color: #9feaf9;}
+    100% {transform: scale(1);}
+}
+*/
+
+@-webkit-keyframes shakeAnimation {
+    10%, 90% {
+      color: #9feaf9;
+      transform: translate3d(-2px, 0, 0);
+    }
+    20%, 80% {
+      transform: translate3d(4px, 0, 0);
+    }
+    30%, 50%, 70% {
+      transform: translate3d(-8px, 0, 0);
+    }
+    40%, 60% {
+      transform: translate3d(8px, 0, 0);
+    }
+    100%{
+      color: #9feaf9;
+    }
+}
+@keyframes shakeAnimation {
+    10%, 90% {
+      color: #9feaf9;
+      transform: translate3d(-2px, 0, 0);
+    }
+    20%, 80% {
+      transform: translate3d(4px, 0, 0);
+    }
+    30%, 50%, 70% {
+      transform: translate3d(-8px, 0, 0);
+    }
+    40%, 60% {
+      transform: translate3d(8px, 0, 0);
+    }
+    100%{
+      color: #9feaf9;
+    }
+}

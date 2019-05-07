@@ -4,11 +4,11 @@
 
 'use strict';
 
-const ipc = require('electron').ipcRenderer
+const ipc = require('electron').ipcRenderer;
 
-const Vue = require('vue/dist/vue.min.js')
+const Vue = require('vue/dist/vue.min.js');
 
-Vue.config.devtools = true
+Vue.config.devtools = false;
 
 var messageTimeout = 0;
 var settingFilesWrapNode, fileListNode, logoImg;
@@ -36,30 +36,34 @@ var isVideoLoadedTimeOut = 0;
 
 var saverApp = new Vue({
   el: '#vSaver',
-  data: {
-    activeVideoIndex: -1, // 0 index -1
-    activeVideoSource: null,
-    isVideoLoaded: false,
-    showVideoLoadingError: false,
-    nextVideoErrorTimeoutSec: 15,
-    nextVideoErrorCountDownSec: 0,
-    isVideoFadeInClass: false,
-    isOverlayfadeOut: false,
-    isConnectedFlag: true,
-    clockAMPMValue: null,
-    clockTimeValue: null,
-    clockTimeStylePosition: null,
-    currentVideoTimeValue: '0:00',
-    currentFileDuration: '0:00',
-    isNoVideoClass: false,
-    isCurrentVideoTimeGo: false, // 'current-time-go'
-    videoFileName: '',
-    showAnimateFileName: false,
-    showHotkeysHelp: false,
-    settings: {},
-    files: [],
-    filesRandom: [],
-    size: {width: 0, height: 768}
+  data: () => {
+    return {
+      activeVideoIndex: -1, // 0 index -1
+      activeVideoSource: null,
+      isVideoLoaded: false,
+      showVideoLoadingError: false,
+      nextVideoErrorTimeoutSec: 15,
+      nextVideoErrorCountDownSec: 0,
+      isVideoFadeInClass: false,
+      isOverlayfadeOut: false,
+      isConnectedFlag: true,
+      clockAMPMValue: null,
+      clockTimeValue: null,
+      clockTimeStylePosition: null,
+      currentVideoTimeValue: '0:00',
+      currentFileDuration: '0:00',
+      isNoVideoClass: false,
+      isCurrentVideoTimeGo: false, // 'current-time-go'
+      videoFileName: '',
+      showAnimateFileName: false,
+      showFullPathFileName: false,
+      showHotkeysHelp: false,
+      settings: {},
+      files: [],
+      filesRandom: [],
+      size: {width: 0, height: 768},
+      playByIndexData: null
+    }
   },
 
 
@@ -68,15 +72,15 @@ var saverApp = new Vue({
       return this.settings.files;
     },
     activeVideoNumber () {
-      return this.activeVideoIndex + 1
+      return this.activeVideoIndex + 1;
     },
     totalVideoCount () {
       if (this.filesRandom && this.filesRandom.length) {
-        return this.filesRandom.length
+        return this.filesRandom.length;
       } else if (this.files && this.files.length) {
-        return this.files.length
+        return this.files.length;
       } else {
-        return 0
+        return 0;
       }
     }
   },
@@ -84,6 +88,8 @@ var saverApp = new Vue({
 
   mounted () {
     var self = this;
+
+    self.playByIndexData = this.getProcessArguments(['--filepathindex', '--filepath']);
 
     videoPlayer = document.getElementById('videoPlayer');
     videoPlayer.addEventListener('loadedmetadata', () => {
@@ -144,6 +150,7 @@ var saverApp = new Vue({
         if (!goNextAvailable) {
           return false;
         }
+        self.showFullPathFileName = false;
         showVideoLoadingErrorTimeOut && clearTimeout(showVideoLoadingErrorTimeOut);
         this.showVideoLoadingError = false;
         self.goPlayer();
@@ -173,6 +180,9 @@ var saverApp = new Vue({
         return;
       }
       if(e.keyCode === 70){ // 'f'
+        if (self.showAnimateFileName) {
+          self.showFullPathFileName = true;
+        }
         self.showVideoFileName(self.activeVideoSource, 10);
         return;
       }
@@ -208,7 +218,7 @@ var saverApp = new Vue({
   methods: {
 
     loadSettings () {
-      ipc.send('load-settings', 'load')
+      ipc.send('load-settings', 'load');
     },
 
 
@@ -246,6 +256,14 @@ var saverApp = new Vue({
         this.activeVideoIndex = 0;
       }
       this.activeVideoSource = videoStorage[this.activeVideoIndex];
+
+      if (this.playByIndexData) {
+        if (videoStorage.indexOf(this.playByIndexData.filepath) > -1) {
+          this.activeVideoSource = videoStorage[videoStorage.indexOf(this.playByIndexData.filepath)];
+        }
+        this.playByIndexData = null;
+      }
+
       setTimeout(() => {
         videoPlayer.currentTime = 0;
         mainPlayFrameSec = 0;
@@ -354,6 +372,10 @@ var saverApp = new Vue({
 
 
     getFileNameFromSrcLink (srcLink) {
+        var self = this;
+        if (self.showFullPathFileName) {
+          return srcLink;
+        }
         var srcParts_arr = [];
         srcParts_arr = srcLink.split('/');
         return srcParts_arr[srcParts_arr.length-1];
@@ -438,8 +460,24 @@ var saverApp = new Vue({
             this.showAnimateFileName = true;
             hgvf = setTimeout(() => {
               this.showAnimateFileName = false;
+              this.showFullPathFileName = false;
             }, 8000);
         }, _delay);
+    },
+
+
+    getProcessArguments(keysArr) {
+      if (!keysArr && !keysArr.length) { return null;}
+      let resultObj = {};
+      if (process.argv.length) {
+        process.argv.forEach(arg => {
+          const argSplitted = arg.split('=');
+          if (keysArr.indexOf(argSplitted[0]) > -1){
+            resultObj[argSplitted[0].replace('--', '')] = (argSplitted.length > 1 && argSplitted[1]) ? argSplitted[1] : '';
+          }
+        });
+        return Object.keys(resultObj).length ? resultObj : null;
+      }
     },
 
 
@@ -465,6 +503,10 @@ var saverApp = new Vue({
 
     getRandomIntMinMax (min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
+    },
+
+    checkTestSend (data) {
+      ipc.send('check-test-send', data);
     }
 
   }

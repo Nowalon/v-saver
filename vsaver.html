@@ -10,6 +10,8 @@
     <div class="main-content" id="vSaver">
 
       <video width="100%" height="100%" autoplay muted id="videoPlayer"
+             autobuffer
+             preload
              :src="activeVideoSource"
              class="video-fade-out"
              :class="{'video-fade-in' : isVideoFadeInClass}"
@@ -56,7 +58,7 @@
 
         <div id="videoSrcError" :class="{'video-src-error' : showVideoLoadingError}">
           <p>The video source &laquo;{{ activeVideoSource }}&raquo; is not available:</p>
-          <p>perhaps it has wrong format, was removed, renamed or deleted...</p> </br>
+          <p>perhaps it has wrong format, has been moved, renamed or deleted...</p> </br>
           <p>Next source loading attempt in {{ nextVideoErrorCountDownSec }} sec...</p>
         </div>
 

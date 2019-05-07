@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="assets/css/settings.css">
     <link rel="stylesheet" href="components/v-dropdown/v-dropdown.css">
+    <link rel="stylesheet" href="components/v-confirm-action-button/v-confirm-action-button.css">
     <title>Settings - V-Sasver</title>
   </head>
   <body>
@@ -12,11 +13,15 @@
       <img src="./assets/img/videoscreensaver-gradient-icon.png"
            class="logo" id="logoImg"/>
       V-Sasver - Settings
+      <div class="title-window-actions">
+        <button id="minimizeBtnTitle" class="title-button">&ndash;</button>
+        <button id="closeBtnTitle" class="title-button">&times;</button>
+      </div>
     </h1>
 
     <div class="main-content" id="settings">
 
-      <p id="message" :class="{'show-message' : showMessage}">{{ message }}</p>
+      <p id="message" :class="{'show-message' : showMessage, 'is-error-message' : isErrorMessage}">{{ message }}</p>
       <div id="sectionsNav">
         <ul>
           <li :class="tab1ActiveClass">
@@ -47,16 +52,49 @@
               </div>
 
               <div class="settings-option-wrap">
+                <span class="settings-option-title">{{this.settings.externalDisplay ? 'Primary screen' : ''}} Saver type:
+                  <note-tip text="Select screensaver type as videoscreensaver or floating clock screensaver" ></note-tip>
+                </span>
+                <div class="vs-radioGroup settings-option-control">
+                  <input type="radio" id="saverTypeMainChoice1"
+                   name="saver_type_main" value="video" v-model="settings.saverTypeMain">
+                  <label for="saverTypeMainChoice1">Video</label>
+
+                  <input type="radio" id="saverTypeMainChoice2"
+                   name="saver_type_main" value="clock" v-model="settings.saverTypeMain">
+                  <label for="saverTypeMainChoice2">Clock</label>
+                </div>
+              </div>
+              
+
+              <div v-if="settings.externalDisplay" class="settings-option-wrap">
+                <span class="settings-option-title">External screen Saver type:
+                  <note-tip text="Select screensaver type as videoscreensaver or floating clock screensaver for secondary screen" ></note-tip>
+                </span>
+                <div class="vs-radioGroup settings-option-control">
+                  <input type="radio" id="saverTypeExternalChoice1"
+                   name="saver_type_external" value="video" v-model="settings.saverTypeExternal">
+                  <label for="saverTypeExternalChoice1">Video</label>
+
+                  <input type="radio" id="saverTypeExternalChoice2"
+                   name="saver_type_external" value="clock" v-model="settings.saverTypeExternal">
+                  <label for="saverTypeExternalChoice2">Clock</label>
+                </div>
+              </div>
+              
+              
+
+              <div class="settings-option-wrap" :class="{'disabled-option' : videoOptionsDisabled}">
                 <span class="settings-option-title">Change video after:
                   <note-tip text="Plays next video by certain defined interval or plays every video to end. Anyway plays next video if the previous one was over" ></note-tip>
                 </span>
                 <div class="vs-radioGroup settings-option-control">
                   <input type="radio" id="changeAfterChoice1"
-                   name="change_after" value="interval" v-model="settings.changeAfter">
+                   name="change_after" value="interval" v-model="settings.changeAfter" :disabled="videoOptionsDisabled">
                   <label for="changeAfterChoice1">Interval</label>
 
                   <input type="radio" id="changeAfterChoice2"
-                   name="change_after" value="videoends" v-model="settings.changeAfter">
+                   name="change_after" value="videoends" v-model="settings.changeAfter" :disabled="videoOptionsDisabled">
                   <label for="changeAfterChoice2">Video ends</label>
                 </div>
               </div>
@@ -72,12 +110,12 @@
                 </div>
               </div>
 
-              <div class="settings-option-wrap">
+              <div class="settings-option-wrap" :class="{'disabled-option' : videoOptionsDisabled}">
                 <span class="settings-option-title ">Shuffle video
                   <note-tip text="Shuffle video sources playlist. Shuffling on saver start and periodically direcly in screensaver vindow, not in settings:Files" ></note-tip>
                 </span>
                 <div class="slideCheckBox settings-option-control">
-                  <input type="checkbox" id="randomizeVideoChBx" name="randomizeVideo" v-model="settings.randomizeVideo" >
+                  <input type="checkbox" id="randomizeVideoChBx" name="randomizeVideo" v-model="settings.randomizeVideo" :disabled="videoOptionsDisabled" >
                   <label for="randomizeVideoChBx"></label>
                 </div>
               </div>
@@ -106,20 +144,10 @@
               </div>
               <!-- showTrayIcon -->
 
-              <div class="settings-option-wrap">
-                <span class="settings-option-title">Unlock 'Reset to default' option
-                  <note-tip text="Will not be saved in settings" ></note-tip>
-                </span>
-                <div class="slideCheckBox settings-option-control">
-                  <input type="checkbox" id="unlockResetToDefaultChBx" name="unlockResetToDefault" v-model="unlockResetToDefault" >
-                  <label for="unlockResetToDefaultChBx"></label>
-                </div>
-              </div>
 
               <p></p></br>
               <p></p></br>
               <p></p></br>
-
 
 <!--
               <div v-if="showDevDebugOption" class="settings-option-wrap">
@@ -137,12 +165,12 @@
 
             <div class="settings-col settings-col-2">
 
-              <div class="settings-option-wrap">
+              <div class="settings-option-wrap" :class="{'disabled-option' : videoOptionsDisabled}">
                 <span class="settings-option-title">Show system clock time
-                <note-tip text="Shows clock on left side of screensaver window periodically changing its vertical position" ></note-tip>
+                <note-tip text="Shows clock on left side of video screensaver window periodically changing its vertical position" ></note-tip>
                 </span>
                 <div class="slideCheckBox settings-option-control">
-                  <input type="checkbox" id="showSystemClockTimeChBx" name="showSystemClockTime" v-model="settings.showSystemClockTime" >
+                  <input type="checkbox" id="showSystemClockTimeChBx" name="showSystemClockTime" v-model="settings.showSystemClockTime" :disabled="videoOptionsDisabled" >
                   <label for="showSystemClockTimeChBx"></label>
                 </div>
               </div>
@@ -160,21 +188,21 @@
                 </div>
               </div>
 
-              <div class="settings-option-wrap">
+              <div class="settings-option-wrap" :class="{'disabled-option' : videoOptionsDisabled}">
                 <span class="settings-option-title">Show video remaining time
                 </span>
                 <div class="slideCheckBox settings-option-control">
-                  <input type="checkbox" id="showVideoRemainingTimeChBx" name="showVideoRemainingTime" v-model="settings.showVideoRemainingTime" >
+                  <input type="checkbox" id="showVideoRemainingTimeChBx" name="showVideoRemainingTime" v-model="settings.showVideoRemainingTime" :disabled="videoOptionsDisabled" >
                   <label for="showVideoRemainingTimeChBx"></label>
                 </div>
               </div>
 
-              <div class="settings-option-wrap">
+              <div class="settings-option-wrap" :class="{'disabled-option' : videoOptionsDisabled}">
                 <span class="settings-option-title">Show video file name on change
                 <note-tip text="Shows video file name for a few seconds at the beginning of each video" ></note-tip>
                 </span>
                 <div class="slideCheckBox settings-option-control">
-                  <input type="checkbox" id="showVideoFileNameChBx" name="showVideoFileName" v-model="settings.showVideoFileName" >
+                  <input type="checkbox" id="showVideoFileNameChBx" name="showVideoFileName" v-model="settings.showVideoFileName" :disabled="videoOptionsDisabled" >
                   <label for="showVideoFileNameChBx"></label>
                 </div>
               </div>
@@ -187,6 +215,17 @@
                 <div class="slideCheckBox settings-option-control">
                   <input type="checkbox" id="showInternetConnectionLostIndicatorChBx" name="showInternetConnectionLostIndicator" v-model="settings.showInternetConnectionLostIndicator" >
                   <label for="showInternetConnectionLostIndicatorChBx"></label>
+                </div>
+              </div>
+
+              <div class="settings-option-wrap">
+                <span class="settings-option-title">Show Internet connection lost notification
+                <note-tip
+                    text="Shows OS desktop notifications when the Internet connection is lost and then when connection established. Based on external source DNS lookup" img-src="./assets/img/cloud-connection-2.svg"></note-tip>
+                </span>
+                <div class="slideCheckBox settings-option-control">
+                  <input type="checkbox" id="showInternetConnectionNotificationChBx" name="showInternetConnectionNotification" v-model="settings.showInternetConnectionNotification" >
+                  <label for="showInternetConnectionNotificationChBx"></label>
                 </div>
               </div>
 
@@ -208,12 +247,26 @@
                 </div>
               </div>
 
+              <div class="settings-option-wrap">
+                <span class="settings-option-title">Ignore fullscreen after idle:
+                <note-tip
+                        text="Ceases to consider the fullscreen applications states after this idle interval value and starts saver if no suspend mode is switched on" ></note-tip>
+                </span>
+                <div class="settings-option-control">
+                  <v-dropdown class="__active"
+                              v-model="settings.resetFullScreenInterval"
+                              :select-options="resetFullScreenIntervalItems"
+                              select-name="resetFullScreenInterval"
+                  >
+                  </v-dropdown>
+                </div>
+              </div>
+
               <br>
 
               <p></p></br>
               <p></p></br>
 
-              <!--<button class="btn mr-6" @click="handleDeleteSettings" disabled>test/delete</button>-->
               <button class="btn" @click="handleRunTestSaverWindow">Run screensaver</button>
 
               <div class="settings-option-wrap">
@@ -226,7 +279,7 @@
           </section>
 
 
-          <section id="filesSection" class="section">
+          <section id="filesSection" class="section" @dragover.prevent.stop="handleFileDragover" @drop.prevent.stop="handleFileDrop">
 
             <div class="settings-col settings-col-1">
               <button class="btn" @click="handleAddFiles">Add files</button>
@@ -234,29 +287,51 @@
               <button class="btn right" @click="handleLoadDemoFiles">Load demo</button>
             </div>
             <div class="settings-col settings-col-2">
-              <button class="btn" @click="handleClearFiles">Remove all files</button>
+              <v-confirm-action-state-button
+                      class="btn"
+                      :confirmed-handler="handleClearFiles"
+                      default-text="Remove all files"
+              >
+              </v-confirm-action-state-button>
               <span class="btn-notif">Files count: {{ filesCount }}</span>
+              <span v-if="fileErrorsCount > 0" class="btn-notif duration-error">Errors: {{ fileErrorsCount }}</span>
             </div>
 
             <div class="clearfix-divider"></div>
 
             <div class="setting-files-wrap" id="settingFilesWrapNode">
-              <ul class="file-list" id="fileListNode">
-                <li v-for="filePath, filePathindex in settings.files" :index="filePathindex">
-                  <span class="file-name">{{ filePathindex }}: {{ filePath }}</span>
-                  <span class="file-action file-action-move-up"
-                        :class="{'disabled' : filePathindex === 0}"
-                        @click="handleMoveFilePathUp(filePath, filePathindex)"
-                        title="move up"> &#8679; </span>
-                  <span class="file-action file-action-move-down"
-                        @click="handleMoveFilePathDown(filePath, filePathindex)"
-                        :class="{'disabled' : filePathindex === (settings.files.length - 1) }"
-                        title="move down"> &#8681; </span>
-                  <span class="file-action file-action-delete"
-                        @click="handleRemoveFilePath(filePath, filePathindex)"
-                        title="remove"> &times; </span>
-                </li>
-              </ul>
+
+              <div id="fileDropHolder"
+                   :class="{'show' : showFileDropHolder}"
+                   @dragleave.prevent.stop="handleFileDragleave"
+                   @click.prevent.stop="showFileDropHolder=false;"
+              ></div>
+
+              <sortable-list lock-axis="y"
+                             helper-class="drag-sortable-list-item"
+                             v-model="filesWithDurations"
+                             press-threshold="10"
+                             distance="6"
+                             lock-to-container-edges="true"
+                             @sortStart="handleFileListSortStart($event)"
+                             @sort-start="handleFileListSortStart($event)"
+                             @sortEnd="handleFileListSortEnd($event)"
+                             @sort-end="handleFileListSortEnd($event)"
+                             @input="handleFileListSortInput"
+              >
+                <sortable-item v-for="(file, filePathindex) in filesWithDurations"
+                               :index="filePathindex"
+                               :key="filePathindex"
+                               :file="file"
+                               :file-pathindex="filePathindex"
+                               :saver-type="settings.saverTypeMain"
+                               :handle-play-file-by-index="handlePlayFileByIndex"
+                               :handle-move-file-path-up="handleMoveFilePathUp"
+                               :handle-move-file-path-down="handleMoveFilePathDown"
+                               :handle-remove-file-path="handleRemoveFilePath"
+                />
+              </sortable-list>
+
               <div class="file-list-scroller" v-if="showfileListScroll"><span>&varr;</span></div>
             </div>
 
@@ -267,9 +342,23 @@
         <div class="clearfix-divider"></div>
 
         <div class="btn-controls">
-          <button class="btn mr-6" :disabled="!unlockResetToDefault" @click="handleResetSettings">Reset to default</button>
+          <v-confirm-action-state-button
+                  class="btn mr-6"
+                  :confirmed-handler="handleResetSettings"
+                  default-text="Reset to default"
+          >
+          </v-confirm-action-state-button>
+
           <button class="btn btn-close" @click="handleCloseSettings">Close</button>
-          <button class="btn right" @click="handleSaveSettings">Save</button>
+          <v-confirm-action-state-button
+                  class="btn right"
+                  :confirmed-handler="handleCloseSettings"
+                  :first-action-handler="handleSaveSettings"
+                  default-text="Save"
+                  confirm-text="Close"
+          >
+          </v-confirm-action-state-button>
+
           <p v-if="isNewVersionavailable" class="new-version-info">A new <a @click.prevent="handleOpenVersion" href="#">version {{newVersionValue}}</a> is available</p>
         </div>
 

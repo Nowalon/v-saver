@@ -1,6 +1,6 @@
 {
   "name": "v-saver",
-  "version": "0.9.4",
+  "version": "0.9.5",
   "description": "Electron based desktop videoscreensaver (linux(ubuntu)-first) application",
   "author": "Nowalon",
   "email": "nowalon@mail.com",

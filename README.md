@@ -30,9 +30,9 @@ Multiscreen support implemented as 2 screens support: Primary and Secondary if c
 
 ### Download
 
-Deb: [v-saver_0.9.4_amd64.deb](https://github.com/Nowalon/v-saver/raw/master/dist/v-saver_0.9.4_amd64.deb)
+Deb: [v-saver_0.9.5_amd64.deb](https://github.com/Nowalon/v-saver/raw/settings/dist/v-saver_0.9.5_amd64.deb)
 
-AppImage: [v-saver-0.9.4-x86_64.AppImage](https://github.com/Nowalon/v-saver/raw/master/dist/v-saver-0.9.4-x86_64.AppImage)
+AppImage: [V-Saver_0.9.5.AppImage](https://github.com/Nowalon/v-saver/raw/settings/dist/V-Saver_0.9.5.AppImage)
 
 
 ### Start application automatically on login
@@ -82,11 +82,24 @@ displays detection with flexible checking fix;
 ### Changelog
 
 0.9.5:
-*
-*
-*
-*
-
+* main: fullscreen detection based on X-server windows info;
+* main,settings: saver type selection  - video or clock - for primary (and external if provided) displays;
+* primary/secondary displays detection, position (GNOME/secondary display left position) fix/improvements;
+* main: fullscreen (GNOME especial) behavior, cursor hiding fix/improvements;
+* main,settings: eliminate fullscreen applications detection after 30m/1h/2h... timer;
+* main: tray icon enabling/disabling for Ubuntu 18.04 GNOME issues reworked;
+* main: GNOME screen lock (system is locked) detection;
+* settings: drag and drop files upload to file list;
+* settings: file list sorting by arrows is cycled;
+* settings: file list items ordering with drag-n-drop;
+* settings: file duration time with ffprobe fetching/storing, file-path/duration fetch errors handling;
+* settings: wrong file path, format, duration, broken file error indication;
+* settings: 'action-confirm' button for 'are you sure' actions;
+* settings: 'play' button in the file list;
+* videosaver: double 'F' press shows full file path;
+* settings window: title close, minify buttons;
+* main,settings: 'Internet connection lost' OS notification;
+* electron, node updated;
 
 0.9.4: electron, node updated;
 
